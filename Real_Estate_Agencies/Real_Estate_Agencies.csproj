@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
+
+		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.8" />
+	</ItemGroup>
+
+</Project>
