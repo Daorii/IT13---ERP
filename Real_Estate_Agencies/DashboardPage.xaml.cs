@@ -10,15 +10,16 @@ namespace Real_Estate_Agencies
         {
             InitializeComponent();
 
-            // Bind the page to the ViewModel (make sure it exists under Models folder)
+            // Bind the page to the ViewModel
             DataContext = new DashboardViewModel();
         }
 
-        // Handle mouse wheel scrolling for property list
+        // Handle horizontal scrolling of the property list using mouse wheel
         private void PropertyScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (sender is ScrollViewer scrollViewer)
             {
+                // Scroll horizontally instead of vertically
                 scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
                 e.Handled = true;
             }

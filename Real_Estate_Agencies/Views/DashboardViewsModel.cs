@@ -1,51 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using LiveChartsCore;
+﻿using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Real_Estate_Agencies.Model;
 
-namespace Real_Estate_Agencies.Models
+namespace Real_Estate_Agencies
 {
-    public class DashboardViewModel
+    public class DashboardViewModel : BaseViewModel
     {
-        public string CurrentDate { get; set; }
-        public string CurrentTime { get; set; }
-
-        public DashboardModel DashboardData { get; set; }
-        public IEnumerable<ISeries> PieSeries { get; set; }
-        public IEnumerable<PropertyModel> OnSellProperties { get; set; }
+        public ObservableCollection<PropertyModel> OnSellProperties { get; set; } = new();
+        public IEnumerable<ISeries> PieSeries { get; set; } = new List<ISeries>();
+        public IEnumerable<ISeries> SalesOverTimeSeries { get; set; } = new List<ISeries>();
+        public DashboardData DashboardData { get; set; } = new DashboardData();
+        public string CurrentDate => System.DateTime.Now.ToShortDateString();
+        public string CurrentTime => System.DateTime.Now.ToShortTimeString();
 
         public DashboardViewModel()
         {
-            // Current date/time
-            CurrentDate = DateTime.Now.ToString("MMMM dd, yyyy");
-            CurrentTime = DateTime.Now.ToString("hh:mm tt");
+            OnSellProperties.Add(new PropertyModel { Name = "Sunset Villa", Location = "Tagaytay", PropertyType = "House", Category = "Luxury", Status = "On Sale", Price = 2500000, ImagePath = "Images/villa1.jpg" });
+            OnSellProperties.Add(new PropertyModel { Name = "City Apartment", Location = "Makati", PropertyType = "Condo", Category = "Residential", Status = "On Sale", Price = 1200000, ImagePath = "Images/apartment1.jpg" });
 
-            // Demo KPI values
-            DashboardData = new DashboardModel
-            {
-                SalesCount = "15",
-                AgentCount = "8",
-                Commission = "$1200",
-                PropertiesListed = "32"
-            };
-
-            // Pie chart sample
             PieSeries = new ISeries[]
             {
-                new PieSeries<double> { Values = new double[] { 10 }, Name="House A" },
-                new PieSeries<double> { Values = new double[] { 20 }, Name="Condo B" },
-                new PieSeries<double> { Values = new double[] { 30 }, Name="Villa C" },
+                new PieSeries<double> { Values = new double[] { 40 }, Name = "House" },
+                new PieSeries<double> { Values = new double[] { 35 }, Name = "Condo" },
+                new PieSeries<double> { Values = new double[] { 25 }, Name = "Lot" }
             };
 
-            // Property list sample
-            OnSellProperties = new List<PropertyModel>
+            SalesOverTimeSeries = new ISeries[]
             {
-                new PropertyModel { Name="House A", Price="$200,000", Status="For Sale", ImagePath="Images/house1.jpg" },
-                new PropertyModel { Name="Condo B", Price="$120,000", Status="For Sale", ImagePath="Images/house2.jpg" },
-                new PropertyModel { Name="Villa C", Price="$350,000", Status="For Sale", ImagePath="Images/house3.jpg" },
-                new PropertyModel { Name="Apartment D", Price="$90,000", Status="For Sale", ImagePath="Images/house4.jpg" },
-                new PropertyModel { Name="Townhouse E", Price="$180,000", Status="For Sale", ImagePath="Images/house5.jpg" }
+                new ColumnSeries<int> { Values = new int[] { 5, 10, 7, 12, 8, 15 } }
+            };
+
+            DashboardData = new DashboardData
+            {
+                SalesCount = 42,
+                AgentCount = 8,
+                Commission = 125000.50m,
+                PropertiesListed = OnSellProperties.Count
             };
         }
+    }
+
+    public class DashboardData
+    {
+        public int SalesCount { get; set; }
+        public int AgentCount { get; set; }
+        public decimal Commission { get; set; }
+        public int PropertiesListed { get; set; }
     }
 }

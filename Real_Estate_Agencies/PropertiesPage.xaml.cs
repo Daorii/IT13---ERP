@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.Views;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -6,33 +7,64 @@ namespace Real_Estate_Agencies
 {
     public partial class PropertiesPage : Page
     {
-        public ObservableCollection<PropertyModel> Properties { get; set; }
+        public PropertiesViewModel ViewModel { get; set; }
 
         public PropertiesPage()
         {
             InitializeComponent();
-
-            Properties = new ObservableCollection<PropertyModel>();
-            PropertiesGrid.ItemsSource = Properties;
+            ViewModel = new PropertiesViewModel();
+            DataContext = ViewModel;
         }
 
-        private void AddPropertyButton_Click(object sender, RoutedEventArgs e)
+        private void Add_Click(object sender, RoutedEventArgs e)
         {
-            AddPropertyWindow addWindow = new AddPropertyWindow();
+            var addWindow = new AddPropertyWindow();
             if (addWindow.ShowDialog() == true)
             {
-                Properties.Add(addWindow.NewProperty);
+                ViewModel.Properties.Add(addWindow.NewProperty);
             }
         }
-    }
 
-    public class PropertyModel
-    {
-        public string Name { get; set; }
-        public string Location { get; set; }
-        public string Type { get; set; }
-        public string Category { get; set; }
-        public string Price { get; set; }
-        public string Status { get; set; }
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            if (PropertiesList.SelectedItem is PropertyModel selected)
+            {
+                var editWindow = new AddPropertyWindow
+                {
+                    TxtPropertyName = { Text = selected.Name },
+                    TxtLocation = { Text = selected.Location },
+                    TxtPropertyType = { Text = selected.PropertyType },
+                    TxtCategory = { Text = selected.Category },
+                    TxtPrice = { Text = selected.Price.ToString() },
+                    CmbStatus = { SelectedItem = selected.Status }
+                };
+
+                if (editWindow.ShowDialog() == true)
+                {
+                    int index = ViewModel.Properties.IndexOf(selected);
+                    ViewModel.Properties[index] = editWindow.NewProperty;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a property to edit.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            if (PropertiesList.SelectedItem is PropertyModel selected)
+            {
+                var result = MessageBox.Show($"Delete {selected.Name}?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    ViewModel.Properties.Remove(selected);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a property to delete.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
     }
 }
