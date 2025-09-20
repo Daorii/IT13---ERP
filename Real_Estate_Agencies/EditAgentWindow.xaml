@@ -1,0 +1,145 @@
+<Window x:Class="Real_Estate_Agencies.EditAgentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Agent"
+        Height="600" Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F8F9FA">
+
+    <Border CornerRadius="12" Background="White" Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="#F39C12" CornerRadius="12,12,0,0" Padding="30,20">
+                <StackPanel>
+                    <TextBlock Text="Edit Agent" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Update agent information below" FontSize="14" Foreground="#FEF9E7" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Form Content -->
+            <ScrollViewer Grid.Row="1" Padding="40,30" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    
+                    <!-- Employee ID -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Employee ID *" FontWeight="Bold" FontSize="14" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                        <TextBox x:Name="TxtEmployeeId" 
+                                 FontSize="14" 
+                                 Padding="15,12" 
+                                 BorderThickness="2" 
+                                 BorderBrush="#E1E8ED" 
+                                 Background="White"
+                                 Foreground="#2C3E50"
+                                 IsReadOnly="True"/>
+                    </StackPanel>
+
+                    <!-- Name Fields -->
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- First Name -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="First Name *" FontWeight="Bold" FontSize="14" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                            <TextBox x:Name="TxtFirstName" 
+                                     FontSize="14" 
+                                     Padding="15,12" 
+                                     BorderThickness="2" 
+                                     BorderBrush="#E1E8ED" 
+                                     Background="White"
+                                     Foreground="#2C3E50"/>
+                        </StackPanel>
+
+                        <!-- Last Name -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Last Name *" FontWeight="Bold" FontSize="14" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                            <TextBox x:Name="TxtLastName" 
+                                     FontSize="14" 
+                                     Padding="15,12" 
+                                     BorderThickness="2" 
+                                     BorderBrush="#E1E8ED" 
+                                     Background="White"
+                                     Foreground="#2C3E50"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Hire Date -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Hire Date" FontWeight="Bold" FontSize="14" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                        <DatePicker x:Name="DpHireDate" 
+                                    FontSize="14" 
+                                    Padding="15,12" 
+                                    BorderThickness="2" 
+                                    BorderBrush="#E1E8ED" 
+                                    Background="White"
+                                    Foreground="#2C3E50"/>
+                    </StackPanel>
+
+                    <!-- Contact Info -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Contact Information" FontWeight="Bold" FontSize="14" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                        <TextBox x:Name="TxtContactInfo" 
+                                 FontSize="14" 
+                                 Padding="15,12" 
+                                 BorderThickness="2" 
+                                 BorderBrush="#E1E8ED" 
+                                 Background="White"
+                                 Foreground="#2C3E50"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Height="60"/>
+                    </StackPanel>
+
+                    <!-- Salary Rate -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Salary Rate" FontWeight="Bold" FontSize="14" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                        <TextBox x:Name="TxtSalaryRate" 
+                                 FontSize="14" 
+                                 Padding="15,12" 
+                                 BorderThickness="2" 
+                                 BorderBrush="#E1E8ED" 
+                                 Background="White"
+                                 Foreground="#2C3E50"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Action Buttons -->
+            <Border Grid.Row="2" Background="#F8F9FA" CornerRadius="0,0,12,12" Padding="30,20">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Cancel" 
+                            Background="#95A5A6" 
+                            Foreground="White" 
+                            FontWeight="Bold" 
+                            FontSize="14"
+                            Padding="25,12" 
+                            Margin="0,0,15,0"
+                            BorderThickness="0" 
+                            Cursor="Hand"
+                            Click="Cancel_Click"/>
+                    
+                    <Button Content="Update Agent" 
+                            Background="#F39C12" 
+                            Foreground="White" 
+                            FontWeight="Bold" 
+                            FontSize="14"
+                            Padding="25,12" 
+                            BorderThickness="0" 
+                            Cursor="Hand"
+                            Click="Update_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

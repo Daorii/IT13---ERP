@@ -4,12 +4,15 @@ using System.Windows.Data;
 
 namespace Real_Estate_Agencies
 {
-    public class StaggerDelayConverter : IValueConverter
+    public class UpperCaseConverter : IValueConverter
     {
+        public static UpperCaseConverter Instance { get; } = new UpperCaseConverter();
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int index = (int)value;
-            return TimeSpan.FromMilliseconds(index * 100);
+            if (value is string str)
+                return str.ToUpper();
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

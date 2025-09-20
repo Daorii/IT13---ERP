@@ -1,9 +1,9 @@
-﻿using Microsoft.Win32;
-using Real_Estate_Agencies.Model;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using Real_Estate_Agencies.Model;
 
 namespace Real_Estate_Agencies
 {
@@ -14,22 +14,30 @@ namespace Real_Estate_Agencies
         public AddPropertyWindow()
         {
             InitializeComponent();
-        }
-
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.DialogResult = false;
-            this.Close();
+            NewProperty = new PropertyModel();
         }
 
         private void ChooseImage_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
-            if (dlg.ShowDialog() == true)
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                TxtImagePath.Text = dlg.FileName;
-                PreviewImage.Source = new BitmapImage(new Uri(dlg.FileName));
+                Title = "Select Property Image",
+                Filter = "Image files (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string path = openFileDialog.FileName;
+                TxtImagePath.Text = System.IO.Path.GetFileName(path);
+                NewProperty.ImagePath = path;
+
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(path, UriKind.Absolute);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+
+                PreviewImage.Source = bitmap;
             }
         }
 
@@ -37,23 +45,63 @@ namespace Real_Estate_Agencies
         {
             if (string.IsNullOrWhiteSpace(TxtPropertyName.Text))
             {
-                MessageBox.Show("Property Name is required.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Property Name is required.");
+                TxtPropertyName.Focus();
                 return;
             }
 
-            NewProperty = new PropertyModel
+            if (string.IsNullOrWhiteSpace(TxtLocation.Text))
             {
-                Name = TxtPropertyName.Text,
-                Location = TxtLocation.Text,
-                PropertyType = TxtPropertyType.Text,
-                Category = TxtCategory.Text,
-                Price = decimal.TryParse(TxtPrice.Text, out decimal p) ? p : 0,
-                Status = (CmbStatus.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "On Sale",
-                ImagePath = string.IsNullOrEmpty(TxtImagePath.Text) ? "Images/default.jpg" : TxtImagePath.Text
-            };
+                MessageBox.Show("Location is required.");
+                TxtLocation.Focus();
+                return;
+            }
 
-            this.DialogResult = true;
-            this.Close();
+            if (CmbPropertyType.SelectedItem == null)
+            {
+                MessageBox.Show("Property Type is required.");
+                CmbPropertyType.Focus();
+                return;
+            }
+
+            if (CmbCategory.SelectedItem == null)
+            {
+                MessageBox.Show("Category is required.");
+                CmbCategory.Focus();
+                return;
+            }
+
+            if (!double.TryParse(TxtPrice.Text, out double price) || price <= 0)
+            {
+                MessageBox.Show("Valid price required.");
+                TxtPrice.Focus();
+                return;
+            }
+
+            if (CmbStatus.SelectedItem == null)
+            {
+                MessageBox.Show("Status is required.");
+                CmbStatus.Focus();
+                return;
+            }
+
+            NewProperty.Name = TxtPropertyName.Text.Trim();
+            NewProperty.Location = TxtLocation.Text.Trim();
+            NewProperty.PropertyType = (CmbPropertyType.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            NewProperty.Category = (CmbCategory.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            NewProperty.Price = price;
+            NewProperty.Status = (CmbStatus.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            if (string.IsNullOrEmpty(NewProperty.ImagePath))
+                NewProperty.ImagePath = "Images/default.jpg";
+
+            DialogResult = true;
+            Close();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
         }
     }
 }
