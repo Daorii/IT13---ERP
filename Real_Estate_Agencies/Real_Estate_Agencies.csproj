@@ -7,14 +7,6 @@
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Compile Remove="AddPropertyWindow.xaml.cs" />
-	  <Compile Remove="Views\PropertiesViewModel.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Remove="AddPropertyWindow.xaml" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />

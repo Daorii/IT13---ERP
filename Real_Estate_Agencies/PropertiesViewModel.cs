@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using Real_Estate_Agencies.Model;
-using Real_Estate_Agencies.Views;
 using Real_Estate_Agencies.Common;
 
 namespace Real_Estate_Agencies.ViewModels
@@ -80,7 +79,7 @@ namespace Real_Estate_Agencies.ViewModels
 
         private void AddProperty()
         {
-            var addWindow = new AddPropertyWindow();
+            var addWindow = new Real_Estate_Agencies.Views.AddPropertyWindow();
             bool? result = addWindow.ShowDialog();
 
             if (result == true)

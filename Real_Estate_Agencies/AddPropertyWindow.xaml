@@ -26,19 +26,19 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0" Content="Name:" Margin="5" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NewProperty.Name}" Margin="5"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding NewProperty.Name, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
         <Label Grid.Row="1" Grid.Column="0" Content="Location:" Margin="5" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewProperty.Location}" Margin="5"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewProperty.Location, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
         <Label Grid.Row="2" Grid.Column="0" Content="Type:" Margin="5" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NewProperty.PropertyType}" Margin="5"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding NewProperty.PropertyType, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
         <Label Grid.Row="3" Grid.Column="0" Content="Category:" Margin="5" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding NewProperty.Category}" Margin="5"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding NewProperty.Category, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
         <Label Grid.Row="4" Grid.Column="0" Content="Price:" Margin="5" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding NewProperty.Price}" Margin="5"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding NewProperty.Price, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
 
         <Label Grid.Row="5" Grid.Column="0" Content="Status:" Margin="5" VerticalAlignment="Center"/>
         <ComboBox Grid.Row="5" Grid.Column="1" x:Name="StatusComboBox" Margin="5">
@@ -49,7 +49,7 @@
 
         <Label Grid.Row="6" Grid.Column="0" Content="Image:" Margin="5" VerticalAlignment="Center"/>
         <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="5">
-            <TextBox Text="{Binding NewProperty.ImagePath}" Width="200" Margin="0,0,10,0"/>
+            <TextBox Text="{Binding NewProperty.ImagePath, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,10,0"/>
             <Button Content="Browse" Click="BrowseImage_Click" Width="80"/>
         </StackPanel>
 

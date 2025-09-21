@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 using Real_Estate_Agencies.Model;
-using Real_Estate_Agencies.Common; // Add this using directive
+using Real_Estate_Agencies.Common;
 
 namespace Real_Estate_Agencies.ViewModels
 {

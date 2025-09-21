@@ -1,4 +1,5 @@
 ﻿using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.ViewModels;
 using Real_Estate_Agencies.Views;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,21 +28,23 @@ namespace Real_Estate_Agencies
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            if (PropertiesList.SelectedItem is PropertyModel selected)
+            if (ViewModel.SelectedProperty != null)
             {
-                var editWindow = new AddPropertyWindow
+                var editWindow = new AddPropertyWindow();
+                editWindow.NewProperty = new PropertyModel
                 {
-                    TxtPropertyName = { Text = selected.Name },
-                    TxtLocation = { Text = selected.Location },
-                    TxtPropertyType = { Text = selected.PropertyType },
-                    TxtCategory = { Text = selected.Category },
-                    TxtPrice = { Text = selected.Price.ToString() },
-                    CmbStatus = { SelectedItem = selected.Status }
+                    Name = ViewModel.SelectedProperty.Name,
+                    Location = ViewModel.SelectedProperty.Location,
+                    PropertyType = ViewModel.SelectedProperty.PropertyType,
+                    Category = ViewModel.SelectedProperty.Category,
+                    Price = ViewModel.SelectedProperty.Price,
+                    Status = ViewModel.SelectedProperty.Status,
+                    ImagePath = ViewModel.SelectedProperty.ImagePath
                 };
 
                 if (editWindow.ShowDialog() == true)
                 {
-                    int index = ViewModel.Properties.IndexOf(selected);
+                    int index = ViewModel.Properties.IndexOf(ViewModel.SelectedProperty);
                     ViewModel.Properties[index] = editWindow.NewProperty;
                 }
             }
@@ -53,18 +56,33 @@ namespace Real_Estate_Agencies
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (PropertiesList.SelectedItem is PropertyModel selected)
+            if (ViewModel.SelectedProperty != null)
             {
-                var result = MessageBox.Show($"Delete {selected.Name}?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var result = MessageBox.Show($"Delete {ViewModel.SelectedProperty.Name}?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    ViewModel.Properties.Remove(selected);
+                    ViewModel.Properties.Remove(ViewModel.SelectedProperty);
                 }
             }
             else
             {
                 MessageBox.Show("Please select a property to delete.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        private void View_Click(object sender, RoutedEventArgs e)
+        {
+            // View property functionality
+        }
+
+        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        {
+            // Previous page functionality
+        }
+
+        private void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            // Next page functionality
         }
     }
 }

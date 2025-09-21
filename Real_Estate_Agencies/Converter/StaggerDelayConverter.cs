@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Real_Estate_Agencies.Converters
+namespace Real_Estate_Agencies.Converter
 {
     public class StaggerDelayConverter : IValueConverter
     {
