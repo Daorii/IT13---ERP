@@ -3,10 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Real Estate Agency System"
         Height="720" Width="1280"
+        MinHeight="500" MinWidth="800"
         WindowStartupLocation="CenterScreen"
         Background="#F5F5F5">
 
     <Window.Resources>
+        <!-- Modern Label Style -->
+        <Style x:Key="SidebarLabelStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Margin" Value="60,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="RenderTransformOrigin" Value="0,0.5"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TranslateTransform X="-20"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Sidebar Button Style -->
         <Style x:Key="SidebarIconStyle" TargetType="ToggleButton">
             <Setter Property="Width" Value="50"/>
@@ -24,9 +47,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
                         <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="12"
-                                Width="{TemplateBinding Width}" 
-                                Height="{TemplateBinding Height}">
+                            CornerRadius="12"
+                            Width="{TemplateBinding Width}" 
+                            Height="{TemplateBinding Height}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -43,80 +66,336 @@
         </Style>
     </Window.Resources>
 
-    <DockPanel>
-        <!-- Rounded Sidebar -->
+
+    <DockPanel LastChildFill="True">
+        <!-- Sidebar -->
         <Border CornerRadius="20"
                 Margin="10"
                 Background="#F9E2AE"
                 DockPanel.Dock="Left"
                 VerticalAlignment="Stretch"
-                HorizontalAlignment="Left">
+                Width="80">
+            <!-- Fixed sidebar width -->
+
             <StackPanel x:Name="SidebarPanel"
-                        Width="70"
                         VerticalAlignment="Stretch"
-                        HorizontalAlignment="Left">
+                        HorizontalAlignment="Center">
 
                 <!-- Profile Circle -->
-                <Border Width="50" Height="50"
+                <Border Width="60" Height="60"
                         Margin="10 20 10 30"
-                        CornerRadius="25"
+                        CornerRadius="30"
                         Background="#D9D9D9"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         ClipToBounds="True">
-                    <Grid>
-                        <Ellipse Fill="#D9D9D9"/>
-                        <Viewbox Stretch="Uniform">
-                            <Image Source="C:\Users\maria\Downloads\realEstate (1).png"/>
-                        </Viewbox>
-                    </Grid>
+                    <Image Source="Assets/logo.png"
+                           Stretch="Uniform"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
                 </Border>
+                
+                
+ <!-- Dashboard -->
+    <ToggleButton x:Name="BtnDashboard" ToolTip="Dashboard"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE80F;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border x:Name="LblDashboard" 
+        Background="#F9E2AE"
+        CornerRadius="12"
+        Height="50"
+        VerticalAlignment="Center" 
+        HorizontalAlignment="Left"
+        Margin="60,0,0,0" 
+        Opacity="0" 
+        RenderTransformOrigin="0,0.5">
+                            <Border.RenderTransform>
+                                <TranslateTransform X="-20"/>
+                            </Border.RenderTransform>
+                            <TextBlock Text="Dashboard" 
+               FontSize="14" 
+               Foreground="Black" 
+               VerticalAlignment="Center" 
+               Padding="10,0"/>
+                        </Border>
 
-                <!-- Navigation Buttons -->
-                <ToggleButton x:Name="BtnDashboard" ToolTip="Dashboard"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE80F;"/>
-                </ToggleButton>
+                    </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblDashboard" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblDashboard" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblDashboard" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblDashboard" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-                <ToggleButton x:Name="BtnClients" ToolTip="Clients"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE77B;"/>
-                </ToggleButton>
+    <!-- Clients -->
+    <ToggleButton x:Name="BtnClients" ToolTip="Clients"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE77B;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border x:Name="LblClients" 
+        Background="#F9E2AE"
+        CornerRadius="12"
+        Height="50"
+        VerticalAlignment="Center" 
+        HorizontalAlignment="Left"
+        Margin="60,0,0,0" 
+        Opacity="0" 
+        RenderTransformOrigin="0,0.5">
+                            <Border.RenderTransform>
+                                <TranslateTransform X="-20"/>
+                            </Border.RenderTransform>
+                            <TextBlock Text="Dashboard" 
+               FontSize="14" 
+               Foreground="Black" 
+               VerticalAlignment="Center" 
+               Padding="10,0"/>
+                        </Border>
 
-                <ToggleButton x:Name="BtnProperties" ToolTip="Properties"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE80C;"/>
-                </ToggleButton>
+                    </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblClients" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblClients" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblClients" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblClients" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-                <ToggleButton x:Name="BtnAgents" ToolTip="Agents"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE7EF;"/>
-                </ToggleButton>
+    <!-- Properties -->
+    <ToggleButton x:Name="BtnProperties" ToolTip="Properties"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE80C;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border x:Name="LblProperties" Background="Transparent"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="60,0,0,0" Opacity="0" RenderTransformOrigin="0,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-20"/>
+                </Border.RenderTransform>
+                <TextBlock Text="Properties" FontSize="14" Foreground="Black" VerticalAlignment="Center" Padding="5,0"/>
+            </Border>
+        </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblProperties" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblProperties" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblProperties" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblProperties" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-                <ToggleButton x:Name="BtnSales" ToolTip="Sales"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE7BF;"/>
-                </ToggleButton>
+    <!-- Agents -->
+    <ToggleButton x:Name="BtnAgents" ToolTip="Agents"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE7EF;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border x:Name="LblAgents" Background="Transparent"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="60,0,0,0" Opacity="0" RenderTransformOrigin="0,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-20"/>
+                </Border.RenderTransform>
+                <TextBlock Text="Agents" FontSize="14" Foreground="Black" VerticalAlignment="Center" Padding="5,0"/>
+            </Border>
+        </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblAgents" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblAgents" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblAgents" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblAgents" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-                <ToggleButton x:Name="BtnCommissions" ToolTip="Commissions"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE9D2;"/>
-                </ToggleButton>
+    <!-- Sales -->
+    <ToggleButton x:Name="BtnSales" ToolTip="Sales"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE7BF;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border x:Name="LblSales" Background="Transparent"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="60,0,0,0" Opacity="0" RenderTransformOrigin="0,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-20"/>
+                </Border.RenderTransform>
+                <TextBlock Text="Sales" FontSize="14" Foreground="Black" VerticalAlignment="Center" Padding="5,0"/>
+            </Border>
+        </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblSales" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblSales" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblSales" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblSales" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-                <ToggleButton x:Name="BtnPayroll" ToolTip="Payroll"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE825;"/>
-                </ToggleButton>
+    <!-- Commissions -->
+    <ToggleButton x:Name="BtnCommissions" ToolTip="Commissions"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE9D2;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border x:Name="LblCommissions" Background="Transparent"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="60,0,0,0" Opacity="0" RenderTransformOrigin="0,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-20"/>
+                </Border.RenderTransform>
+                <TextBlock Text="Commissions" FontSize="14" Foreground="Black" VerticalAlignment="Center" Padding="5,0"/>
+            </Border>
+        </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblCommissions" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblCommissions" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblCommissions" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblCommissions" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-                <ToggleButton x:Name="BtnIncentives" ToolTip="Incentives"
-                              Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
-                    <TextBlock Text="&#xE9A1;"/>
-                </ToggleButton>
+    <!-- Payroll -->
+    <ToggleButton x:Name="BtnPayroll" ToolTip="Payroll"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE825;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border x:Name="LblPayroll" Background="Transparent"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="60,0,0,0" Opacity="0" RenderTransformOrigin="0,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-20"/>
+                </Border.RenderTransform>
+                <TextBlock Text="Payroll" FontSize="14" Foreground="Black" VerticalAlignment="Center" Padding="5,0"/>
+            </Border>
+        </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblPayroll" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblPayroll" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblPayroll" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblPayroll" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
 
-            </StackPanel>
+    <!-- Incentives -->
+    <ToggleButton x:Name="BtnIncentives" ToolTip="Incentives"
+                  Style="{StaticResource SidebarIconStyle}" Checked="Sidebar_Checked">
+        <Grid>
+            <TextBlock Text="&#xE9A1;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border x:Name="LblIncentives" Background="Transparent"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Margin="60,0,0,0" Opacity="0" RenderTransformOrigin="0,0.5">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-20"/>
+                </Border.RenderTransform>
+                <TextBlock Text="Incentives" FontSize="14" Foreground="Black" VerticalAlignment="Center" Padding="5,0"/>
+            </Border>
+        </Grid>
+        <ToggleButton.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblIncentives" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblIncentives" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="LblIncentives" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetName="LblIncentives" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" To="-20" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </ToggleButton.Triggers>
+    </ToggleButton>
+
+</StackPanel>
         </Border>
 
         <!-- Main Content Area -->
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        <Grid>
+            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        </Grid>
     </DockPanel>
 </Window>

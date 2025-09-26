@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Real_Estate_Agencies"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             ShutdownMode="OnLastWindowClose">
 
     <Application.Resources>
         <!-- ✅ KPI Card Style -->
@@ -20,5 +21,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- ✅ Correct converter registration -->
+        <local:StaggerDelayConverter x:Key="StaggerDelayConverter"/>
     </Application.Resources>
 </Application>

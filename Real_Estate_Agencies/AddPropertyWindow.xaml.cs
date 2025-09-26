@@ -71,6 +71,11 @@ namespace Real_Estate_Agencies.Views
             this.Close();
         }
 
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         private void BrowseImage_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog

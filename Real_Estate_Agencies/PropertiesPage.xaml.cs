@@ -9,6 +9,7 @@ namespace Real_Estate_Agencies
     public partial class PropertiesPage : Page
     {
         public PropertiesViewModel ViewModel { get; set; }
+        public PropertyModel SelectedProperty { get; set; }
 
         public PropertiesPage()
         {
@@ -26,63 +27,154 @@ namespace Real_Estate_Agencies
             }
         }
 
-        private void Edit_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectedProperty != null)
-            {
-                var editWindow = new AddPropertyWindow();
-                editWindow.NewProperty = new PropertyModel
-                {
-                    Name = ViewModel.SelectedProperty.Name,
-                    Location = ViewModel.SelectedProperty.Location,
-                    PropertyType = ViewModel.SelectedProperty.PropertyType,
-                    Category = ViewModel.SelectedProperty.Category,
-                    Price = ViewModel.SelectedProperty.Price,
-                    Status = ViewModel.SelectedProperty.Status,
-                    ImagePath = ViewModel.SelectedProperty.ImagePath
-                };
-
-                if (editWindow.ShowDialog() == true)
-                {
-                    int index = ViewModel.Properties.IndexOf(ViewModel.SelectedProperty);
-                    ViewModel.Properties[index] = editWindow.NewProperty;
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select a property to edit.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.SelectedProperty != null)
+            if ((sender as Button)?.CommandParameter is PropertyModel property)
             {
-                var result = MessageBox.Show($"Delete {ViewModel.SelectedProperty.Name}?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var result = MessageBox.Show(
+                    $"Delete {property.Name}?",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
                 if (result == MessageBoxResult.Yes)
                 {
-                    ViewModel.Properties.Remove(ViewModel.SelectedProperty);
+                    ViewModel.Properties.Remove(property);
                 }
             }
             else
             {
-                MessageBox.Show("Please select a property to delete.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please select a property to delete.",
+                    "Warning",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
-            // View property functionality
+            if ((sender as Button)?.CommandParameter is PropertyModel property)
+            {
+                ViewModel.SelectedProperty = property;
+                PopupOverlay.Visibility = Visibility.Visible; // show overlay
+            }
+            else
+            {
+                MessageBox.Show("No property selected.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is PropertyModel property)
+            {
+                SelectedProperty = property;
+
+                // Populate the form fields with property data
+                EditNameTextBox.Text = property.Name;
+                EditLocationTextBox.Text = property.Location;
+                EditPropertyTypeComboBox.Text = property.PropertyType;
+                EditCategoryComboBox.Text = property.Category;
+                EditPriceTextBox.Text = property.Price.ToString();
+
+                EditPopupOverlay.Visibility = Visibility.Visible; // Show edit overlay
+            }
+            else
+            {
+                MessageBox.Show("No property selected.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void SaveProperty_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(EditNameTextBox.Text))
+                {
+                    MessageBox.Show("Property name is required.", "Validation Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    EditNameTextBox.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(EditLocationTextBox.Text))
+                {
+                    MessageBox.Show("Location is required.", "Validation Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    EditLocationTextBox.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(EditPriceTextBox.Text))
+                {
+                    MessageBox.Show("Price is required.", "Validation Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    EditPriceTextBox.Focus();
+                    return;
+                }
+
+                // Validate price format
+                if (!decimal.TryParse(EditPriceTextBox.Text, out decimal price) || price < 0)
+                {
+                    MessageBox.Show("Please enter a valid price.", "Validation Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    EditPriceTextBox.Focus();
+                    return;
+                }
+
+                // If we have a selected property, update the properties
+                if (SelectedProperty != null)
+                {
+                    SelectedProperty.Name = EditNameTextBox.Text.Trim();
+                    SelectedProperty.Location = EditLocationTextBox.Text.Trim();
+                    SelectedProperty.PropertyType = EditPropertyTypeComboBox.Text.Trim();
+                    SelectedProperty.Category = EditCategoryComboBox.Text.Trim();
+                    SelectedProperty.Price = (double)price;
+
+                    MessageBox.Show("Property updated successfully!", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Close the overlay
+                    EditPopupOverlay.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    MessageBox.Show("No property selected for editing.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"Error saving property: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CloseEditPopup_Click(object sender, RoutedEventArgs e)
+        {
+            EditPopupOverlay.Visibility = Visibility.Collapsed; // Hide edit overlay
+        }
+
+        private void ClosePopup_Click(object sender, RoutedEventArgs e)
+        {
+            PopupOverlay.Visibility = Visibility.Collapsed; // hide view overlay
         }
 
         private void PreviousPage_Click(object sender, RoutedEventArgs e)
         {
-            // Previous page functionality
+            // TODO: Previous page functionality
         }
 
         private void NextPage_Click(object sender, RoutedEventArgs e)
         {
-            // Next page functionality
+            // TODO: Next page functionality
         }
     }
 }

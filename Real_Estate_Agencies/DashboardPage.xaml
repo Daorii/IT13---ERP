@@ -3,13 +3,31 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       xmlns:local="clr-namespace:Real_Estate_Agencies"
-      xmlns:converters="clr-namespace:Real_Estate_Agencies.Converters"
+      xmlns:converter="clr-namespace:Real_Estate_Agencies.Converter"
       Title="DashboardPage"
       Background="#F5F5F5">
 
     <Page.Resources>
-        <local:StaggerDelayConverter x:Key="DelayConverter"/>
+        <!-- ✅ Converters -->
+        <converter:StaggerDelayConverter x:Key="DelayConverter"/>
+        <converter:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
 
+        <!-- KPI Card Style -->
+        <Style x:Key="KpiCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="6"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" BlurRadius="5" Opacity="0.1" ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Property Card Hover Animation -->
         <Style x:Key="PropertyCardStyle" TargetType="Border">
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
             <Setter Property="RenderTransform">
@@ -28,11 +46,11 @@
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                             To="1.05" Duration="0:0:0.2"/>
+                                                 To="1.05" Duration="0:0:0.2"/>
                                 <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                             To="1.05" Duration="0:0:0.2"/>
+                                                 To="1.05" Duration="0:0:0.2"/>
                                 <DoubleAnimation Storyboard.TargetProperty="Effect.(DropShadowEffect.Opacity)"
-                                             To="0.3" Duration="0:0:0.2"/>
+                                                 To="0.3" Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.EnterActions>
@@ -40,11 +58,11 @@
                         <BeginStoryboard>
                             <Storyboard>
                                 <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                             To="1" Duration="0:0:0.2"/>
+                                                 To="1" Duration="0:0:0.2"/>
                                 <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                             To="1" Duration="0:0:0.2"/>
+                                                 To="1" Duration="0:0:0.2"/>
                                 <DoubleAnimation Storyboard.TargetProperty="Effect.(DropShadowEffect.Opacity)"
-                                             To="0" Duration="0:0:0.2"/>
+                                                 To="0" Duration="0:0:0.2"/>
                             </Storyboard>
                         </BeginStoryboard>
                     </Trigger.ExitActions>
@@ -62,20 +80,65 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                <!-- Welcome Card -->
+                <Border Grid.Column="0" CornerRadius="25"
+        Padding="0" BorderBrush="#E0E0E0" BorderThickness="1" 
+        Margin="0,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Top" 
+        Height="120" Width="280">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
+                    </Border.Effect>
 
-                <Border Grid.Column="0" Background="#FFF9C4" CornerRadius="20"
-                        Padding="8,6" BorderBrush="#E0E0E0" BorderThickness="1" 
-                        Margin="0,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="90" Width="400">
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <TextBlock Text="Welcome, Admin" FontSize="25" FontWeight="Bold" Foreground="#333" Margin="0,0,0,2"/>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding CurrentDate}" FontSize="10" Foreground="#555"/>
-                            <TextBlock Text=" • " FontSize="10" Foreground="#555" Margin="4,0"/>
-                            <TextBlock Text="{Binding CurrentTime}" FontSize="10" Foreground="#555"/>
+                    <Grid>
+                        <!-- ✅ Rounded Clip for the Image -->
+                        <Image Source="C:\Users\maria\Pictures\Screenshots\Screenshot 2025-09-24 182619.png"
+               Stretch="Fill">
+                            <Image.Clip>
+                                <RectangleGeometry RadiusX="26" RadiusY="26" Rect="0,0,280,120"/>
+                            </Image.Clip>
+                        </Image>
+
+                        <!-- 🔆 Very light semi-transparent overlay -->
+                        <Rectangle Fill="#19000000" RadiusX="25" RadiusY="25"/>
+
+                        <!-- Text Content -->
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="15,0,0,0">
+                            <TextBlock Text="Welcome, Admin" FontSize="25" FontWeight="Bold" Foreground="White" Margin="0,0,0,5">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="4" Opacity="0.6" ShadowDepth="1"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CurrentDate}" FontSize="14" Foreground="White">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="3" Opacity="0.6" ShadowDepth="1"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+
+                                <TextBlock Text=" • " FontSize="12" Foreground="White" Margin="4,0">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="3" Opacity="0.6" ShadowDepth="1"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+
+                                <TextBlock Text="{Binding CurrentTime}" FontSize="14" Foreground="White">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="3" Opacity="0.6" ShadowDepth="1"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </Border>
 
+
+
+
+
+
+
+                <!-- KPI CARDS -->
                 <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -86,31 +149,31 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="280" Margin="1,3,7,3">
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Property Sales" Foreground="Gray" FontSize="11"/>
-                            <TextBlock Text="{Binding DashboardData.SalesCount}" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="Property Sales" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="{Binding DashboardData.SalesCount}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="280" Margin="0,3,6,3">
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Agents" Foreground="Gray" FontSize="11"/>
-                            <TextBlock Text="{Binding DashboardData.AgentCount}" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="Agents" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="{Binding DashboardData.AgentCount}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="280" Margin="1,3,7,3">
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Commission" Foreground="Gray" FontSize="11"/>
-                            <TextBlock Text="{Binding DashboardData.Commission}" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="Commission" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="{Binding DashboardData.Commission}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="280" Margin="0,3,6,3">
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Properties" Foreground="Gray" FontSize="11"/>
-                            <TextBlock Text="{Binding DashboardData.PropertiesListed}" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="Properties" Foreground="Gray" FontSize="12"/>
+                            <TextBlock Text="{Binding DashboardData.PropertiesListed}" FontSize="18" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -124,65 +187,47 @@
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Top Properties -->
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Top Properties" FontSize="18" FontWeight="Bold" Margin="0,0,0,12" Foreground="#333"/>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden"
-                                  VerticalScrollBarVisibility="Disabled"
-                                  Height="400"
-                                  PanningMode="HorizontalOnly"
-                                  CanContentScroll="True"
-                                  PreviewMouseWheel="PropertyScrollViewer_PreviewMouseWheel">
-                        <ItemsControl ItemsSource="{Binding OnSellProperties}" AlternationCount="50">
+                    <ScrollViewer x:Name="TopPropertiesScrollViewer"
+                  HorizontalScrollBarVisibility="Hidden"
+                  VerticalScrollBarVisibility="Disabled"
+                  Height="320"
+                  PanningMode="HorizontalOnly"
+                  CanContentScroll="True"
+                  Loaded="TopPropertiesScrollViewer_Loaded"
+                  PreviewMouseWheel="PropertyScrollViewer_PreviewMouseWheel">
+                        <ItemsControl ItemsSource="{Binding OnSellProperties}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                                    <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Style="{StaticResource PropertyCardStyle}"
-                                            Background="White" 
-                                            CornerRadius="15" 
-                                            Margin="6" Padding="10"
-                                            MinWidth="200" MaxWidth="280"
-                                            MinHeight="250" MaxHeight="320"
-                                            BorderBrush="#E0E0E0" BorderThickness="1"
-                                            Opacity="0">
+                            Background="White"
+                            CornerRadius="15"
+                            Margin="6"
+                            Padding="10"
+                            Width="220"
+                            Height="300"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1"
+                            Opacity="1">
                                         <StackPanel>
-                                            <Border CornerRadius="10" BorderThickness="1" BorderBrush="#DDD" Margin="0,0,0,8" Height="120">
-                                                <Image Source="{Binding ImagePath}" Stretch="UniformToFill" ClipToBounds="True" />
+                                            <Border CornerRadius="10" BorderThickness="1" BorderBrush="#DDD" Height="140" Margin="0,0,0,8">
+                                                <Image Source="{Binding ImagePath}" Stretch="UniformToFill" ClipToBounds="True"/>
                                             </Border>
-
                                             <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap"/>
                                             <TextBlock Text="{Binding Location}" FontSize="12" Margin="0,2,0,0"/>
-                                            <TextBlock Text="{Binding Type}" FontSize="12" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding PropertyType}" FontSize="12" Margin="0,2,0,0"/>
                                             <TextBlock Text="{Binding Category}" FontSize="12" Margin="0,2,0,0"/>
-
                                             <Border Background="#F0F0F0" CornerRadius="8" Padding="4" HorizontalAlignment="Left" Margin="0,8,0,0">
                                                 <TextBlock Text="{Binding Status}" FontSize="12" Foreground="#333"/>
                                             </Border>
                                         </StackPanel>
-
-                                        <Border.Triggers>
-                                            <EventTrigger RoutedEvent="Loaded">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="0" To="1"
-                                                                         Duration="0:0:0.5"
-                                                                         BeginTime="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource DelayConverter}}"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                                         From="0.95" To="1"
-                                                                         Duration="0:0:0.5"
-                                                                         BeginTime="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource DelayConverter}}"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                                         From="0.95" To="1"
-                                                                         Duration="0:0:0.5"
-                                                                         BeginTime="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource DelayConverter}}"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-                                        </Border.Triggers>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -190,57 +235,210 @@
                     </ScrollViewer>
                 </StackPanel>
 
-                <Border Grid.Column="1" Background="#DDDDDD" Width="2" Margin="0,0"/>
 
+                <!-- Divider -->
+                <Border Grid.Column="1" Background="#DDDDDD" Width="2"/>
+
+                <!-- Charts Section -->
                 <Grid Grid.Column="2" Margin="10,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="0" MinHeight="350">
+                    <!-- Pie Chart -->
+                    <Grid Grid.Column="0" MinHeight="400">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-
-                        <TextBlock Text="Property Type Distribution" 
-                                   FontSize="18" 
-                                   FontWeight="Bold" 
-                                   Foreground="#333" 
-                                   HorizontalAlignment="Left" 
-                                   Margin="0,0,0,10"/>
-
-                        <lvc:PieChart Grid.Row="1"
-                                      Series="{Binding PieSeries}"
-                                      LegendPosition="Right"
-                                      TooltipPosition="Top"
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Stretch"/>
+                        <TextBlock Text="Property Type Distribution" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+                        <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1">
+                            <lvc:PieChart Grid.Row="1"
+                                          Series="{Binding PieSeries}"
+                                          LegendPosition="Right"
+                                          TooltipPosition="Top"
+                                          Padding="8"/>
+                        </Border>
                     </Grid>
 
-                    <Grid Grid.Column="1" MinHeight="350">
+                    <!-- Line Chart -->
+                    <Grid Grid.Column="1" MinHeight="400">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-
-                        <TextBlock Text="Sales Over Time" 
-                                   FontSize="18" 
-                                   FontWeight="Bold" 
-                                   Foreground="#333" 
-                                   HorizontalAlignment="Left" 
-                                   Margin="0,0,0,10"/>
-
-                        <lvc:CartesianChart Grid.Row="1"
-                                            Series="{Binding SalesOverTimeSeries}"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"/>
+                        <TextBlock Text="Sales Over Time" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+                        <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1">
+                            <lvc:CartesianChart Grid.Row="1"
+                                                Series="{Binding SalesOverTimeSeries}"
+                                                XAxes="{Binding SalesXAxes}"
+                                                YAxes="{Binding SalesYAxes}"
+                                                Padding="8"/>
+                        </Border>
                     </Grid>
                 </Grid>
-
             </Grid>
 
+            <!-- NEW FEATURES -->
+            <StackPanel Margin="0,40,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Bar Chart -->
+                    <Grid Grid.Column="0" Margin="0,0,20,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Top Agent Performance" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+                        <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Height="400" Width="Auto">
+                            <lvc:CartesianChart Series="{Binding AgentPerformanceSeries}"
+                                                XAxes="{Binding AgentPerformanceXAxes}"
+                                                YAxes="{Binding AgentPerformanceYAxes}"
+                                                LegendPosition="Bottom"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                Padding="8"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- DataGrid -->
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Recent Sales" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
+                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1">
+                            <DataGrid ItemsSource="{Binding RecentSales}" AutoGenerateColumns="False" CanUserAddRows="False"
+                                      CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column" Height="400"
+                                      RowBackground="White" AlternatingRowBackground="#F9F9F9" GridLinesVisibility="Horizontal" BorderThickness="0">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Property" Binding="{Binding Property}" Width="*"/>
+                                    <DataGridTextColumn Header="Agent" Binding="{Binding Agent}" Width="*"/>
+                                    <DataGridTextColumn Header="Client" Binding="{Binding Client}" Width="*"/>
+                                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" Width="*"/>
+                                    <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <!-- ENHANCED ANALYTICS SECTION -->
+            <StackPanel Margin="0,40,0,20">
+                <TextBlock Text="" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Mini Map & Top Agent -->
+                    <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Top" >
+
+                        <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#DDD" BorderThickness="1" Margin="0,10,0,0">
+                            <StackPanel>
+                                <!-- Panel Header -->
+                                <TextBlock Text="📝 Tasks / To-Do" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,8"/>
+                                <TextBlock Text="Pending tasks related to properties or clients:" FontSize="12" Foreground="#777" Margin="0,0,0,15"/>
+
+                                <!-- Task Items -->
+                                <StackPanel>
+                                    <!-- Task Item Template -->
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0">
+                                            <CheckBox.Style>
+                                                <Style TargetType="CheckBox">
+                                                    <Setter Property="Foreground" Value="#4CAF50"/>
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="BorderBrush" Value="#CCC"/>
+                                                    <Setter Property="BorderThickness" Value="2"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="#4CAF50"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter Property="Background" Value="#4CAF50"/>
+                                                            <Setter Property="BorderBrush" Value="#4CAF50"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </CheckBox.Style>
+                                        </CheckBox>
+                                        <TextBlock Text="Follow-up with clients" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0" Style="{StaticResource {x:Type CheckBox}}"/>
+                                        <TextBlock Text="Approve listings" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0" Style="{StaticResource {x:Type CheckBox}}"/>
+                                        <TextBlock Text="Update property status" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0" Style="{StaticResource {x:Type CheckBox}}"/>
+                                        <TextBlock Text="Schedule client meetings" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+
+
+                    </StackPanel>
+
+
+
+
+
+                    <!-- Mini KPI Cards / Trend Indicators -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Top">
+
+                        <!-- New Properties This Month -->
+                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="New Properties This Month" FontSize="14" Foreground="#555"/>
+                                <TextBlock Text="{Binding DashboardData.NewProperties}" FontSize="18" FontWeight="SemiBold" Margin="0,1,0,1"/>
+                                <Border Background="#E0E0E0" CornerRadius="3" Height="6" HorizontalAlignment="Stretch">
+                                    <Border Width="{Binding DashboardData.NewPropertiesProgress, Converter={StaticResource ProgressToWidthConverter}}" 
+                        Background="#4CAF50" CornerRadius="3" HorizontalAlignment="Left"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Average Commission -->
+                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Average Commission" FontSize="14" Foreground="#555"/>
+                                <TextBlock Text="{Binding DashboardData.AvgCommission}" FontSize="18" FontWeight="SemiBold" Margin="0,1,0,1"/>
+                                <Border Background="#E0E0E0" CornerRadius="3" Height="6" HorizontalAlignment="Stretch">
+                                    <Border Width="{Binding DashboardData.AvgCommissionProgress, Converter={StaticResource ProgressToWidthConverter}}" 
+                        Background="#FF9800" CornerRadius="3" HorizontalAlignment="Left"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Top Category Sales -->
+                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="Top Category Sales" FontSize="14" Foreground="#555"/>
+                                <TextBlock Text="{Binding DashboardData.TopCategorySales}" FontSize="18" FontWeight="SemiBold" Margin="0,1,0,1"/>
+                                <Border Background="#E0E0E0" CornerRadius="3" Height="6" HorizontalAlignment="Stretch">
+                                    <Border Width="{Binding DashboardData.TopCategoryProgress, Converter={StaticResource ProgressToWidthConverter}}" 
+                        Background="#2196F3" CornerRadius="3" HorizontalAlignment="Left"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+
+                </Grid>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </Page>

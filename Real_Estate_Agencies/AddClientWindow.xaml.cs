@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Real_Estate_Agencies
 {
@@ -20,7 +21,7 @@ namespace Real_Estate_Agencies
                 LastName = TxtLastName.Text,
                 ContactInfo = TxtContactInfo.Text,
                 Address = TxtAddress.Text,
-                PreferredPropertyType = TxtPreferredType.Text
+                PreferredPropertyType = (TxtPreferredType.SelectedItem as ComboBoxItem)?.Content.ToString()
             };
 
             DialogResult = true;
@@ -31,6 +32,11 @@ namespace Real_Estate_Agencies
         {
             DialogResult = false;
             Close();
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -14,6 +14,8 @@
         <SolidColorBrush x:Key="Gray400" Color="#9CA3AF"/>
         <SolidColorBrush x:Key="Gray600" Color="#4B5563"/>
         <SolidColorBrush x:Key="Gray800" Color="#1F2937"/>
+        <SolidColorBrush x:Key="PastelBlue" Color="#A7C7E7"/>
+        <SolidColorBrush x:Key="PastelYellow" Color="#FFF9B1"/>
 
         <!-- Table header text -->
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
@@ -22,6 +24,8 @@
             <Setter Property="Foreground" Value="{StaticResource Gray600}"/>
             <Setter Property="Padding" Value="12,10"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
         </Style>
 
         <!-- Table cell text -->
@@ -83,6 +87,88 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Form input styles -->
+        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Gray200}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource Gray800}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlue}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{StaticResource Gray600}"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <Style x:Key="SaveButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#10B981"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#059669"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#6B7280"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4B5563"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
     <Border Padding="24">
@@ -125,88 +211,319 @@
                         Click="AddClient_Click" Margin="16,0,0,0"/>
             </Grid>
 
-            <!-- Table header -->
-            <Border Grid.Row="1" Background="White" CornerRadius="8,8,0,0" BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0">
-                <Grid Background="{StaticResource Gray50}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="120"/>
-                    </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="Client ID" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="1" Text="First Name" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="3" Text="Contact Info" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="4" Text="Address" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="5" Text="Preferred Property" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="6" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+                    <!-- Table header -->
+                    <Border Background="White" 
+                CornerRadius="8,8,0,0" 
+                BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
+                Grid.Row="0">
+                        <Grid Background="{StaticResource Gray50}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.5*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="1.5*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="0.7*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Client ID" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="1" Text="First Name" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="3" Text="Contact Info" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="4" Text="Address" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="5" Text="Preferred Property" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="6" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Client list -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="White">
+                        <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
+                            <ItemsControl x:Name="ClientsDataGrid" ItemsSource="{Binding Clients}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.5*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="1.5*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="0.7*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" Text="{Binding ClientId}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding Address}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+                                                <TextBlock Grid.Column="5" Text="{Binding PreferredPropertyType}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+
+                                                <!-- Action buttons -->
+                                                <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Button Style="{StaticResource CircularIconButtonStyle}" 
+                                                            ToolTip="Edit" 
+                                                            Margin="2,0" 
+                                                            Click="EditClient_Click"
+                                                            CommandParameter="{Binding}">
+                                                        <TextBlock Text="✏️" FontSize="12"/>
+                                                    </Button>
+                                                    <Button Style="{StaticResource CircularIconButtonStyle}" 
+                                                            ToolTip="Delete" 
+                                                            Margin="2,0"
+                                                            Click="DeleteClient_Click"
+                                                            CommandParameter="{Binding}">
+                                                        <TextBlock Text="🗑️" FontSize="12"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                    </ScrollViewer>
                 </Grid>
-            </Border>
-
-            <!-- Client list -->
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Background="White">
-                <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
-                    <ItemsControl x:Name="ClientsDataGrid" ItemsSource="{Binding Clients}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="150"/>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="150"/>
-                                            <ColumnDefinition Width="120"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Column="0" Text="{Binding ClientId}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="3" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="4" Text="{Binding Address}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="5" Text="{Binding PreferredPropertyType}" Style="{StaticResource CellTextStyle}"/>
-
-                                        <!-- Action buttons -->
-                                        <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Edit" Margin="2,0">
-                                                <TextBlock Text="✏️" FontSize="12"/>
-                                            </Button>
-                                            <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Delete" Margin="2,0">
-                                                <TextBlock Text="🗑️" FontSize="12"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Border>
-            </ScrollViewer>
+            </Grid>
 
             <!-- Pagination -->
             <Grid Grid.Row="3" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="Showing 1-2 of 2 clients" VerticalAlignment="Center" 
-                           Foreground="{StaticResource Gray600}" FontSize="12"/>
+                <!-- Left side: record count -->
+                <TextBlock Grid.Column="0" Text="Showing 1-2 of 2 clients"
+               VerticalAlignment="Center"
+               Foreground="{StaticResource Gray600}" 
+               FontSize="12"
+               Margin="0,0,16,0"
+               HorizontalAlignment="Left"/>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Content="❮" Width="32" Height="32" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                    <Button Content="1" Width="32" Height="32" Background="{StaticResource PrimaryBlue}" 
-                            Foreground="White" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                    <Button Content="❯" Width="32" Height="32" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                <!-- Center: pagination buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="❮" Width="32" Height="32"
+                Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                    <Button Content="1" Width="32" Height="32"
+                Background="{StaticResource PrimaryBlue}" 
+                Foreground="White" 
+                Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                    <Button Content="❯" Width="32" Height="32"
+                Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
                 </StackPanel>
             </Grid>
+
+            <!-- Edit Client Overlay Popup -->
+            <Grid x:Name="EditPopupOverlay"
+                  Background="#80000000"
+                  Visibility="Collapsed"
+                  Grid.RowSpan="4">
+
+                <!-- Clean White Popup -->
+                <Border CornerRadius="16" Width="500" MaxHeight="600"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Background="White"
+                        BorderThickness="0"
+                        Padding="32">
+
+                    <!-- Shadow -->
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.1"/>
+                    </Border.Effect>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Close Button -->
+                        <Button Content="✕"
+                                Width="24" Height="24"
+                                Background="Transparent"
+                                Foreground="{StaticResource Gray400}"
+                                BorderThickness="0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                FontSize="16"
+                                Cursor="Hand"
+                                Click="CloseEditPopup_Click"
+                                Grid.Row="0"
+                                Margin="0,-8,-8,0"/>
+
+                        <!-- Title and Description -->
+                        <StackPanel Grid.Row="1" Margin="0,0,0,24">
+                            <TextBlock Text="Edit Client"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource Gray800}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="Update client information and preferences"
+                                       FontSize="14"
+                                       Foreground="{StaticResource Gray600}"/>
+                        </StackPanel>
+
+                        <!-- Form Content -->
+                        <ScrollViewer Grid.Row="2" MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <!-- Client ID (Read-only) -->
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="Client ID" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="{StaticResource Gray800}" 
+                                               Margin="0,0,0,8"/>
+                                    <TextBox x:Name="EditClientIdTextBox" 
+                                             Style="{StaticResource FormTextBoxStyle}"
+                                             IsReadOnly="True"
+                                             Background="{StaticResource Gray50}"
+                                             Height="40"/>
+                                </StackPanel>
+
+                                <!-- First Name -->
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="First Name" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="{StaticResource Gray800}" 
+                                               Margin="0,0,0,8"/>
+                                    <TextBox x:Name="EditFirstNameTextBox" 
+                                             Style="{StaticResource FormTextBoxStyle}"
+                                             Height="40"/>
+                                </StackPanel>
+
+                                <!-- Last Name -->
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="Last Name" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="{StaticResource Gray800}" 
+                                               Margin="0,0,0,8"/>
+                                    <TextBox x:Name="EditLastNameTextBox" 
+                                             Style="{StaticResource FormTextBoxStyle}"
+                                             Height="40"/>
+                                </StackPanel>
+
+                                <!-- Contact Info -->
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="Contact Info" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="{StaticResource Gray800}" 
+                                               Margin="0,0,0,8"/>
+                                    <TextBox x:Name="EditContactInfoTextBox" 
+                                             Style="{StaticResource FormTextBoxStyle}"
+                                             Height="40"/>
+                                </StackPanel>
+
+                                <!-- Address -->
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="Address" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="{StaticResource Gray800}" 
+                                               Margin="0,0,0,8"/>
+                                    <TextBox x:Name="EditAddressTextBox" 
+                                             Style="{StaticResource FormTextBoxStyle}"
+                                             Height="80"
+                                             AcceptsReturn="True"
+                                             TextWrapping="Wrap"
+                                             VerticalScrollBarVisibility="Auto"/>
+                                </StackPanel>
+
+                                <!-- Preferred Property Type -->
+                                <StackPanel Margin="0,0,0,20">
+                                    <TextBlock Text="Preferred Property Type" 
+                                               FontSize="14" 
+                                               FontWeight="Medium" 
+                                               Foreground="{StaticResource Gray800}" 
+                                               Margin="0,0,0,8"/>
+                                    <ComboBox x:Name="EditPreferredPropertyTypeComboBox" 
+                                              Height="40"
+                                              Background="White"
+                                              BorderBrush="{StaticResource Gray200}"
+                                              BorderThickness="1"
+                                              IsEditable="True"
+                                              Padding="12,0">
+                                        <ComboBoxItem Content="Apartment"/>
+                                        <ComboBoxItem Content="House"/>
+                                        <ComboBoxItem Content="Condo"/>
+                                        <ComboBoxItem Content="Townhouse"/>
+                                        <ComboBoxItem Content="Villa"/>
+                                        <ComboBoxItem Content="Office"/>
+                                        <ComboBoxItem Content="Retail"/>
+                                        <ComboBoxItem Content="Warehouse"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Row="3" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Right" 
+                                    Margin="0,24,0,0">
+                            <Button Content="Close"
+                                    Background="Transparent"
+                                    Foreground="{StaticResource Gray600}"
+                                    BorderThickness="0"
+                                    Padding="16,8"
+                                    FontSize="14"
+                                    FontWeight="Medium"
+                                    Cursor="Hand"
+                                    Click="CloseEditPopup_Click"
+                                    Margin="0,0,12,0"/>
+                            <Button Content="Save Changes"
+                                    Background="{StaticResource PrimaryBlue}"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Padding="20,8"
+                                    FontSize="14"
+                                    FontWeight="Medium"
+                                    Cursor="Hand"
+                                    Click="SaveClient_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="6" 
+                                                Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource DarkBlue}"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+
+                    </Grid>
+
+                </Border>
+            </Grid>
+
         </Grid>
     </Border>
 </Page>

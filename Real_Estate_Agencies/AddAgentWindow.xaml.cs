@@ -14,6 +14,11 @@ namespace Real_Estate_Agencies
             this.Close();
         }
 
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             // Collect agent details (later save to DB)
