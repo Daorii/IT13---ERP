@@ -142,19 +142,19 @@
 
                 <!-- Header -->
                 <Border Background="White" CornerRadius="8,8,0,0"
-                        BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
-                        Grid.Row="0">
+        BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
+        Grid.Row="0">
                     <Grid Background="{StaticResource Gray50}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="140"/>
-                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*" MinWidth="100"/>
+                            <ColumnDefinition Width="*" MinWidth="100"/>
+                            <ColumnDefinition Width="*" MinWidth="100"/>
+                            <ColumnDefinition Width="*" MinWidth="100"/>
+                            <ColumnDefinition Width="*" MinWidth="120"/>
+                            <ColumnDefinition Width="*" MinWidth="120"/>
+                            <ColumnDefinition Width="*" MinWidth="100"/>
+                            <ColumnDefinition Width="*" MinWidth="120"/>
+                            <ColumnDefinition Width="Auto" MinWidth="80"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Commission ID" Style="{StaticResource HeaderTextStyle}"/>
@@ -178,15 +178,15 @@
                                     <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="150"/>
-                                                <ColumnDefinition Width="150"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="140"/>
-                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="*" MinWidth="100"/>
+                                                <ColumnDefinition Width="*" MinWidth="100"/>
+                                                <ColumnDefinition Width="*" MinWidth="100"/>
+                                                <ColumnDefinition Width="*" MinWidth="100"/>
+                                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                                <ColumnDefinition Width="*" MinWidth="100"/>
+                                                <ColumnDefinition Width="*" MinWidth="120"/>
+                                                <ColumnDefinition Width="Auto" MinWidth="80"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0" Text="{Binding CommissionID}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
