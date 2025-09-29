@@ -8,7 +8,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="ViewPropertyWindow.xaml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Assets\logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Remove="ViewPropertyWindow.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -20,6 +28,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
 		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.8" />
 	</ItemGroup>
 

@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Real_Estate_Agencies.Model;
+
 
 namespace Real_Estate_Agencies
 {

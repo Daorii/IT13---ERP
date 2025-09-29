@@ -1,4 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Model;
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -6,18 +9,17 @@ namespace Real_Estate_Agencies
 {
     public partial class ClientsPage : Page
     {
+        private readonly ClientRepository _repo;
         public ObservableCollection<Client> Clients { get; set; }
         public Client SelectedClient { get; set; }
 
         public ClientsPage()
         {
             InitializeComponent();
-            // Example data
-            Clients = new ObservableCollection<Client>
-            {
-                new Client { ClientId = 1, FirstName = "John", LastName = "Doe", ContactInfo = "09123456789", Address = "123 Main St", PreferredPropertyType = "House" },
-                new Client { ClientId = 2, FirstName = "Jane", LastName = "Smith", ContactInfo = "09987654321", Address = "456 Elm St", PreferredPropertyType = "Condo" }
-            };
+
+            _repo = new ClientRepository();
+            Clients = new ObservableCollection<Client>(_repo.GetAllClients());
+
             ClientsDataGrid.ItemsSource = Clients;
             DataContext = this;
         }
@@ -25,9 +27,10 @@ namespace Real_Estate_Agencies
         private void AddClient_Click(object sender, RoutedEventArgs e)
         {
             AddClientWindow addWindow = new AddClientWindow();
-            if (addWindow.ShowDialog() == true)
+            if (addWindow.ShowDialog() == true && addWindow.NewClient != null)
             {
-                Clients.Add(addWindow.NewClient);
+                _repo.AddClient(addWindow.NewClient);   // save to DB
+                Clients.Add(addWindow.NewClient);       // update UI
             }
         }
 
@@ -70,7 +73,8 @@ namespace Real_Estate_Agencies
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    Clients.Remove(client);
+                    _repo.DeleteClient(client.ClientId);   // delete from DB
+                    Clients.Remove(client);                // update UI
                 }
             }
             else
@@ -120,14 +124,12 @@ namespace Real_Estate_Agencies
                     SelectedClient.Address = EditAddressTextBox.Text.Trim();
                     SelectedClient.PreferredPropertyType = EditPreferredPropertyTypeComboBox.Text.Trim();
 
+                    _repo.UpdateClient(SelectedClient);   // save changes to DB
+
                     MessageBox.Show("Client updated successfully!", "Success",
                         MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Refresh the ItemsControl to reflect changes
-                    ClientsDataGrid.ItemsSource = null;
-                    ClientsDataGrid.ItemsSource = Clients;
-
-                    // Close the overlay
+                    ClientsDataGrid.Items.Refresh();
                     EditPopupOverlay.Visibility = Visibility.Collapsed;
                 }
                 else
@@ -136,7 +138,7 @@ namespace Real_Estate_Agencies
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error saving client: {ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
@@ -147,15 +149,5 @@ namespace Real_Estate_Agencies
         {
             EditPopupOverlay.Visibility = Visibility.Collapsed; // Hide overlay
         }
-    }
-
-    public class Client
-    {
-        public int ClientId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string ContactInfo { get; set; }
-        public string Address { get; set; }
-        public string PreferredPropertyType { get; set; }
     }
 }

@@ -1,12 +1,13 @@
-﻿namespace Real_Estate_Agencies
+﻿
+namespace Real_Estate_Agencies.Model
 {
-    public class ClientModel
+    public class Client
     {
-        public int ClientId { get; set; }                  // Matches TxtClientId
-        public string FirstName { get; set; }             // Matches TxtFirstName
-        public string LastName { get; set; }              // Matches TxtLastName
-        public string ContactInfo { get; set; }           // Matches TxtContactInfo
-        public string Address { get; set; }               // Matches TxtAddress
-        public string PreferredPropertyType { get; set; } // Matches CmbPropertyType
+        public int ClientId { get; set; }                  // DB identity column
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string ContactInfo { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string PreferredPropertyType { get; set; } = string.Empty;
     }
 }

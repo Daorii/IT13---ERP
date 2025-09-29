@@ -178,7 +178,7 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" Text="No" Style="{StaticResource HeaderTextStyle}"/>
-                            <TextBlock Grid.Column="1" Text="Employee ID" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="1" Text="Agent ID" Style="{StaticResource HeaderTextStyle}"/>
                             <TextBlock Grid.Column="2" Text="First Name" Style="{StaticResource HeaderTextStyle}"/>
                             <TextBlock Grid.Column="3" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
                             <TextBlock Grid.Column="4" Text="Hire Date" Style="{StaticResource HeaderTextStyle}"/>
@@ -208,7 +208,7 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Grid.Column="0" Text="{Binding No}" Style="{StaticResource CellTextStyle}"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding EmployeeId}" Style="{StaticResource CellTextStyle}" FontFamily="Consolas" FontSize="11"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}" FontFamily="Consolas" FontSize="11"/>
                                                 <TextBlock Grid.Column="2" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}" FontWeight="SemiBold"/>
                                                 <TextBlock Grid.Column="3" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}"/>
                                                 <TextBlock Grid.Column="4" Text="{Binding HireDate}" Style="{StaticResource CellTextStyle}"/>
@@ -221,9 +221,14 @@
                                                             Click="EditAgent_Click" CommandParameter="{Binding}">
                                                         <TextBlock Text="✏️" FontSize="12"/>
                                                     </Button>
-                                                    <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Delete" Margin="2,0">
+                                                    <Button Style="{StaticResource CircularIconButtonStyle}" 
+        ToolTip="Delete" 
+        Margin="2,0"
+        Click="DeleteAgent_Click"
+        CommandParameter="{Binding}">
                                                         <TextBlock Text="🗑️" FontSize="12"/>
                                                     </Button>
+
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -326,8 +331,12 @@
                                                Foreground="{StaticResource Gray800}" 
                                                Margin="0,0,0,8"/>
                                     <TextBox x:Name="EditEmployeeIdTextBox" 
-                                             Style="{StaticResource FormTextBoxStyle}"
-                                             Height="40"/>
+         Style="{StaticResource FormTextBoxStyle}"
+         Height="40"
+         IsReadOnly="True"
+         Background="#F3F4F6" 
+         Foreground="Gray"/>
+
                                 </StackPanel>
 
                                 <!-- First Name -->

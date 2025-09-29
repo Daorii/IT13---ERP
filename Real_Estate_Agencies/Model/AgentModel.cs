@@ -1,14 +1,13 @@
-﻿using System;
-
-namespace Real_Estate_Agencies
+﻿namespace Real_Estate_Agencies.Model
 {
-    public class AgentModel
+    public class Agent
     {
-        public int EmployeeId { get; set; }    // Matches TxtEmployeeId
-        public string FirstName { get; set; }  // Matches TxtFirstName
-        public string LastName { get; set; }   // Matches TxtLastName
-        public string ContactInfo { get; set; }// Matches TxtContactInfo
-        public DateTime HireDate { get; set; } // Matches DpHireDate
-        public decimal SalaryRate { get; set; }// Matches TxtSalaryRate
+        public int No { get; set; }              // UI row number
+        public int AgentId { get; set; }         // DB primary key (IDENTITY)
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string HireDate { get; set; } = string.Empty;    // yyyy-MM-dd
+        public string ContactInfo { get; set; } = string.Empty;
+        public string SalaryRate { get; set; } = string.Empty;  // formatted string
     }
 }

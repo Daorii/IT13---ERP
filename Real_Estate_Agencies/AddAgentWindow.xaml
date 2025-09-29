@@ -36,11 +36,16 @@
 
                 <!-- Input Fields -->
                 <StackPanel>
-                    <TextBlock Text="Employee ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                    <TextBlock Text="Agent ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtEmployeeId"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+         Margin="0,5,0,12" Padding="8"
+         Background="#F3F4F6"
+         BorderBrush="#FFBFD6E5"
+         BorderThickness="1"
+         IsReadOnly="True"
+         IsTabStop="False"
+         Text="(Auto-generated)"/>
+
 
                     <TextBlock Text="First Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtFirstName"

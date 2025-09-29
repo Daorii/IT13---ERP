@@ -52,19 +52,27 @@
                              Background="White"
                              BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
-                    <TextBlock Text="Type" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtType"
-                             Text="{Binding NewProperty.PropertyType, UpdateSourceTrigger=PropertyChanged}"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+
 
                     <TextBlock Text="Category" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtCategory"
-                             Text="{Binding NewProperty.Category, UpdateSourceTrigger=PropertyChanged}"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+                    <ComboBox x:Name="CategoryComboBox"
+          ItemsSource="{Binding Categories}"
+          SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          Margin="0,5,0,12" Padding="8"
+          Background="White"
+          BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+
+
+                    <TextBlock Text="Type" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                    <ComboBox x:Name="TypeComboBox"
+          ItemsSource="{Binding FilteredPropertyTypes}"
+          SelectedItem="{Binding NewProperty.PropertyType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          Margin="0,5,0,12" Padding="8"
+          Background="White"
+          BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+
+                    
+                    
 
                     <TextBlock Text="Price" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtPrice"

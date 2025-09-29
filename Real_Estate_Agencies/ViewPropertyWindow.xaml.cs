@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Real_Estate_Agencies.Model;
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Real_Estate_Agencies.Model;
 
 namespace Real_Estate_Agencies.Views
 {
@@ -13,9 +14,33 @@ namespace Real_Estate_Agencies.Views
         public ViewPropertyWindow(PropertyModel property)
         {
             InitializeComponent();
-            Property = property ?? throw new ArgumentNullException(nameof(property));
-            LoadPropertyDetails();
+
+            if (property != null)
+            {
+                PropertyNameDisplay.Text = property.Name;
+                PropertyLocationDisplay.Text = property.Location;
+                PropertyTypeDisplay.Text = property.PropertyType; // or map to Type
+                CategoryDisplay.Text = property.Category;
+                PriceDisplay.Text = property.Price.ToString("C");
+                PropertyNumberDisplay.Text = property.No.ToString(); // if you still want a number
+
+                StatusText.Text = property.Status ?? "N/A";
+
+                if (property.Image != null)
+                {
+                    using (var ms = new MemoryStream(property.Image))
+                    {
+                        BitmapImage image = new BitmapImage();
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = ms;
+                        image.EndInit();
+                        PropertyImage.Source = image;
+                    }
+                }
+            }
         }
+
 
         private void LoadPropertyDetails()
         {
@@ -77,6 +102,8 @@ namespace Real_Estate_Agencies.Views
                 PropertyImage.Source = null;
             }
         }
+
+
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {

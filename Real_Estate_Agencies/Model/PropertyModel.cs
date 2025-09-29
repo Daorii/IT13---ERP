@@ -1,85 +1,26 @@
-﻿using System.ComponentModel;
-
-namespace Real_Estate_Agencies.Model
+﻿namespace Real_Estate_Agencies.Model
 {
-    public class PropertyModel : INotifyPropertyChanged
+    public class PropertyModel
     {
-        private int _id;
-        private string _code;
-        private string _name;
-        private string _location;
-        private string _propertyType;
-        private string _category;
-        private double _price;
-        private string _status;
-        private string _imagePath;
-        private int _no;
+        public int Id { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        // Unique identifier you want to display (like PROP-1001)
+        public string Code { get; set; }
 
-        public int Id
-        {
-            get => _id;
-            set { _id = value; OnPropertyChanged(nameof(Id)); }
-        }
+        public string Name { get; set; }
+        public string Location { get; set; }
+        public string PropertyType { get; set; }
+        public string Category { get; set; }
+        public double Price { get; set; }
+        public string Status { get; set; }
 
-        public string Code
-        {
-            get => _code;
-            set { _code = value; OnPropertyChanged(nameof(Code)); }
-        }
+        // Display order number (like row # in the table)
+        public int No { get; set; }
 
-        public string Name
-        {
-            get => _name;
-            set { _name = value; OnPropertyChanged(nameof(Name)); }
-        }
+        // Path to the property image stored locally
+        public string ImagePath { get; set; }
 
-        public string Location
-        {
-            get => _location;
-            set { _location = value; OnPropertyChanged(nameof(Location)); }
-        }
-
-        public string PropertyType
-        {
-            get => _propertyType;
-            set { _propertyType = value; OnPropertyChanged(nameof(PropertyType)); }
-        }
-
-        public string Category
-        {
-            get => _category;
-            set { _category = value; OnPropertyChanged(nameof(Category)); }
-        }
-
-        public double Price
-        {
-            get => _price;
-            set { _price = value; OnPropertyChanged(nameof(Price)); }
-        }
-
-        public string Status
-        {
-            get => _status;
-            set { _status = value; OnPropertyChanged(nameof(Status)); }
-        }
-
-        public string ImagePath
-        {
-            get => _imagePath;
-            set { _imagePath = value; OnPropertyChanged(nameof(ImagePath)); }
-        }
-
-        public int No
-        {
-            get => _no;
-            set { _no = value; OnPropertyChanged(nameof(No)); }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        // Optional: store image directly as byte[] if you want DB storage
+        public byte[] Image { get; set; }
     }
 }
