@@ -173,7 +173,6 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="0.7*"/>
                             </Grid.ColumnDefinitions>
 
@@ -183,60 +182,56 @@
                             <TextBlock Grid.Column="3" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
                             <TextBlock Grid.Column="4" Text="Hire Date" Style="{StaticResource HeaderTextStyle}"/>
                             <TextBlock Grid.Column="5" Text="Contact Info" Style="{StaticResource HeaderTextStyle}"/>
-                            <TextBlock Grid.Column="6" Text="Salary Rate" Style="{StaticResource HeaderTextStyle}"/>
-                            <TextBlock Grid.Column="7" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+                            <TextBlock Grid.Column="6" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
                         </Grid>
                     </Border>
 
                     <!-- Agent List -->
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="White">
                         <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
-                            <ItemsControl x:Name="AgentsDataGrid" ItemsSource="{Binding Agents}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="0.5*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="0.7*"/>
-                                                </Grid.ColumnDefinitions>
+                            <Grid>
+                                <ItemsControl x:Name="AgentsDataGrid" ItemsSource="{Binding Agents}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="0.5*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="0.7*"/>
+                                                    </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="0" Text="{Binding No}" Style="{StaticResource CellTextStyle}"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}" FontFamily="Consolas" FontSize="11"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="3" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}"/>
-                                                <TextBlock Grid.Column="4" Text="{Binding HireDate}" Style="{StaticResource CellTextStyle}"/>
-                                                <TextBlock Grid.Column="5" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}"/>
-                                                <TextBlock Grid.Column="6" Text="{Binding SalaryRate}" Style="{StaticResource CellTextStyle}"/>
+                                                    <TextBlock Grid.Column="0" Text="{Binding No}" Style="{StaticResource CellTextStyle}"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}" FontFamily="Consolas" FontSize="11"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}" FontWeight="SemiBold"/>
+                                                    <TextBlock Grid.Column="3" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}"/>
+                                                    <TextBlock Grid.Column="4" Text="{Binding HireDate}" Style="{StaticResource CellTextStyle}"/>
+                                                    <TextBlock Grid.Column="5" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}"/>
 
-                                                <!-- Actions -->
-                                                <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Edit" Margin="2,0" 
-                                                            Click="EditAgent_Click" CommandParameter="{Binding}">
-                                                        <TextBlock Text="✏️" FontSize="12"/>
-                                                    </Button>
-                                                    <Button Style="{StaticResource CircularIconButtonStyle}" 
-        ToolTip="Delete" 
-        Margin="2,0"
-        Click="DeleteAgent_Click"
-        CommandParameter="{Binding}">
-                                                        <TextBlock Text="🗑️" FontSize="12"/>
-                                                    </Button>
-
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                                    <!-- Actions -->
+                                                    <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Edit" Margin="2,0" 
+                                            Click="EditAgent_Click" CommandParameter="{Binding}">
+                                                            <TextBlock Text="✏️" FontSize="12"/>
+                                                        </Button>
+                                                        <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Delete" Margin="2,0"
+                                            Click="DeleteAgent_Click" CommandParameter="{Binding}">
+                                                            <TextBlock Text="🗑️" FontSize="12"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
                         </Border>
                     </ScrollViewer>
+
                 </Grid>
             </Grid>
 
@@ -325,85 +320,73 @@
 
                                 <!-- Employee ID -->
                                 <StackPanel Margin="0,0,0,20">
-                                    <TextBlock Text="Employee ID" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="{StaticResource Gray800}" 
-                                               Margin="0,0,0,8"/>
+                                    <TextBlock Text="Agent ID" 
+                       FontSize="14" 
+                       FontWeight="Medium" 
+                       Foreground="{StaticResource Gray800}" 
+                       Margin="0,0,0,8"/>
                                     <TextBox x:Name="EditEmployeeIdTextBox" 
-         Style="{StaticResource FormTextBoxStyle}"
-         Height="40"
-         IsReadOnly="True"
-         Background="#F3F4F6" 
-         Foreground="Gray"/>
-
+                     Style="{StaticResource FormTextBoxStyle}"
+                     Height="40"
+                     IsReadOnly="True"
+                     Background="#F3F4F6" 
+                     Foreground="Gray"/>
                                 </StackPanel>
 
                                 <!-- First Name -->
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="First Name" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="{StaticResource Gray800}" 
-                                               Margin="0,0,0,8"/>
+                       FontSize="14" 
+                       FontWeight="Medium" 
+                       Foreground="{StaticResource Gray800}" 
+                       Margin="0,0,0,8"/>
                                     <TextBox x:Name="EditFirstNameTextBox" 
-                                             Style="{StaticResource FormTextBoxStyle}"
-                                             Height="40"/>
+                     Style="{StaticResource FormTextBoxStyle}"
+                     Height="40"/>
                                 </StackPanel>
 
                                 <!-- Last Name -->
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="Last Name" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="{StaticResource Gray800}" 
-                                               Margin="0,0,0,8"/>
+                       FontSize="14" 
+                       FontWeight="Medium" 
+                       Foreground="{StaticResource Gray800}" 
+                       Margin="0,0,0,8"/>
                                     <TextBox x:Name="EditLastNameTextBox" 
-                                             Style="{StaticResource FormTextBoxStyle}"
-                                             Height="40"/>
+                     Style="{StaticResource FormTextBoxStyle}"
+                     Height="40"/>
                                 </StackPanel>
 
                                 <!-- Hire Date -->
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="Hire Date" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="{StaticResource Gray800}" 
-                                               Margin="0,0,0,8"/>
+                       FontSize="14" 
+                       FontWeight="Medium" 
+                       Foreground="{StaticResource Gray800}" 
+                       Margin="0,0,0,8"/>
                                     <DatePicker x:Name="EditHireDatePicker" 
-                                                Height="40"
-                                                Background="White"
-                                                BorderBrush="{StaticResource Gray200}"
-                                                BorderThickness="1"
-                                                Padding="12,0"/>
+                        Height="40"
+                        Background="White"
+                        BorderBrush="{StaticResource Gray200}"
+                        BorderThickness="1"
+                        Padding="12,0"/>
                                 </StackPanel>
 
                                 <!-- Contact Info -->
                                 <StackPanel Margin="0,0,0,20">
                                     <TextBlock Text="Contact Info" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="{StaticResource Gray800}" 
-                                               Margin="0,0,0,8"/>
+                       FontSize="14" 
+                       FontWeight="Medium" 
+                       Foreground="{StaticResource Gray800}" 
+                       Margin="0,0,0,8"/>
                                     <TextBox x:Name="EditContactInfoTextBox" 
-                                             Style="{StaticResource FormTextBoxStyle}"
-                                             Height="40"/>
-                                </StackPanel>
-
-                                <!-- Salary Rate -->
-                                <StackPanel Margin="0,0,0,20">
-                                    <TextBlock Text="Salary Rate" 
-                                               FontSize="14" 
-                                               FontWeight="Medium" 
-                                               Foreground="{StaticResource Gray800}" 
-                                               Margin="0,0,0,8"/>
-                                    <TextBox x:Name="EditSalaryRateTextBox" 
-                                             Style="{StaticResource FormTextBoxStyle}"
-                                             Height="40"/>
+                     Style="{StaticResource FormTextBoxStyle}"
+                     Height="40"/>
                                 </StackPanel>
 
                             </StackPanel>
                         </ScrollViewer>
+
 
                         <!-- Action Buttons -->
                         <StackPanel Grid.Row="3" 

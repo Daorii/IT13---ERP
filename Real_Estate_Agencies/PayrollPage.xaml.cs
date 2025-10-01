@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,10 +17,11 @@ namespace Real_Estate_Agencies
         private void LoadSampleData()
         {
             payrolls = new ObservableCollection<Payroll>
-         {
-            new Payroll { PayrollId = 1, AgentId = 1, Period = "Jan 2024", BasicPay = 50000, Deductions = 5000, NetPay = 45000, ReleaseDate = new DateTime(2024, 1, 31) },
-            new Payroll { PayrollId = 2, AgentId = 2, Period = "Jan 2024", BasicPay = 55000, Deductions = 7000, NetPay = 48000, ReleaseDate = new DateTime(2024, 1, 31) }
-          };  
+            {
+                new Payroll { PayrollId = 1, AgentId = 1, PayPeriod = "Jan 2024", CommissionSalary = 50000, NetPay = 45000 },
+                new Payroll { PayrollId = 2, AgentId = 2, PayPeriod = "Jan 2024", CommissionSalary = 55000, NetPay = 48000 },
+                new Payroll { PayrollId = 3, AgentId = 3, PayPeriod = "Feb 2024", CommissionSalary = 60000, NetPay = 54000 }
+            };
 
             PayrollDataGrid.ItemsSource = payrolls;
         }

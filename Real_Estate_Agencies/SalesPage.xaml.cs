@@ -18,118 +18,127 @@ namespace Real_Estate_Agencies
 
         private void LoadSales()
         {
-            // Sample data for design purposes
             allSales = new List<Sale>
             {
-                new Sale { SaleId = "S001", Customer = "Maria Santos", Agent = "Agent A001", Date = new DateTime(2023, 1, 15), Amount = "₱2,500,000" },
-                new Sale { SaleId = "S002", Customer = "John Reyes", Agent = "Agent A002", Date = new DateTime(2023, 4, 20), Amount = "₱3,100,000" },
-                new Sale { SaleId = "S003", Customer = "Ana Cruz", Agent = "Agent A001", Date = new DateTime(2023, 7, 2), Amount = "₱4,000,000" },
-                new Sale { SaleId = "S004", Customer = "Pedro Lopez", Agent = "Agent A003", Date = new DateTime(2023, 9, 12), Amount = "₱5,200,000" },
-                new Sale { SaleId = "S005", Customer = "Carmen Dela Cruz", Agent = "Agent A002", Date = new DateTime(2023, 11, 5), Amount = "₱2,800,000" },
-                new Sale { SaleId = "S006", Customer = "Roberto Garcia", Agent = "Agent A001", Date = new DateTime(2024, 2, 18), Amount = "₱6,500,000" },
-                new Sale { SaleId = "S007", Customer = "Isabella Fernandez", Agent = "Agent A003", Date = new DateTime(2024, 5, 25), Amount = "₱3,750,000" }
+                new Sale { SaleId = "S001", ClientId = "C001", PropertyId = "P001", AgentId = "A001", SaleDate = new DateTime(2023,1,15), PaymentMode="One-time Payment" },
+                new Sale { SaleId = "S002", ClientId = "C002", PropertyId = "P002", AgentId = "A002", SaleDate = new DateTime(2023,4,20), PaymentMode="Installment" },
+                new Sale { SaleId = "S003", ClientId = "C003", PropertyId = "P003", AgentId = "A001", SaleDate = new DateTime(2023,7,2), PaymentMode="One-time Payment" },
+                new Sale { SaleId = "S004", ClientId = "C004", PropertyId = "P004", AgentId = "A003", SaleDate = new DateTime(2023,9,12), PaymentMode="Installment" }
             };
 
-            SalesDataGrid.ItemsSource = allSales;
+            RefreshDataGrid(allSales);
         }
 
-        // Filter button click event
-        private void Filter_Click(object sender, RoutedEventArgs e)
+        private void RefreshDataGrid(IEnumerable<Sale> sales)
         {
-            ApplyFilter();
+            if (SalesDataGrid == null) return;
+
+            var numberedList = sales.Select((s, index) => new
+            {
+                Number = (index + 1).ToString(),
+                s.SaleId,
+                s.ClientId,
+                s.PropertyId,
+                s.AgentId,
+                SaleDate = s.SaleDate.ToString("yyyy-MM-dd"),
+                s.PaymentMode
+            }).ToList();
+
+            SalesDataGrid.ItemsSource = numberedList;
         }
 
-        // Date picker change events
-        private void FromDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilter();
-        }
+        private void FromDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
+        private void ToDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
 
-        private void ToDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilter();
-        }
-
-        // Sort combobox change event
-        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilter();
-        }
-
-        // Clear filters button
         private void ClearFilters_Click(object sender, RoutedEventArgs e)
         {
             FromDatePicker.SelectedDate = null;
             ToDatePicker.SelectedDate = null;
-
-            var sortComboBox = FindName("SortComboBox") as ComboBox;
-            if (sortComboBox != null)
-                sortComboBox.SelectedIndex = 0;
-
-            SalesDataGrid.ItemsSource = allSales;
+            SortComboBox.SelectedIndex = 0;
+            RefreshDataGrid(allSales);
         }
 
-        // Main filter logic
         private void ApplyFilter()
         {
             if (allSales == null) return;
 
             var filtered = allSales.AsEnumerable();
 
-            // Date filtering
-            DateTime? fromDate = FromDatePicker.SelectedDate;
-            DateTime? toDate = ToDatePicker.SelectedDate;
+            DateTime? from = FromDatePicker.SelectedDate;
+            DateTime? to = ToDatePicker.SelectedDate;
 
-            if (fromDate.HasValue || toDate.HasValue)
+            if (from.HasValue && to.HasValue && from > to)
+            {
+                MessageBox.Show("⚠ 'From' date cannot be later than 'To' date.", "Invalid Date Range", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (from.HasValue || to.HasValue)
             {
                 filtered = filtered.Where(s =>
                 {
-                    bool afterFrom = !fromDate.HasValue || s.Date >= fromDate.Value;
-                    bool beforeTo = !toDate.HasValue || s.Date <= toDate.Value;
+                    bool afterFrom = !from.HasValue || s.SaleDate >= from.Value;
+                    bool beforeTo = !to.HasValue || s.SaleDate <= to.Value;
                     return afterFrom && beforeTo;
                 });
             }
 
-            // Sorting
-            var sortComboBox = FindName("SortComboBox") as ComboBox;
-            if (sortComboBox != null)
+            switch (SortComboBox.SelectedIndex)
             {
-                switch (sortComboBox.SelectedIndex)
-                {
-                    case 0: // Sort by Date
-                        filtered = filtered.OrderByDescending(s => s.Date);
-                        break;
-                    case 1: // Sort by Amount
-                        filtered = filtered.OrderByDescending(s => ParseAmount(s.Amount));
-                        break;
-                    case 2: // Sort by Customer
-                        filtered = filtered.OrderBy(s => s.Customer);
-                        break;
-                }
+                case 0: filtered = filtered.OrderByDescending(s => s.SaleDate); break;
+                case 1: filtered = filtered.OrderBy(s => ExtractNumeric(s.ClientId)); break;
             }
 
-            SalesDataGrid.ItemsSource = filtered.ToList();
+            RefreshDataGrid(filtered);
         }
 
-        // Helper method to parse amount for sorting
-        private decimal ParseAmount(string amount)
+        private int ExtractNumeric(string id)
         {
-            if (string.IsNullOrEmpty(amount)) return 0;
+            if (string.IsNullOrEmpty(id)) return 0;
+            string numPart = new string(id.Where(char.IsDigit).ToArray());
+            return int.TryParse(numPart, out int result) ? result : 0;
+        }
 
-            string cleanAmount = amount.Replace("₱", "").Replace(",", "").Trim();
-            if (decimal.TryParse(cleanAmount, out decimal result))
-                return result;
+        private void AddSale_Click(object sender, RoutedEventArgs e)
+        {
+            var addWindow = new AddSaleWindow();
+            if (addWindow.ShowDialog() == true && addWindow.NewSale != null)
+            {
+                allSales.Add(addWindow.NewSale);
+                RefreshDataGrid(allSales);
+            }
+        }
 
-            return 0;
+        // ✅ New handler for the "View" button in Sales list
+        private void ViewSale_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            if (button?.DataContext == null) return;
+
+            // Get SaleId from DataContext
+            var saleIdProp = button.DataContext.GetType().GetProperty("SaleId");
+            string saleId = saleIdProp?.GetValue(button.DataContext)?.ToString();
+
+            if (string.IsNullOrEmpty(saleId)) return;
+
+            // Find the matching sale
+            var selectedSale = allSales.FirstOrDefault(s => s.SaleId == saleId);
+            if (selectedSale != null)
+            {
+                var detailWindow = new SaleDetailWindow(selectedSale);
+                detailWindow.ShowDialog();
+            }
         }
     }
 
     public class Sale
     {
         public string SaleId { get; set; }
-        public string Customer { get; set; }
-        public string Agent { get; set; }
-        public DateTime Date { get; set; }
-        public string Amount { get; set; }
+        public string ClientId { get; set; }
+        public string PropertyId { get; set; }
+        public string AgentId { get; set; }
+        public DateTime SaleDate { get; set; }
+        public string PaymentMode { get; set; }
     }
 }

@@ -5,37 +5,29 @@
       Background="#F8FAFC">
 
     <Page.Resources>
-        <!-- Same palette -->
         <SolidColorBrush x:Key="PrimaryBlue" Color="#3B82F6"/>
         <SolidColorBrush x:Key="DarkBlue" Color="#1E40AF"/>
         <SolidColorBrush x:Key="Gray50" Color="#F9FAFB"/>
-        <SolidColorBrush x:Key="Gray100" Color="#F3F4F6"/>
         <SolidColorBrush x:Key="Gray200" Color="#E5E7EB"/>
         <SolidColorBrush x:Key="Gray400" Color="#9CA3AF"/>
         <SolidColorBrush x:Key="Gray600" Color="#4B5563"/>
         <SolidColorBrush x:Key="Gray800" Color="#1F2937"/>
 
-        <!-- Table header -->
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Foreground" Value="{StaticResource Gray600}"/>
             <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
 
-        <!-- Table cell -->
         <Style x:Key="CellTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="Foreground" Value="{StaticResource Gray800}"/>
             <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
 
-        <!-- Action buttons -->
         <Style x:Key="CircularIconButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
             <Setter Property="Height" Value="32"/>
@@ -63,7 +55,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Add button -->
         <Style x:Key="AddButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
             <Setter Property="Foreground" Value="White"/>
@@ -93,13 +84,9 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Search + Add -->
                 <RowDefinition Height="Auto"/>
-                <!-- Header -->
                 <RowDefinition Height="*"/>
-                <!-- Payroll list -->
                 <RowDefinition Height="Auto"/>
-                <!-- Pagination -->
             </Grid.RowDefinitions>
 
             <!-- Search + Add -->
@@ -122,13 +109,9 @@
                                  Background="Transparent" BorderThickness="0" 
                                  FontSize="14" Padding="0,12"
                                  VerticalAlignment="Center" Foreground="{StaticResource Gray800}"/>
-                        <TextBlock Grid.Column="1" Text="Search payroll..." x:Name="PlaceholderText"
-                                   Foreground="{StaticResource Gray400}" IsHitTestVisible="False" 
-                                   VerticalAlignment="Center" Margin="0,12"/>
                     </Grid>
                 </Border>
 
-                <!-- Add Payroll -->
                 <Button Grid.Column="1" Content="+ Add Payroll" Style="{StaticResource AddButtonStyle}" 
                         Click="AddPayroll_Click" Margin="16,0,0,0"/>
             </Grid>
@@ -142,29 +125,23 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="0.7*"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Text="Payroll ID" Style="{StaticResource HeaderTextStyle}"/>
                     <TextBlock Grid.Column="1" Text="Agent ID" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="2" Text="Period" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="3" Text="Basic Pay" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="4" Text="Deductions" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="5" Text="Net Pay" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="6" Text="Release Date" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="7" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+                    <TextBlock Grid.Column="2" Text="Pay Period" Style="{StaticResource HeaderTextStyle}"/>
+                    <TextBlock Grid.Column="3" Text="Commission Salary" Style="{StaticResource HeaderTextStyle}"/>
+                    <TextBlock Grid.Column="4" Text="Net Pay" Style="{StaticResource HeaderTextStyle}"/>
                 </Grid>
             </Border>
 
             <!-- Payroll list -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="White">
                 <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
-                    <ItemsControl x:Name="PayrollDataGrid" ItemsSource="{Binding Payrolls}">
+                    <ItemsControl x:Name="PayrollDataGrid">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
+                                <Border Background="White" BorderBrush="{StaticResource Gray200}" BorderThickness="0,0,0,1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="0.7*"/>
@@ -172,26 +149,13 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="0.7*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Text="{Binding PayrollID}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding AgentID}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding Period}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="3" Text="{Binding BasicPay}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="4" Text="{Binding Deductions}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="5" Text="{Binding NetPay}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="6" Text="{Binding ReleaseDate}" Style="{StaticResource CellTextStyle}"/>
-
-                                        <!-- Actions -->
-                                        <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                  
-                                            <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Delete" Margin="2,0">
-                                                <TextBlock Text="🗑️" FontSize="12"/>
-                                            </Button>
-                                        </StackPanel>
+                                        <TextBlock Grid.Column="0" Text="{Binding PayrollIDDisplay}" Style="{StaticResource CellTextStyle}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding AgentIDDisplay}" Style="{StaticResource CellTextStyle}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding PayPeriod}" Style="{StaticResource CellTextStyle}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding CommissionSalary}" Style="{StaticResource CellTextStyle}"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding NetPay}" Style="{StaticResource CellTextStyle}"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -199,35 +163,6 @@
                     </ItemsControl>
                 </Border>
             </ScrollViewer>
-
-            <!-- Pagination -->
-            <Grid Grid.Row="3" Margin="0,16,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Left: record count -->
-                <TextBlock Grid.Column="0" Text="Showing 1-3 of 3 payroll records"
-                           VerticalAlignment="Center"
-                           Foreground="{StaticResource Gray600}" 
-                           FontSize="12"
-                           Margin="0,0,16,0"
-                           HorizontalAlignment="Left"/>
-
-                <!-- Center: pagination -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="❮" Width="32" Height="32"
-                            Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                    <Button Content="1" Width="32" Height="32"
-                            Background="{StaticResource PrimaryBlue}" 
-                            Foreground="White" 
-                            Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                    <Button Content="❯" Width="32" Height="32"
-                            Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                </StackPanel>
-            </Grid>
         </Grid>
     </Border>
 </Page>

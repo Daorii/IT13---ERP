@@ -4,8 +4,8 @@
       Title="SalesPage"
       Background="#F8FAFC">
 
+    <!-- Resources and Styles -->
     <Page.Resources>
-        <!-- Palette -->
         <SolidColorBrush x:Key="PrimaryBlue" Color="#3B82F6"/>
         <SolidColorBrush x:Key="DarkBlue" Color="#1E40AF"/>
         <SolidColorBrush x:Key="Gray50" Color="#F9FAFB"/>
@@ -15,7 +15,6 @@
         <SolidColorBrush x:Key="Gray600" Color="#4B5563"/>
         <SolidColorBrush x:Key="Gray800" Color="#1F2937"/>
 
-        <!-- Header text -->
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="11"/>
@@ -23,12 +22,9 @@
             <Setter Property="Padding" Value="12,10"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <!-- fills the grid cell -->
             <Setter Property="TextAlignment" Value="Center"/>
-            <!-- centers the text -->
         </Style>
 
-        <!-- Cell text -->
         <Style x:Key="CellTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="Foreground" Value="{StaticResource Gray800}"/>
@@ -37,7 +33,6 @@
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
 
-        <!-- Circular button -->
         <Style x:Key="CircularIconButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
             <Setter Property="Height" Value="32"/>
@@ -64,11 +59,37 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="AddButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource DarkBlue}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
+    <!-- Main Layout -->
     <Border Padding="24">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -76,48 +97,55 @@
 
             <!-- Filters -->
             <Border Grid.Row="0" Background="White" CornerRadius="12"
-        Padding="20" Margin="0,0,0,24"
-        BorderBrush="{StaticResource Gray200}" BorderThickness="1">
+                    Padding="20" Margin="0,0,0,16"
+                    BorderBrush="{StaticResource Gray200}" BorderThickness="1">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-
                     <!-- From Date -->
                     <StackPanel Margin="0,0,32,0">
                         <TextBlock Text="From" FontSize="11" FontWeight="SemiBold"
-                       Foreground="{StaticResource Gray600}" Margin="0,0,0,6"
-                       HorizontalAlignment="Center"/>
+                                   Foreground="{StaticResource Gray600}" Margin="0,0,0,6"
+                                   HorizontalAlignment="Center"/>
                         <Border CornerRadius="6" BorderBrush="{StaticResource Gray200}" BorderThickness="1" Background="{StaticResource Gray50}">
-                            <DatePicker x:Name="FromDatePicker" Width="160" Height="32" Background="Transparent"/>
+                            <DatePicker x:Name="FromDatePicker" Width="160" Height="32" Background="Transparent"
+                                        SelectedDateChanged="FromDatePicker_SelectedDateChanged"/>
                         </Border>
                     </StackPanel>
 
                     <!-- To Date -->
                     <StackPanel Margin="0,0,32,0">
                         <TextBlock Text="To" FontSize="11" FontWeight="SemiBold"
-                       Foreground="{StaticResource Gray600}" Margin="0,0,0,6"
-                       HorizontalAlignment="Center"/>
+                                   Foreground="{StaticResource Gray600}" Margin="0,0,0,6"
+                                   HorizontalAlignment="Center"/>
                         <Border CornerRadius="6" BorderBrush="{StaticResource Gray200}" BorderThickness="1" Background="{StaticResource Gray50}">
-                            <DatePicker x:Name="ToDatePicker" Width="160" Height="32" Background="Transparent"/>
+                            <DatePicker x:Name="ToDatePicker" Width="160" Height="32" Background="Transparent"
+                                        SelectedDateChanged="ToDatePicker_SelectedDateChanged"/>
                         </Border>
                     </StackPanel>
 
                     <!-- Sort -->
                     <StackPanel>
                         <TextBlock Text="Sort By" FontSize="11" FontWeight="SemiBold"
-                       Foreground="{StaticResource Gray600}" Margin="0,0,0,6"
-                       HorizontalAlignment="Center"/>
+                                   Foreground="{StaticResource Gray600}" Margin="0,0,0,6"
+                                   HorizontalAlignment="Center"/>
                         <Border CornerRadius="6" BorderBrush="{StaticResource Gray200}" BorderThickness="1" Background="{StaticResource Gray50}">
-                            <ComboBox x:Name="SortComboBox" Width="160" Height="32" Background="Transparent">
+                            <ComboBox x:Name="SortComboBox" Width="160" Height="32" Background="Transparent"
+                                      SelectionChanged="SortComboBox_SelectionChanged">
                                 <ComboBoxItem Content="Date" IsSelected="True"/>
-                                <ComboBoxItem Content="Amount"/>
-                                <ComboBoxItem Content="Customer"/>
+                                <ComboBoxItem Content="Client"/>
                             </ComboBox>
                         </Border>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
-            <!-- Table -->
-            <Grid Grid.Row="1">
+            <!-- Add Sale Button -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
+                <Button Content="Add Sale" Style="{StaticResource AddButtonStyle}" Width="120" Height="36"
+                        Click="AddSale_Click"/>
+            </StackPanel>
+
+            <!-- Sales Table -->
+            <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -125,9 +153,9 @@
 
                 <!-- Header -->
                 <Border Background="{StaticResource Gray50}" 
-        CornerRadius="8,8,0,0" 
-        BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
-        Grid.Row="0">
+                        CornerRadius="8,8,0,0" 
+                        BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
+                        Grid.Row="0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -135,13 +163,18 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Action Column -->
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="No" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="1" Text="Sales ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="2" Text="Student ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="3" Text="Sales Date" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="4" Text="Total Amount" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="0" Text="Sale ID" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="1" Text="Client ID" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="2" Text="Property ID" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="3" Text="Agent ID" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="4" Text="Sale Date" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="5" Text="Payment Mode" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="6" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
                     </Grid>
                 </Border>
 
@@ -159,26 +192,33 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="0" Text="1" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding SalesId}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding StudentId}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding SalesDate}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="4" Text="{Binding TotalAmount}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="0" Text="{Binding SaleId}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding ClientId}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding PropertyId}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding SaleDate}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="5" Text="{Binding PaymentMode}" Style="{StaticResource CellTextStyle}"/>
+
+                                            <!-- View Button -->
+                                            <Button Grid.Column="6" Content="👁"
+                                                    Style="{StaticResource CircularIconButtonStyle}"
+                                                    ToolTip="View Sale"
+                                                    Click="ViewSale_Click"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-
-
                     </Border>
                 </ScrollViewer>
             </Grid>
 
             <!-- Pagination -->
-            <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid Grid.Row="3" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>

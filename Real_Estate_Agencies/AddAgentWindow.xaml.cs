@@ -19,7 +19,6 @@ namespace Real_Estate_Agencies
             if (string.IsNullOrWhiteSpace(TxtFirstName.Text) ||
                 string.IsNullOrWhiteSpace(TxtLastName.Text) ||
                 string.IsNullOrWhiteSpace(TxtContactInfo.Text) ||
-                string.IsNullOrWhiteSpace(TxtSalaryRate.Text) ||
                 DpHireDate.SelectedDate == null)
             {
                 MessageBox.Show("All fields are required.", "Validation Error",
@@ -27,17 +26,16 @@ namespace Real_Estate_Agencies
                 return;
             }
 
-            // Build new Agent object (AgentID is auto-increment in DB, so ignore TxtEmployeeId)
+            // Build new Agent object (AgentID is auto-increment in DB)
             NewAgent = new Agent
             {
                 FirstName = TxtFirstName.Text.Trim(),
                 LastName = TxtLastName.Text.Trim(),
                 ContactInfo = TxtContactInfo.Text.Trim(),
-                SalaryRate = TxtSalaryRate.Text.Trim(),
                 HireDate = DpHireDate.SelectedDate?.ToString("yyyy-MM-dd") ?? ""
             };
 
-            DialogResult = true; // tells AgentsPage we have a new agent
+            DialogResult = true;
             Close();
         }
 

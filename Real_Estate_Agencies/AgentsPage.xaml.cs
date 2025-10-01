@@ -9,7 +9,7 @@ namespace Real_Estate_Agencies
 {
     public partial class AgentsPage : Page
     {
-        private readonly AgentRepository _repo;   // FIXED: private field
+        private readonly AgentRepository _repo;
 
         public ObservableCollection<Agent> Agents { get; set; }
         public Agent SelectedAgent { get; set; }
@@ -29,7 +29,7 @@ namespace Real_Estate_Agencies
             AddAgentWindow addAgentWindow = new AddAgentWindow();
             if (addAgentWindow.ShowDialog() == true)
             {
-                var newAgent = addAgentWindow.NewAgent; // requires property in AddAgentWindow.xaml.cs
+                var newAgent = addAgentWindow.NewAgent;
                 if (newAgent != null)
                 {
                     _repo.AddAgent(newAgent);
@@ -47,7 +47,6 @@ namespace Real_Estate_Agencies
                 EditFirstNameTextBox.Text = agent.FirstName;
                 EditLastNameTextBox.Text = agent.LastName;
                 EditContactInfoTextBox.Text = agent.ContactInfo;
-                EditSalaryRateTextBox.Text = agent.SalaryRate;
 
                 if (DateTime.TryParse(agent.HireDate, out DateTime hireDate))
                     EditHireDatePicker.SelectedDate = hireDate;
@@ -83,12 +82,6 @@ namespace Real_Estate_Agencies
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(EditSalaryRateTextBox.Text))
-                {
-                    MessageBox.Show("Salary rate is required.", "Validation Error");
-                    return;
-                }
-
                 if (EditHireDatePicker.SelectedDate == null)
                 {
                     MessageBox.Show("Hire date is required.", "Validation Error");
@@ -100,10 +93,9 @@ namespace Real_Estate_Agencies
                     SelectedAgent.FirstName = EditFirstNameTextBox.Text.Trim();
                     SelectedAgent.LastName = EditLastNameTextBox.Text.Trim();
                     SelectedAgent.ContactInfo = EditContactInfoTextBox.Text.Trim();
-                    SelectedAgent.SalaryRate = EditSalaryRateTextBox.Text.Trim();
                     SelectedAgent.HireDate = EditHireDatePicker.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
 
-                    _repo.UpdateAgent(SelectedAgent);   // ✅ Save back to DB
+                    _repo.UpdateAgent(SelectedAgent);
 
                     MessageBox.Show("Agent updated successfully!", "Success");
 
@@ -131,10 +123,7 @@ namespace Real_Estate_Agencies
                 {
                     try
                     {
-                        // Delete from database
                         _repo.DeleteAgent(agent.AgentId);
-
-                        // Remove from collection (refresh UI)
                         Agents.Remove(agent);
 
                         MessageBox.Show("Agent deleted successfully.",

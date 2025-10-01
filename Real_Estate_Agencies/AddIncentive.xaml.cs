@@ -7,7 +7,7 @@ namespace Real_Estate_Agencies
 {
     public partial class AddIncentive : Window
     {
-        public Incentive NewIncentive { get; set; }  // Add this property
+        public Incentive NewIncentive { get; set; }
 
         public AddIncentive()
         {
@@ -17,16 +17,15 @@ namespace Real_Estate_Agencies
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
+            if (!ValidateInput()) return;
+
             try
             {
-                if (!ValidateInput()) return;
-
                 NewIncentive = new Incentive
                 {
                     AgentId = int.Parse(TxtAgentId.Text),
-                    IncentiveType = TxtIncentiveType.Text,
+                    IncentiveType = (CmbIncentiveType.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "",
                     Amount = decimal.Parse(TxtAmount.Text),
-                    Status = (CmbStatus.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Pending",
                     ReleaseDate = DateTime.Parse(TxtReleaseDate.Text)
                 };
 
@@ -35,7 +34,7 @@ namespace Real_Estate_Agencies
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -54,19 +53,22 @@ namespace Real_Estate_Agencies
         {
             if (!int.TryParse(TxtAgentId.Text, out _))
             {
-                MessageBox.Show("Please enter a valid Agent ID.");
+                MessageBox.Show("Please enter a valid Agent ID.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(TxtIncentiveType.Text))
+
+            if (CmbIncentiveType.SelectedItem == null)
             {
-                MessageBox.Show("Please enter Incentive Type.");
+                MessageBox.Show("Please select an Incentive Type.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
+
             if (!decimal.TryParse(TxtAmount.Text, out _))
             {
-                MessageBox.Show("Please enter a valid amount.");
+                MessageBox.Show("Please enter a valid Amount.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
+
             return true;
         }
     }
