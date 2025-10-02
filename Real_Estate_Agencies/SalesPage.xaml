@@ -4,7 +4,6 @@
       Title="SalesPage"
       Background="#F8FAFC">
 
-    <!-- Resources and Styles -->
     <Page.Resources>
         <SolidColorBrush x:Key="PrimaryBlue" Color="#3B82F6"/>
         <SolidColorBrush x:Key="DarkBlue" Color="#1E40AF"/>
@@ -15,6 +14,7 @@
         <SolidColorBrush x:Key="Gray600" Color="#4B5563"/>
         <SolidColorBrush x:Key="Gray800" Color="#1F2937"/>
 
+        <!-- Text styles -->
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="11"/>
@@ -33,33 +33,18 @@
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
 
-        <Style x:Key="CircularIconButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="32"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Gray200}"/>
-            <Setter Property="BorderThickness" Value="1"/>
+        <!-- Hoverable row style -->
+        <Style x:Key="HoverableRowStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="16">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="{StaticResource Gray50}"/>
-                    <Setter Property="BorderBrush" Value="{StaticResource Gray400}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
+        <!-- Add Sale button style -->
         <Style x:Key="AddButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
             <Setter Property="Foreground" Value="White"/>
@@ -83,9 +68,34 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Circular button for pagination -->
+        <Style x:Key="CircularIconButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Gray50}"/>
+            <Setter Property="Foreground" Value="{StaticResource Gray800}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimaryBlue}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
-    <!-- Main Layout -->
     <Border Padding="24">
         <Grid>
             <Grid.RowDefinitions>
@@ -99,7 +109,7 @@
             <Border Grid.Row="0" Background="White" CornerRadius="12"
                     Padding="20" Margin="0,0,0,16"
                     BorderBrush="{StaticResource Gray200}" BorderThickness="1">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
                     <!-- From Date -->
                     <StackPanel Margin="0,0,32,0">
                         <TextBlock Text="From" FontSize="11" FontWeight="SemiBold"
@@ -164,8 +174,6 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <!-- Action Column -->
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Sale ID" Style="{StaticResource HeaderTextStyle}"/>
@@ -174,17 +182,16 @@
                         <TextBlock Grid.Column="3" Text="Agent ID" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="4" Text="Sale Date" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="5" Text="Payment Mode" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="6" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
                     </Grid>
                 </Border>
 
                 <!-- Sales List -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
-                        <ItemsControl x:Name="SalesDataGrid" ItemsSource="{Binding}">
+                        <ItemsControl x:Name="SalesDataGrid">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
+                                    <Border Style="{StaticResource HoverableRowStyle}" MouseDown="SaleRow_MouseDown">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
@@ -193,7 +200,6 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0" Text="{Binding SaleId}" Style="{StaticResource CellTextStyle}"/>
@@ -202,12 +208,6 @@
                                             <TextBlock Grid.Column="3" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="4" Text="{Binding SaleDate}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="5" Text="{Binding PaymentMode}" Style="{StaticResource CellTextStyle}"/>
-
-                                            <!-- View Button -->
-                                            <Button Grid.Column="6" Content="👁"
-                                                    Style="{StaticResource CircularIconButtonStyle}"
-                                                    ToolTip="View Sale"
-                                                    Click="ViewSale_Click"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -218,6 +218,7 @@
             </Grid>
 
             <!-- Pagination -->
+            <!-- Pagination -->
             <Grid Grid.Row="3" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -225,16 +226,23 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="Page 1 of 1" VerticalAlignment="Center" 
-                           Foreground="{StaticResource Gray600}" FontSize="12" HorizontalAlignment="Left"/>
+                <!-- Showing info -->
+                <TextBlock Grid.Column="0" x:Name="PageInfoTextBlock"
+               Text="Showing 1-3 of 3 sales"
+               VerticalAlignment="Center"
+               Foreground="{StaticResource Gray600}" 
+               FontSize="12"
+               Margin="0,0,16,0"
+               HorizontalAlignment="Left"/>
 
+                <!-- Pagination buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="❮" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                    <Button Content="1" Background="{StaticResource PrimaryBlue}" 
-                            Foreground="White" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
-                    <Button Content="❯" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                    <Button Content="❮" Width="32" Height="32" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0" Click="PrevPageBtn_Click"/>
+                    <Button Content="1" Width="32" Height="32" Background="{StaticResource PrimaryBlue}" Foreground="White" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                    <Button Content="❯" Width="32" Height="32" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0" Click="NextPageBtn_Click"/>
                 </StackPanel>
             </Grid>
+
         </Grid>
     </Border>
 </Page>

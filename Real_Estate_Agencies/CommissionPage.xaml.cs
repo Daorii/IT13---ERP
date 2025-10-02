@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Real_Estate_Agencies.Models;
 
 namespace Real_Estate_Agencies
 {
@@ -36,26 +35,6 @@ namespace Real_Estate_Agencies
         {
             CommissionsDataGrid.ItemsSource = null;
             CommissionsDataGrid.ItemsSource = allCommissionsModels.Select(c => ConvertToDisplayItem(c)).ToList();
-        }
-
-        private void AddCommission_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var addWindow = new AddCommission();
-                bool? result = addWindow.ShowDialog();
-
-                if (result == true && addWindow.NewCommission != null)
-                {
-                    addWindow.NewCommission.CommissionId = nextCommissionId++;
-                    allCommissionsModels.Add(addWindow.NewCommission);
-                    RefreshDataGrid();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -107,5 +86,14 @@ namespace Real_Estate_Agencies
         public string AgentID { get; set; }
         public string CommissionAmount { get; set; }
         public string ReleaseDate { get; set; }
+    }
+
+    public class Commission
+    {
+        public int CommissionId { get; set; }
+        public int SalesId { get; set; }
+        public int AgentId { get; set; }
+        public decimal CommissionAmount { get; set; }
+        public DateTime ReleaseDate { get; set; }
     }
 }

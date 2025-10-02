@@ -3,141 +3,129 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Real_Estate_Agencies
 {
     public partial class SalesPage : Page
     {
-        private List<Sale> allSales;
+        private List<Sale> AllSales;
+        private List<Sale> FilteredSales;
+        private int CurrentPage = 1;
+        private int PageSize = 10;
 
         public SalesPage()
         {
             InitializeComponent();
             LoadSales();
+            ApplyFilter();
         }
 
         private void LoadSales()
         {
-            allSales = new List<Sale>
+            AllSales = new List<Sale>();
+            for (int i = 1; i <= 50; i++)
             {
-                new Sale { SaleId = "S001", ClientId = "C001", PropertyId = "P001", AgentId = "A001", SaleDate = new DateTime(2023,1,15), PaymentMode="One-time Payment" },
-                new Sale { SaleId = "S002", ClientId = "C002", PropertyId = "P002", AgentId = "A002", SaleDate = new DateTime(2023,4,20), PaymentMode="Installment" },
-                new Sale { SaleId = "S003", ClientId = "C003", PropertyId = "P003", AgentId = "A001", SaleDate = new DateTime(2023,7,2), PaymentMode="One-time Payment" },
-                new Sale { SaleId = "S004", ClientId = "C004", PropertyId = "P004", AgentId = "A003", SaleDate = new DateTime(2023,9,12), PaymentMode="Installment" }
-            };
-
-            RefreshDataGrid(allSales);
-        }
-
-        private void RefreshDataGrid(IEnumerable<Sale> sales)
-        {
-            if (SalesDataGrid == null) return;
-
-            var numberedList = sales.Select((s, index) => new
-            {
-                Number = (index + 1).ToString(),
-                s.SaleId,
-                s.ClientId,
-                s.PropertyId,
-                s.AgentId,
-                SaleDate = s.SaleDate.ToString("yyyy-MM-dd"),
-                s.PaymentMode
-            }).ToList();
-
-            SalesDataGrid.ItemsSource = numberedList;
-        }
-
-        private void FromDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
-        private void ToDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
-        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
-
-        private void ClearFilters_Click(object sender, RoutedEventArgs e)
-        {
-            FromDatePicker.SelectedDate = null;
-            ToDatePicker.SelectedDate = null;
-            SortComboBox.SelectedIndex = 0;
-            RefreshDataGrid(allSales);
+                AllSales.Add(new Sale
+                {
+                    SaleId = i,
+                    ClientId = 1000 + i,
+                    PropertyId = 2000 + i,
+                    AgentId = 3000 + i,
+                    SaleDate = DateTime.Now.AddDays(-i),
+                    PaymentMode = i % 2 == 0 ? "Cash" : "Bank Loan"
+                });
+            }
         }
 
         private void ApplyFilter()
         {
-            if (allSales == null) return;
+            DateTime? from = FromDatePicker?.SelectedDate;
+            DateTime? to = ToDatePicker?.SelectedDate;
 
-            var filtered = allSales.AsEnumerable();
+            FilteredSales = AllSales?
+                .Where(s => (!from.HasValue || s.SaleDate >= from.Value) &&
+                            (!to.HasValue || s.SaleDate <= to.Value))
+                .ToList() ?? new List<Sale>();
 
-            DateTime? from = FromDatePicker.SelectedDate;
-            DateTime? to = ToDatePicker.SelectedDate;
+            if (SortComboBox?.SelectedIndex == 0)
+                FilteredSales = FilteredSales.OrderBy(s => s.SaleDate).ToList();
+            else if (SortComboBox?.SelectedIndex == 1)
+                FilteredSales = FilteredSales.OrderByDescending(s => s.SaleDate).ToList();
 
-            if (from.HasValue && to.HasValue && from > to)
-            {
-                MessageBox.Show("⚠ 'From' date cannot be later than 'To' date.", "Invalid Date Range", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (from.HasValue || to.HasValue)
-            {
-                filtered = filtered.Where(s =>
-                {
-                    bool afterFrom = !from.HasValue || s.SaleDate >= from.Value;
-                    bool beforeTo = !to.HasValue || s.SaleDate <= to.Value;
-                    return afterFrom && beforeTo;
-                });
-            }
-
-            switch (SortComboBox.SelectedIndex)
-            {
-                case 0: filtered = filtered.OrderByDescending(s => s.SaleDate); break;
-                case 1: filtered = filtered.OrderBy(s => ExtractNumeric(s.ClientId)); break;
-            }
-
-            RefreshDataGrid(filtered);
+            CurrentPage = 1;
+            RefreshPage();
         }
 
-        private int ExtractNumeric(string id)
+        private void RefreshPage()
         {
-            if (string.IsNullOrEmpty(id)) return 0;
-            string numPart = new string(id.Where(char.IsDigit).ToArray());
-            return int.TryParse(numPart, out int result) ? result : 0;
+            if (FilteredSales == null || SalesDataGrid == null) return;
+
+            var pageData = FilteredSales.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+            SalesDataGrid.ItemsSource = pageData;
+
+            PageInfoTextBlock.Text = $"Showing {((CurrentPage - 1) * PageSize + 1)}-{Math.Min(CurrentPage * PageSize, FilteredSales.Count)} of {FilteredSales.Count} sales";
+        }
+
+        private void PrevPageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentPage > 1)
+            {
+                CurrentPage--;
+                RefreshPage();
+            }
+        }
+
+        private void NextPageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentPage < Math.Ceiling((double)FilteredSales.Count / PageSize))
+            {
+                CurrentPage++;
+                RefreshPage();
+            }
+        }
+
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void FromDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilter();
+        }
+
+        private void ToDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilter();
         }
 
         private void AddSale_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddSaleWindow();
-            if (addWindow.ShowDialog() == true && addWindow.NewSale != null)
+            if (addWindow.ShowDialog() == true)
             {
-                allSales.Add(addWindow.NewSale);
-                RefreshDataGrid(allSales);
+                AllSales.Add(addWindow.NewSale);
+                ApplyFilter();
             }
         }
 
-        // ✅ New handler for the "View" button in Sales list
-        private void ViewSale_Click(object sender, RoutedEventArgs e)
+        private void SaleRow_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var button = sender as FrameworkElement;
-            if (button?.DataContext == null) return;
-
-            // Get SaleId from DataContext
-            var saleIdProp = button.DataContext.GetType().GetProperty("SaleId");
-            string saleId = saleIdProp?.GetValue(button.DataContext)?.ToString();
-
-            if (string.IsNullOrEmpty(saleId)) return;
-
-            // Find the matching sale
-            var selectedSale = allSales.FirstOrDefault(s => s.SaleId == saleId);
-            if (selectedSale != null)
+            if (sender is Border border && border.DataContext is Sale sale)
             {
-                var detailWindow = new SaleDetailWindow(selectedSale);
-                detailWindow.ShowDialog();
+                var paymentPage = new PaymentPage(sale.SaleId);
+                NavigationService?.Navigate(paymentPage);
             }
         }
     }
 
     public class Sale
     {
-        public string SaleId { get; set; }
-        public string ClientId { get; set; }
-        public string PropertyId { get; set; }
-        public string AgentId { get; set; }
+        public int SaleId { get; set; }
+        public int ClientId { get; set; }
+        public int PropertyId { get; set; }
+        public int AgentId { get; set; }
         public DateTime SaleDate { get; set; }
         public string PaymentMode { get; set; }
     }
