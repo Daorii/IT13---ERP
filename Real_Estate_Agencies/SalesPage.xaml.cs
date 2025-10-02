@@ -3,43 +3,93 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Real_Estate_Agencies
 {
     public partial class SalesPage : Page
     {
-        private List<Sale> allSales;
+        private List<Sale> AllSales;
+        private List<Sale> FilteredSales;
+        private int CurrentPage = 1;
+        private int PageSize = 10;
 
         public SalesPage()
         {
             InitializeComponent();
             LoadSales();
+            ApplyFilter();
         }
 
         private void LoadSales()
         {
-            // Sample data for design purposes
-            allSales = new List<Sale>
+            AllSales = new List<Sale>();
+            for (int i = 1; i <= 50; i++)
             {
-                new Sale { SaleId = "S001", Customer = "Maria Santos", Agent = "Agent A001", Date = new DateTime(2023, 1, 15), Amount = "₱2,500,000" },
-                new Sale { SaleId = "S002", Customer = "John Reyes", Agent = "Agent A002", Date = new DateTime(2023, 4, 20), Amount = "₱3,100,000" },
-                new Sale { SaleId = "S003", Customer = "Ana Cruz", Agent = "Agent A001", Date = new DateTime(2023, 7, 2), Amount = "₱4,000,000" },
-                new Sale { SaleId = "S004", Customer = "Pedro Lopez", Agent = "Agent A003", Date = new DateTime(2023, 9, 12), Amount = "₱5,200,000" },
-                new Sale { SaleId = "S005", Customer = "Carmen Dela Cruz", Agent = "Agent A002", Date = new DateTime(2023, 11, 5), Amount = "₱2,800,000" },
-                new Sale { SaleId = "S006", Customer = "Roberto Garcia", Agent = "Agent A001", Date = new DateTime(2024, 2, 18), Amount = "₱6,500,000" },
-                new Sale { SaleId = "S007", Customer = "Isabella Fernandez", Agent = "Agent A003", Date = new DateTime(2024, 5, 25), Amount = "₱3,750,000" }
-            };
-
-            SalesDataGrid.ItemsSource = allSales;
+                AllSales.Add(new Sale
+                {
+                    SaleId = i,
+                    ClientId = 1000 + i,
+                    PropertyId = 2000 + i,
+                    AgentId = 3000 + i,
+                    SaleDate = DateTime.Now.AddDays(-i),
+                    PaymentMode = i % 2 == 0 ? "Cash" : "Bank Loan"
+                });
+            }
         }
 
-        // Filter button click event
-        private void Filter_Click(object sender, RoutedEventArgs e)
+        private void ApplyFilter()
+        {
+            DateTime? from = FromDatePicker?.SelectedDate;
+            DateTime? to = ToDatePicker?.SelectedDate;
+
+            FilteredSales = AllSales?
+                .Where(s => (!from.HasValue || s.SaleDate >= from.Value) &&
+                            (!to.HasValue || s.SaleDate <= to.Value))
+                .ToList() ?? new List<Sale>();
+
+            if (SortComboBox?.SelectedIndex == 0)
+                FilteredSales = FilteredSales.OrderBy(s => s.SaleDate).ToList();
+            else if (SortComboBox?.SelectedIndex == 1)
+                FilteredSales = FilteredSales.OrderByDescending(s => s.SaleDate).ToList();
+
+            CurrentPage = 1;
+            RefreshPage();
+        }
+
+        private void RefreshPage()
+        {
+            if (FilteredSales == null || SalesDataGrid == null) return;
+
+            var pageData = FilteredSales.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+            SalesDataGrid.ItemsSource = pageData;
+
+            PageInfoTextBlock.Text = $"Showing {((CurrentPage - 1) * PageSize + 1)}-{Math.Min(CurrentPage * PageSize, FilteredSales.Count)} of {FilteredSales.Count} sales";
+        }
+
+        private void PrevPageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentPage > 1)
+            {
+                CurrentPage--;
+                RefreshPage();
+            }
+        }
+
+        private void NextPageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentPage < Math.Ceiling((double)FilteredSales.Count / PageSize))
+            {
+                CurrentPage++;
+                RefreshPage();
+            }
+        }
+
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilter();
         }
 
-        // Date picker change events
         private void FromDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilter();
@@ -50,86 +100,33 @@ namespace Real_Estate_Agencies
             ApplyFilter();
         }
 
-        // Sort combobox change event
-        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AddSale_Click(object sender, RoutedEventArgs e)
         {
-            ApplyFilter();
-        }
-
-        // Clear filters button
-        private void ClearFilters_Click(object sender, RoutedEventArgs e)
-        {
-            FromDatePicker.SelectedDate = null;
-            ToDatePicker.SelectedDate = null;
-
-            var sortComboBox = FindName("SortComboBox") as ComboBox;
-            if (sortComboBox != null)
-                sortComboBox.SelectedIndex = 0;
-
-            SalesDataGrid.ItemsSource = allSales;
-        }
-
-        // Main filter logic
-        private void ApplyFilter()
-        {
-            if (allSales == null) return;
-
-            var filtered = allSales.AsEnumerable();
-
-            // Date filtering
-            DateTime? fromDate = FromDatePicker.SelectedDate;
-            DateTime? toDate = ToDatePicker.SelectedDate;
-
-            if (fromDate.HasValue || toDate.HasValue)
+            var addWindow = new AddSaleWindow();
+            if (addWindow.ShowDialog() == true)
             {
-                filtered = filtered.Where(s =>
-                {
-                    bool afterFrom = !fromDate.HasValue || s.Date >= fromDate.Value;
-                    bool beforeTo = !toDate.HasValue || s.Date <= toDate.Value;
-                    return afterFrom && beforeTo;
-                });
+                AllSales.Add(addWindow.NewSale);
+                ApplyFilter();
             }
-
-            // Sorting
-            var sortComboBox = FindName("SortComboBox") as ComboBox;
-            if (sortComboBox != null)
-            {
-                switch (sortComboBox.SelectedIndex)
-                {
-                    case 0: // Sort by Date
-                        filtered = filtered.OrderByDescending(s => s.Date);
-                        break;
-                    case 1: // Sort by Amount
-                        filtered = filtered.OrderByDescending(s => ParseAmount(s.Amount));
-                        break;
-                    case 2: // Sort by Customer
-                        filtered = filtered.OrderBy(s => s.Customer);
-                        break;
-                }
-            }
-
-            SalesDataGrid.ItemsSource = filtered.ToList();
         }
 
-        // Helper method to parse amount for sorting
-        private decimal ParseAmount(string amount)
+        private void SaleRow_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (string.IsNullOrEmpty(amount)) return 0;
-
-            string cleanAmount = amount.Replace("₱", "").Replace(",", "").Trim();
-            if (decimal.TryParse(cleanAmount, out decimal result))
-                return result;
-
-            return 0;
+            if (sender is Border border && border.DataContext is Sale sale)
+            {
+                var paymentPage = new PaymentPage(sale.SaleId);
+                NavigationService?.Navigate(paymentPage);
+            }
         }
     }
 
     public class Sale
     {
-        public string SaleId { get; set; }
-        public string Customer { get; set; }
-        public string Agent { get; set; }
-        public DateTime Date { get; set; }
-        public string Amount { get; set; }
+        public int SaleId { get; set; }
+        public int ClientId { get; set; }
+        public int PropertyId { get; set; }
+        public int AgentId { get; set; }
+        public DateTime SaleDate { get; set; }
+        public string PaymentMode { get; set; }
     }
 }

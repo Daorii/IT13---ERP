@@ -1,7 +1,7 @@
-﻿using System.Windows;
+﻿using Real_Estate_Agencies.Model;
+using System;
+using System.Windows;
 using System.Windows.Controls;
-using Real_Estate_Agencies.Model;
-
 
 namespace Real_Estate_Agencies
 {
@@ -16,18 +16,27 @@ namespace Real_Estate_Agencies
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            NewClient = new Client
-            {
-                ClientId = int.TryParse(TxtClientId.Text, out int id) ? id : 0,
-                FirstName = TxtFirstName.Text,
-                LastName = TxtLastName.Text,
-                ContactInfo = TxtContactInfo.Text,
-                Address = TxtAddress.Text,
-                PreferredPropertyType = (TxtPreferredType.SelectedItem as ComboBoxItem)?.Content.ToString()
-            };
+            if (!ValidateInput()) return;
 
-            DialogResult = true;
-            Close();
+            try
+            {
+                NewClient = new Client
+                {
+                    ClientId = int.TryParse(TxtClientId.Text, out int id) ? id : 0,
+                    FirstName = TxtFirstName.Text.Trim(),
+                    LastName = TxtLastName.Text.Trim(),
+                    ContactInfo = TxtContactInfo.Text.Trim(),
+                    Address = TxtAddress.Text.Trim(),
+                    PreferredPropertyType = (TxtPreferredType.SelectedItem as ComboBoxItem)?.Content.ToString() ?? ""
+                };
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -38,7 +47,42 @@ namespace Real_Estate_Agencies
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
+        }
+
+        private bool ValidateInput()
+        {
+            if (string.IsNullOrWhiteSpace(TxtFirstName.Text))
+            {
+                MessageBox.Show("Please enter First Name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(TxtLastName.Text))
+            {
+                MessageBox.Show("Please enter Last Name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(TxtContactInfo.Text))
+            {
+                MessageBox.Show("Please enter Contact Info.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(TxtAddress.Text))
+            {
+                MessageBox.Show("Please enter Address.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (TxtPreferredType.SelectedItem == null)
+            {
+                MessageBox.Show("Please select Preferred Property Type.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
         }
     }
 }

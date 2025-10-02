@@ -38,14 +38,13 @@
                 <StackPanel>
                     <TextBlock Text="Agent ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtEmployeeId"
-         Margin="0,5,0,12" Padding="8"
-         Background="#F3F4F6"
-         BorderBrush="#FFBFD6E5"
-         BorderThickness="1"
-         IsReadOnly="True"
-         IsTabStop="False"
-         Text="(Auto-generated)"/>
-
+                             Margin="0,5,0,12" Padding="8"
+                             Background="#F3F4F6"
+                             BorderBrush="#FFBFD6E5"
+                             BorderThickness="1"
+                             IsReadOnly="True"
+                             IsTabStop="False"
+                             Text="(Auto-generated)"/>
 
                     <TextBlock Text="First Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtFirstName"
@@ -67,12 +66,6 @@
 
                     <TextBlock Text="Contact Info" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtContactInfo"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
-
-                    <TextBlock Text="Salary Rate" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtSalaryRate"
                              Margin="0,5,0,12" Padding="8"
                              Background="White"
                              BorderBrush="#FFBFD6E5" BorderThickness="1"/>
@@ -103,6 +96,8 @@
                 </StackPanel>
             </StackPanel>
         </Border>
+
+        <!-- Close Button -->
         <Button Content="✖"
             Width="28" Height="28"
             HorizontalAlignment="Right"

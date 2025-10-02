@@ -2,7 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Real_Estate_Agencies"
-             StartupUri="MainWindow.xaml"
              ShutdownMode="OnLastWindowClose">
 
     <Application.Resources>
@@ -22,7 +21,7 @@
             </Setter>
         </Style>
 
-        <!-- ✅ Correct converter registration -->
+        <!-- ✅ Converter registration -->
         <local:StaggerDelayConverter x:Key="StaggerDelayConverter"/>
     </Application.Resources>
 </Application>
