@@ -33,8 +33,7 @@
                            HorizontalAlignment="Center"/>
 
                 <!-- Payment ID -->
-                <TextBlock Text="Payment ID" FontWeight="SemiBold" Foreground="#444"/>
-                <TextBox x:Name="TxtPaymentId" Margin="0,5,0,12" Padding="8"/>
+
 
                 <!-- Amount -->
                 <TextBlock Text="Amount" FontWeight="SemiBold" Foreground="#444"/>
@@ -45,7 +44,7 @@
                 <DatePicker x:Name="PaymentDatePicker" Margin="0,5,0,12" Height="32"/>
 
                 <!-- Method -->
-                <TextBlock Text="Payment Method" FontWeight="SemiBold" Foreground="#444"/>
+                <TextBlock Text="Payment Type" FontWeight="SemiBold" Foreground="#444"/>
                 <ComboBox x:Name="PaymentMethodComboBox" Margin="0,5,0,12" Padding="6">
                     <ComboBoxItem Content="Cash" IsSelected="True"/>
                     <ComboBoxItem Content="Bank Transfer"/>

@@ -36,44 +36,39 @@
 
                 <!-- Input Fields -->
                 <StackPanel>
-                    <TextBlock Text="Sale ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtSaleId"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
-
+                    <!-- remove Sale ID controls from XAML; start from Client ID -->
                     <TextBlock Text="Client ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtClientId"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+         Margin="0,5,0,12" Padding="8"
+         Background="White"
+         BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
                     <TextBlock Text="Property ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtPropertyId"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+         Margin="0,5,0,12" Padding="8"
+         Background="White"
+         BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
                     <TextBlock Text="Agent ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <TextBox x:Name="TxtAgentId"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+         Margin="0,5,0,12" Padding="8"
+         Background="White"
+         BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
                     <TextBlock Text="Sale Date" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <DatePicker x:Name="SaleDatePicker"
-                                Margin="0,5,0,12" Height="32"
-                                Background="White"
-                                BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+            Margin="0,5,0,12" Height="32"
+            Background="White"
+            BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
                     <TextBlock Text="Payment Mode" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                     <ComboBox x:Name="PaymentModeComboBox"
-                              Margin="0,5,0,12" Padding="8"
-                              Background="White"
-                              BorderBrush="#FFBFD6E5" BorderThickness="1">
-                        <ComboBoxItem Content="One-time Payment" IsSelected="True"/>
-                        <ComboBoxItem Content="Installment"/>
+          Margin="0,5,0,12" Padding="8"
+          Background="White"
+          BorderBrush="#FFBFD6E5" BorderThickness="1">
+                       
                     </ComboBox>
+
                 </StackPanel>
 
                 <!-- Buttons -->
@@ -88,7 +83,7 @@
                             BorderThickness="1.2"
                             FontWeight="SemiBold"
                             Cursor="Hand"
-                            Click="Cancel_Click"/>
+                           Click="CancelButton_Click"/>
 
                     <Button Content="Add" Width="100" Height="38"
                             Background="#FFFFE08F"
@@ -97,7 +92,7 @@
                             BorderBrush="#FFE6C96D"
                             BorderThickness="1.2"
                             Cursor="Hand"
-                            Click="Add_Click"/>
+                            Click="SaveButton_Click"/>
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -113,6 +108,6 @@
                 FontWeight="Bold"
                 BorderThickness="0"
                 Cursor="Hand"
-                Click="Cancel_Click"/>
+                 Click="CancelButton_Click"/>
     </Grid>
 </Window>

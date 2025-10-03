@@ -147,7 +147,7 @@
                                             <TextBlock Grid.Column="0" Text="{Binding PaymentId}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="1" Text="{Binding SaleId}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="2" Text="{Binding PaymentType}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding PaymentAmount}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding Amount}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="4" Text="{Binding PaymentDate}" Style="{StaticResource CellTextStyle}"/>
                                         </Grid>
                                     </Border>

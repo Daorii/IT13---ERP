@@ -8,6 +8,5 @@
         public string LastName { get; set; } = string.Empty;
         public string HireDate { get; set; } = string.Empty;    // yyyy-MM-dd
         public string ContactInfo { get; set; } = string.Empty;
-        public string SalaryRate { get; set; } = string.Empty;  // formatted string
     }
 }

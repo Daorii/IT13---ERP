@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Real_Estate_Agencies.Model;
 
 namespace Real_Estate_Agencies
 {
@@ -11,23 +12,20 @@ namespace Real_Estate_Agencies
     {
         private List<IncentiveDisplayItem> allIncentives;
         private List<IncentiveDisplayItem> filteredIncentives;
-        private static int nextIncentiveId = 3;
+        private readonly IncentivesRepository repo;
 
         public IncentivesPage()
         {
             InitializeComponent();
+            repo = new IncentivesRepository();
             LoadIncentives();
             SearchTextBox.TextChanged += SearchTextBox_TextChanged;
         }
 
         private void LoadIncentives()
         {
-            allIncentives = new List<IncentiveDisplayItem>
-            {
-                new IncentiveDisplayItem { IncentiveId = "I001", AgentId = "A001", IncentiveType = "Bonus", Amount = "₱5,000", ReleaseDate = "2024-01-20" },
-                new IncentiveDisplayItem { IncentiveId = "I002", AgentId = "A002", IncentiveType = "Travel Allowance", Amount = "₱3,000", ReleaseDate = "2024-02-15" }
-            };
-
+            var incentives = repo.GetAllIncentives();
+            allIncentives = incentives.Select(ConvertToDisplayItem).ToList();
             filteredIncentives = new List<IncentiveDisplayItem>(allIncentives);
             RefreshGrid();
         }
@@ -41,16 +39,14 @@ namespace Real_Estate_Agencies
         private void AddIncentive_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddIncentive();
-            bool? result = addWindow.ShowDialog();
-
-            if (result == true && addWindow.NewIncentive != null)
+            if (addWindow.ShowDialog() == true && addWindow.NewIncentive != null)
             {
-                addWindow.NewIncentive.IncentiveId = nextIncentiveId++;
-                var displayItem = ConvertToDisplayItem(addWindow.NewIncentive);
-                allIncentives.Add(displayItem);
+                repo.AddIncentive(addWindow.NewIncentive);
+                allIncentives.Add(ConvertToDisplayItem(addWindow.NewIncentive));
                 ApplyFilter(SearchTextBox.Text);
             }
         }
+
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
@@ -75,20 +71,49 @@ namespace Real_Estate_Agencies
 
         private void UpdateIncentive_Click(object sender, RoutedEventArgs e)
         {
-            var incentive = allIncentives.FirstOrDefault(x => x.IncentiveId == TxtIncentiveId.Text);
-            if (incentive != null)
+            try
             {
-                incentive.AgentId = TxtAgentId.Text;
-                incentive.IncentiveType = CmbIncentiveType.Text;
-                incentive.Amount = "₱" + decimal.Parse(TxtAmount.Text).ToString("N0");
-                incentive.ReleaseDate = TxtReleaseDate.Text;
+                // Parse real values from the edit fields
+                int incentiveId = int.Parse(TxtIncentiveId.Text.Replace("I", ""));
+                int agentId = int.Parse(TxtAgentId.Text.Replace("A", ""));
+                string incentiveType = CmbIncentiveType.Text;
+                decimal amount = decimal.Parse(TxtAmount.Text);
+                DateTime releaseDate = DateTime.Parse(TxtReleaseDate.Text);
+
+                // Create actual Incentive object
+                var updatedIncentive = new Incentive
+                {
+                    IncentiveId = incentiveId,
+                    AgentId = agentId,
+                    IncentiveType = incentiveType,
+                    Amount = amount,
+                    ReleaseDate = releaseDate
+                };
+
+                // Update DB
+                repo.UpdateIncentive(updatedIncentive);
+
+                // Update UI list
+                var displayItem = allIncentives.FirstOrDefault(x => x.IncentiveId == "I" + incentiveId.ToString("D3"));
+                if (displayItem != null)
+                {
+                    displayItem.AgentId = "A" + agentId.ToString("D3");
+                    displayItem.IncentiveType = incentiveType;
+                    displayItem.Amount = "₱" + amount.ToString("N0");
+                    displayItem.ReleaseDate = releaseDate.ToString("yyyy-MM-dd");
+                }
 
                 ApplyFilter(SearchTextBox.Text);
                 MessageBox.Show("Incentive updated successfully!");
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating incentive: {ex.Message}");
+            }
 
             EditIncentiveOverlay.Visibility = Visibility.Collapsed;
         }
+
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -102,11 +127,21 @@ namespace Real_Estate_Agencies
 
                 if (result == MessageBoxResult.Yes)
                 {
+                    // Convert "I001" back to integer ID
+                    int incentiveId = int.Parse(incentive.IncentiveId.Replace("I", ""));
+
+                    // Remove from DB
+                    repo.DeleteIncentive(incentiveId);
+
+                    // Remove from local list & refresh
                     allIncentives.Remove(incentive);
                     ApplyFilter(SearchTextBox.Text);
+
+                    MessageBox.Show("Incentive deleted successfully!");
                 }
             }
         }
+
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {

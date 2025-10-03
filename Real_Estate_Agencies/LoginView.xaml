@@ -14,7 +14,7 @@
 
     <Border CornerRadius="12">
         <Border.Background>
-            <ImageBrush ImageSource="C:\Users\maria\Downloads\download (5).jpg"
+            <ImageBrush ImageSource="C:\Users\My Py\Downloads\d9642ff7-5c4e-4b80-b135-faf0ad90b35a.jpg"
                         Stretch="None"/>
         </Border.Background>
 
@@ -130,7 +130,7 @@
                             Margin="0,35,0,0"
                             HorizontalAlignment="Center">
 
-                    <Image Source="C:\Users\maria\Downloads\realEstate (1).png"
+                    <Image Source="C:\Users\My Py\Downloads\cf8f5310-b181-44c1-aa18-efd914e91269.jpg"
                            Width="196" Height="154"/>
 
                     <TextBlock Text="REAL ESTATE AGENCIES"
@@ -157,7 +157,7 @@
                                FontFamily="Montserrat"
                                Margin="0,35,0,0"/>
                     <Grid Margin="0,5,0,0">
-                        <Image Source="C:\Users\maria\Downloads\account.png"
+                        <Image Source="C:\Users\My Py\Downloads\2db01be7-e44b-483e-9013-cb62cb2bb4a4.jpg"
                                Width="16" Height="16"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Left"
@@ -184,7 +184,7 @@
                                FontFamily="Montserrat"
                                Margin="0,15,0,0"/>
                     <Grid Margin="0,5,0,0">
-                        <Image Source="C:\Users\maria\Downloads\password.png"
+                        <Image Source="C:\Users\My Py\Downloads\874790ff-d8c0-41c0-9302-79ab660615d5.jpg"
                                Width="16" Height="16"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Left"

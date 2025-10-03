@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -9,6 +11,7 @@ namespace Real_Estate_Agencies
 {
     public partial class SalesPage : Page
     {
+        private readonly SalesRepository _repo;
         private List<Sale> AllSales;
         private List<Sale> FilteredSales;
         private int CurrentPage = 1;
@@ -17,25 +20,14 @@ namespace Real_Estate_Agencies
         public SalesPage()
         {
             InitializeComponent();
+            _repo = new SalesRepository();
             LoadSales();
             ApplyFilter();
         }
 
         private void LoadSales()
         {
-            AllSales = new List<Sale>();
-            for (int i = 1; i <= 50; i++)
-            {
-                AllSales.Add(new Sale
-                {
-                    SaleId = i,
-                    ClientId = 1000 + i,
-                    PropertyId = 2000 + i,
-                    AgentId = 3000 + i,
-                    SaleDate = DateTime.Now.AddDays(-i),
-                    PaymentMode = i % 2 == 0 ? "Cash" : "Bank Loan"
-                });
-            }
+            AllSales = _repo.GetAllSales();
         }
 
         private void ApplyFilter()
@@ -44,14 +36,15 @@ namespace Real_Estate_Agencies
             DateTime? to = ToDatePicker?.SelectedDate;
 
             FilteredSales = AllSales?
-                .Where(s => (!from.HasValue || s.SaleDate >= from.Value) &&
-                            (!to.HasValue || s.SaleDate <= to.Value))
-                .ToList() ?? new List<Sale>();
+     .Where(s => (!from.HasValue || s.SaleDate >= from.Value) &&
+                 (!to.HasValue || s.SaleDate <= to.Value))
+     .ToList() ?? new List<Sale>();
 
             if (SortComboBox?.SelectedIndex == 0)
                 FilteredSales = FilteredSales.OrderBy(s => s.SaleDate).ToList();
             else if (SortComboBox?.SelectedIndex == 1)
                 FilteredSales = FilteredSales.OrderByDescending(s => s.SaleDate).ToList();
+
 
             CurrentPage = 1;
             RefreshPage();
@@ -105,7 +98,12 @@ namespace Real_Estate_Agencies
             var addWindow = new AddSaleWindow();
             if (addWindow.ShowDialog() == true)
             {
-                AllSales.Add(addWindow.NewSale);
+                var newSale = addWindow.NewSale;
+
+                // ✅ Only one insert happens here
+                _repo.AddSale(newSale);
+
+                AllSales.Add(newSale);
                 ApplyFilter();
             }
         }
@@ -119,14 +117,5 @@ namespace Real_Estate_Agencies
             }
         }
     }
-
-    public class Sale
-    {
-        public int SaleId { get; set; }
-        public int ClientId { get; set; }
-        public int PropertyId { get; set; }
-        public int AgentId { get; set; }
-        public DateTime SaleDate { get; set; }
-        public string PaymentMode { get; set; }
-    }
 }
+
