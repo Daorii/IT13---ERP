@@ -139,7 +139,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Text="Incentive ID" Style="{StaticResource HeaderTextStyle}"/>
-                    <TextBlock Grid.Column="1" Text="Agent ID" Style="{StaticResource HeaderTextStyle}"/>
+                    <TextBlock Grid.Column="1" Text="Agent Name" Style="{StaticResource HeaderTextStyle}"/>
                     <TextBlock Grid.Column="2" Text="Incentive Type" Style="{StaticResource HeaderTextStyle}"/>
                     <TextBlock Grid.Column="3" Text="Amount" Style="{StaticResource HeaderTextStyle}"/>
                     <TextBlock Grid.Column="4" Text="Release Date" Style="{StaticResource HeaderTextStyle}"/>
@@ -165,7 +165,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0" Text="{Binding IncentiveId}" Style="{StaticResource CellTextStyle}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding AgentName}" Style="{StaticResource CellTextStyle}"/>
                                         <TextBlock Grid.Column="2" Text="{Binding IncentiveType}" Style="{StaticResource CellTextStyle}"/>
                                         <TextBlock Grid.Column="3" Text="{Binding Amount}" Style="{StaticResource CellTextStyle}"/>
                                         <TextBlock Grid.Column="4" Text="{Binding ReleaseDate}" Style="{StaticResource CellTextStyle}"/>
@@ -249,7 +249,7 @@
                             <StackPanel Orientation="Vertical">
                                 <TextBox x:Name="TxtIncentiveId" Visibility="Collapsed"/>
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Agent ID" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBlock Text="Agent Name  " FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
                                     <TextBox x:Name="TxtAgentId" Height="40" Padding="10" BorderBrush="#E1E8ED" BorderThickness="1" Background="#F5F6FA" Foreground="#5C677D" IsReadOnly="True" VerticalContentAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,12">

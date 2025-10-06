@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Real_Estate_Agencies.Views
 {
@@ -12,7 +11,6 @@ namespace Real_Estate_Agencies.Views
     {
         public PropertyModel NewProperty { get; set; }
 
-        // Category and Type collections
         public List<string> Categories { get; set; }
         public Dictionary<string, List<string>> CategoryTypes { get; set; }
         public List<string> FilteredPropertyTypes { get; set; }
@@ -32,16 +30,13 @@ namespace Real_Estate_Agencies.Views
         {
             InitializeComponent();
 
-            // Initialize property model
             NewProperty = new PropertyModel();
 
-            // Initialize Categories
             Categories = new List<string>
             {
                 "Residential", "Commercial", "Industrial", "Lot Only", "Agricultural", "Mixed-Use"
             };
 
-            // Initialize mapping between Category -> Types
             CategoryTypes = new Dictionary<string, List<string>>
             {
                 { "Residential", new List<string>{ "Condominium – Studio", "Condominium – 1BR", "Condominium – 2BR", "Condominium – 3BR", "Condominium – Penthouse", "Apartment Unit", "Townhouse", "Single-Detached House", "Duplex", "Rowhouse" } },
@@ -52,7 +47,6 @@ namespace Real_Estate_Agencies.Views
                 { "Mixed-Use", new List<string>{ "Residential + Commercial Building", "Commercial/Residential Lot", "Shop-Top Housing (store on ground floor, unit upstairs)" } }
             };
 
-            // Default: empty types
             FilteredPropertyTypes = new List<string>();
 
             DataContext = this;
@@ -65,20 +59,17 @@ namespace Real_Estate_Agencies.Views
             else
                 FilteredPropertyTypes = new List<string>();
 
-            // Refresh TypeComboBox binding
             TypeComboBox.ItemsSource = FilteredPropertyTypes;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            // Assign category and type from ComboBoxes
             if (CategoryComboBox.SelectedItem != null)
                 NewProperty.Category = CategoryComboBox.SelectedItem.ToString();
 
             if (TypeComboBox.SelectedItem != null)
                 NewProperty.PropertyType = TypeComboBox.SelectedItem.ToString();
 
-            // Validate required fields
             if (string.IsNullOrWhiteSpace(NewProperty.Name) ||
                 string.IsNullOrWhiteSpace(NewProperty.Location) ||
                 string.IsNullOrWhiteSpace(NewProperty.PropertyType) ||
@@ -89,7 +80,6 @@ namespace Real_Estate_Agencies.Views
                 return;
             }
 
-            // Validate price
             if (NewProperty.Price <= 0)
             {
                 MessageBox.Show("Please enter a valid price greater than 0.",
@@ -97,13 +87,11 @@ namespace Real_Estate_Agencies.Views
                 return;
             }
 
-            // Get selected status
-            if (StatusComboBox.SelectedItem is ComboBoxItem selectedItem)
+            if (StatusComboBox.SelectedItem is System.Windows.Controls.ComboBoxItem selectedItem)
                 NewProperty.Status = selectedItem.Content.ToString();
             else
                 NewProperty.Status = "On Sale"; // Default
 
-            // If no image selected, set null
             if (NewProperty.Image == null || NewProperty.Image.Length == 0)
             {
                 MessageBox.Show("No image selected. A default image will be used.",
@@ -111,7 +99,6 @@ namespace Real_Estate_Agencies.Views
                 NewProperty.Image = Array.Empty<byte>();
             }
 
-            // Generate temporary ID
             NewProperty.Id = (int)DateTime.Now.Ticks & 0xFFFFFF;
 
             MessageBox.Show($"Property '{NewProperty.Name}' saved successfully!",
@@ -120,7 +107,6 @@ namespace Real_Estate_Agencies.Views
             DialogResult = true;
             Close();
         }
-
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -135,7 +121,7 @@ namespace Real_Estate_Agencies.Views
 
         private void BrowseImage_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            var openFileDialog = new OpenFileDialog
             {
                 Title = "Select Property Image",
                 Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All files (*.*)|*.*",
@@ -145,6 +131,7 @@ namespace Real_Estate_Agencies.Views
             if (openFileDialog.ShowDialog() == true)
             {
                 NewProperty.Image = File.ReadAllBytes(openFileDialog.FileName);
+                NewProperty.ImagePath = openFileDialog.FileName;
                 MessageBox.Show("Image loaded successfully!", "Image", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }

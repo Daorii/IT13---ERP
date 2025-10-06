@@ -163,25 +163,28 @@
 
                 <!-- Header -->
                 <Border Background="{StaticResource Gray50}" 
-                        CornerRadius="8,8,0,0" 
-                        BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
-                        Grid.Row="0">
+            CornerRadius="8,8,0,0" 
+            BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
+            Grid.Row="0">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <!-- Client -->
+                            <ColumnDefinition Width="2*"/>
+                            <!-- Property -->
+                            <ColumnDefinition Width="2*"/>
+                            <!-- Agent -->
                             <ColumnDefinition Width="*"/>
+                            <!-- Date -->
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <!-- Payment -->
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="Sale ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="1" Text="Client ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="2" Text="Property ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="3" Text="Agent ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="4" Text="Sale Date" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="5" Text="Payment Mode" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="0" Text="Client Name" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="1" Text="Property Type" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="2" Text="Agent Name" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="3" Text="Sale Date" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="4" Text="Payment Mode" Style="{StaticResource HeaderTextStyle}"/>
                     </Grid>
                 </Border>
 
@@ -194,20 +197,18 @@
                                     <Border Style="{StaticResource HoverableRowStyle}" MouseDown="SaleRow_MouseDown">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="0" Text="{Binding SaleId}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding ClientId}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding PropertyId}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding AgentId}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="4" Text="{Binding SaleDate}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="5" Text="{Binding PaymentMode}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="0" Text="{Binding ClientName}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding PropertyType}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding AgentName}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding SaleDate}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding PaymentMode}" Style="{StaticResource CellTextStyle}"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

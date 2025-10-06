@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Real_Estate_Agencies
 {
@@ -24,6 +25,8 @@ namespace Real_Estate_Agencies
             DataContext = this;
         }
 
+        #region Add / Edit / Delete Client
+
         private void AddClient_Click(object sender, RoutedEventArgs e)
         {
             AddClientWindow addWindow = new AddClientWindow();
@@ -40,24 +43,19 @@ namespace Real_Estate_Agencies
             {
                 SelectedClient = client;
 
-                // Populate the form fields with client data
+                // Populate form fields
                 EditClientIdTextBox.Text = client.ClientId.ToString();
                 EditFirstNameTextBox.Text = client.FirstName;
                 EditLastNameTextBox.Text = client.LastName;
                 EditContactInfoTextBox.Text = client.ContactInfo;
                 EditAddressTextBox.Text = client.Address;
-
-                // Set ComboBox selection
                 EditPreferredPropertyTypeComboBox.Text = client.PreferredPropertyType;
 
-                EditPopupOverlay.Visibility = Visibility.Visible; // Show overlay
+                EditPopupOverlay.Visibility = Visibility.Visible;
             }
             else
             {
-                MessageBox.Show("No client selected.",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("No client selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -79,10 +77,7 @@ namespace Real_Estate_Agencies
             }
             else
             {
-                MessageBox.Show("Please select a client to delete.",
-                    "Warning",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageBox.Show("Please select a client to delete.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -90,32 +85,28 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                // Validate required fields
+                // Validation
                 if (string.IsNullOrWhiteSpace(EditFirstNameTextBox.Text))
                 {
-                    MessageBox.Show("First name is required.", "Validation Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("First name is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     EditFirstNameTextBox.Focus();
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(EditLastNameTextBox.Text))
                 {
-                    MessageBox.Show("Last name is required.", "Validation Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Last name is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     EditLastNameTextBox.Focus();
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(EditContactInfoTextBox.Text))
                 {
-                    MessageBox.Show("Contact info is required.", "Validation Error",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Contact info is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     EditContactInfoTextBox.Focus();
                     return;
                 }
 
-                // If we have a selected client, update the properties
                 if (SelectedClient != null)
                 {
                     SelectedClient.FirstName = EditFirstNameTextBox.Text.Trim();
@@ -124,30 +115,57 @@ namespace Real_Estate_Agencies
                     SelectedClient.Address = EditAddressTextBox.Text.Trim();
                     SelectedClient.PreferredPropertyType = EditPreferredPropertyTypeComboBox.Text.Trim();
 
-                    _repo.UpdateClient(SelectedClient);   // save changes to DB
+                    _repo.UpdateClient(SelectedClient);
 
-                    MessageBox.Show("Client updated successfully!", "Success",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     ClientsDataGrid.Items.Refresh();
                     EditPopupOverlay.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    MessageBox.Show("No client selected for editing.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("No client selected for editing.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving client: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error saving client: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void CloseEditPopup_Click(object sender, RoutedEventArgs e)
         {
-            EditPopupOverlay.Visibility = Visibility.Collapsed; // Hide overlay
+            EditPopupOverlay.Visibility = Visibility.Collapsed;
         }
+
+        #endregion
+
+        #region Profile Popup
+
+        private void ClientRow_Click(object sender, MouseButtonEventArgs e)
+        {
+            if ((sender as Grid)?.DataContext is Client client)
+            {
+                ProfileClientId.Text = client.ClientId.ToString();
+                ProfileFullName.Text = $"{client.FirstName} {client.LastName}";
+                ProfileContactInfo.Text = client.ContactInfo;
+                ProfileAddress.Text = client.Address;
+                ProfilePreferredProperty.Text = client.PreferredPropertyType;
+                ProfileBalance.Text = client.Balance.ToString("C");
+                ProfilePaymentDate.Text = client.PaymentDate.ToShortDateString();
+                ProfileAmountPaid.Text = client.AmountPaid.ToString("C");
+                ProfilePaymentType.Text = client.PaymentType;
+                ProfileStatus.Text = client.Status;
+
+                ProfilePopupOverlay.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void CloseProfilePopup_Click(object sender, RoutedEventArgs e)
+        {
+            ProfilePopupOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        #endregion
     }
 }

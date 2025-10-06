@@ -8,25 +8,23 @@
         Background="#F5F5F5">
 
     <Window.Resources>
-        <!-- Sidebar Button Style -->
+        <!-- Sidebar ToggleButton Style -->
         <Style x:Key="SidebarButtonStyle" TargetType="ToggleButton">
-            <Setter Property="Width" Value="200"/>
-            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="BtnBorder" Background="{TemplateBinding Background}" 
-                                CornerRadius="12"
-                                Width="{TemplateBinding Width}" 
-                                Height="{TemplateBinding Height}">
+                        <Border x:Name="BtnBorder" Background="{TemplateBinding Background}" CornerRadius="10"
+                                Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -41,6 +39,16 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Section Header Style -->
+        <Style x:Key="SidebarSectionStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Margin" Value="10,10,0,5"/>
+            <Setter Property="Opacity" Value="0"/>
+        </Style>
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
@@ -50,16 +58,16 @@
                 Margin="10"
                 Background="#F9E2AE"
                 DockPanel.Dock="Left"
-                Width="80"
+                Width="74"
                 MouseEnter="Sidebar_MouseEnter"
                 MouseLeave="Sidebar_MouseLeave">
 
             <StackPanel x:Name="SidebarPanel" VerticalAlignment="Top" HorizontalAlignment="Left">
 
                 <!-- Logo -->
-                <Border Width="60" Height="60"
+                <Border Width="50" Height="50"
                         Margin="10,20,10,30"
-                        CornerRadius="30"
+                        CornerRadius="25"
                         Background="#D9D9D9"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
@@ -67,66 +75,81 @@
                     <Image Source="Assets/logo.png" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Border>
 
-                <!-- Dashboard -->
-                <ToggleButton x:Name="BtnDashboard" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
+                <!-- Main Section -->
+                <TextBlock Text="Main" Style="{StaticResource SidebarSectionStyle}" x:Name="LblMainSection"/>
+                <ToggleButton x:Name="BtnDashboard" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Dashboard">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE80F;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblDashboard" Text="Dashboard" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
+                        <TextBlock Text="&#xE80F;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblDashboard" Text="Dashboard" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
                     </StackPanel>
                 </ToggleButton>
 
-                <!-- Clients -->
-                <ToggleButton x:Name="BtnClients" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
+                <!-- Management Section -->
+                <TextBlock Text="Management" Style="{StaticResource SidebarSectionStyle}" x:Name="LblManagementSection"/>
+                <ToggleButton x:Name="BtnClients" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Clients">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE77B;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblClients" Text="Clients" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
+                        <TextBlock Text="&#xE77B;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblClients" Text="Clients" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton x:Name="BtnProperties" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Properties">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE80C;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblProperties" Text="Properties" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton x:Name="BtnAgents" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Agents">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE7EF;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblAgents" Text="Agents" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
                     </StackPanel>
                 </ToggleButton>
 
-                <!-- Properties -->
-                <ToggleButton x:Name="BtnProperties" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
+                <!-- Finance Section -->
+                <TextBlock Text="Finance" Style="{StaticResource SidebarSectionStyle}" x:Name="LblFinanceSection"/>
+                <ToggleButton x:Name="BtnSales" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Sales">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE80C;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblProperties" Text="Properties" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
+                        <TextBlock Text="&#xE7BF;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblSales" Text="Sales" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton x:Name="BtnCommissions" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Commissions">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE9D2;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblCommissions" Text="Commissions" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton x:Name="BtnIncentives" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Incentives">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE9A1;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblIncentives" Text="Incentives" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
                     </StackPanel>
                 </ToggleButton>
 
-                <!-- Agents -->
-                <ToggleButton x:Name="BtnAgents" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
+                <!-- System Section -->
+                <TextBlock Text="System" Style="{StaticResource SidebarSectionStyle}" x:Name="LblSystemSection"/>
+                <ToggleButton x:Name="BtnSettings" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Settings">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE7EF;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblAgents" Text="Agents" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
+                        <TextBlock Text="&#xE713;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblSettings" Text="Settings" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
                     </StackPanel>
                 </ToggleButton>
 
-                <!-- Sales -->
-                <ToggleButton x:Name="BtnSales" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE7BF;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblSales" Text="Sales" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
-                    </StackPanel>
-                </ToggleButton>
+                <!-- Spacer -->
+                <StackPanel Height="50"/>
 
-                <!-- Commissions -->
-                <ToggleButton x:Name="BtnCommissions" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
+                <!-- Logout Button -->
+                <ToggleButton x:Name="BtnLogout" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Logout">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE9D2;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblCommissions" Text="Commissions" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
-                    </StackPanel>
-                </ToggleButton>
-
-                <!-- Incentives -->
-                <ToggleButton x:Name="BtnIncentives" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE9A1;" FontFamily="Segoe Fluent Icons" FontSize="16" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblIncentives" Text="Incentives" FontFamily="Segoe UI" FontSize="16" VerticalAlignment="Center" Margin="-50,0,0,0" Opacity="0"/>
+                        <TextBlock Text="&#xE8AC;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="LblLogout" Text="Logout" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
                     </StackPanel>
                 </ToggleButton>
 
             </StackPanel>
         </Border>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <Grid>
             <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
         </Grid>

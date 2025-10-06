@@ -158,28 +158,37 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- Pagination -->
             <Grid Grid.Row="2" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    
                     <ColumnDefinition Width="Auto"/>
+                    <!-- Left: Page info -->
                     <ColumnDefinition Width="*"/>
+                    <!-- Center: Pagination -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Right: Return button -->
+                    
                 </Grid.ColumnDefinitions>
 
+                <!-- Page Info (Left) -->
                 <TextBlock Grid.Column="0" x:Name="PageInfoTextBlock"
-                           Text="Showing 1-3 of 3 payments"
-                           VerticalAlignment="Center"
-                           Foreground="{StaticResource Gray600}"
-                           FontSize="12"
-                           Margin="0,0,16,0"
-                           HorizontalAlignment="Left"/>
+               Text="Showing 1-3 of 3 payments"
+               VerticalAlignment="Center"
+               Foreground="{StaticResource Gray600}"
+               FontSize="12"
+               HorizontalAlignment="Left"/>
 
+                <!-- Pagination Buttons (Centered) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Content="❮" Width="32" Height="32" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0" Click="PrevPageBtn_Click"/>
                     <Button Content="1" Width="32" Height="32" Background="{StaticResource PrimaryBlue}" Foreground="White" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
                     <Button Content="❯" Width="32" Height="32" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0" Click="NextPageBtn_Click"/>
                 </StackPanel>
+
+                <!-- Return Button (Right) -->
+                <Button Grid.Column="2" Content="Return" Style="{StaticResource AddButtonStyle}" Click="ReturnBtn_Click" HorizontalAlignment="Right"/>
             </Grid>
+
         </Grid>
     </Border>
 </Page>

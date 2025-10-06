@@ -11,7 +11,7 @@ namespace Real_Estate_Agencies
     {
         private List<Commission> allCommissionsModels;
         private Commission commissionToEdit;
-        private static int nextCommissionId = 4;
+        //private static int nextCommissionId = 0;
 
         public CommissionsPage()
         {

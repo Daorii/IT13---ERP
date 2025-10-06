@@ -13,16 +13,16 @@ namespace Real_Estate_Agencies
         public PropertiesViewModel ViewModel { get; set; }
         public PropertyModel SelectedProperty { get; set; }
 
-        private readonly PropertyRepository _repository; // repository instance
+        private readonly PropertyRepository _repository;
 
         public PropertiesPage()
         {
             InitializeComponent();
-            _repository = new PropertyRepository(); // initialize repository
+            _repository = new PropertyRepository();
             ViewModel = new PropertiesViewModel();
             DataContext = ViewModel;
 
-            LoadPropertiesFromDatabase(); // load existing properties
+            LoadPropertiesFromDatabase();
         }
 
         private void LoadPropertiesFromDatabase()
@@ -46,8 +46,8 @@ namespace Real_Estate_Agencies
             {
                 try
                 {
-                    _repository.Add(addWindow.NewProperty); // save to database
-                    ViewModel.Properties.Add(addWindow.NewProperty); // add to ObservableCollection
+                    _repository.Add(addWindow.NewProperty);
+                    ViewModel.Properties.Add(addWindow.NewProperty);
 
                     MessageBox.Show("Property added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -72,8 +72,8 @@ namespace Real_Estate_Agencies
                 {
                     try
                     {
-                        _repository.Delete(property.Id); // delete from database
-                        ViewModel.Properties.Remove(property); // remove from ObservableCollection
+                        _repository.Delete(property.Id);
+                        ViewModel.Properties.Remove(property);
                         MessageBox.Show("Property deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
@@ -96,7 +96,7 @@ namespace Real_Estate_Agencies
             if ((sender as Button)?.CommandParameter is PropertyModel property)
             {
                 ViewModel.SelectedProperty = property;
-                PopupOverlay.Visibility = Visibility.Visible; // show overlay
+                PopupOverlay.Visibility = Visibility.Visible;
             }
             else
             {
@@ -106,7 +106,6 @@ namespace Real_Estate_Agencies
                     MessageBoxImage.Error);
             }
         }
-
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
@@ -114,14 +113,14 @@ namespace Real_Estate_Agencies
             {
                 SelectedProperty = property;
 
-                // Populate the form fields with property data
-                EditNameTextBox.Text = property.Name;
-                EditLocationTextBox.Text = property.Location;
-                EditPropertyTypeComboBox.Text = property.PropertyType;
-                EditCategoryComboBox.Text = property.Category;
-                EditPriceTextBox.Text = property.Price.ToString();
+                TxtPropertyId.Text = property.Id.ToString();
+                TxtPropertyName.Text = property.Name;
+                TxtAddress.Text = property.Location;
+                CmbPropertyType.Text = property.PropertyType;
+                TxtPrice.Text = property.Price.ToString();
+                CmbStatus.Text = property.Status;
 
-                EditPopupOverlay.Visibility = Visibility.Visible; // Show edit overlay
+                EditPropertyOverlay.Visibility = Visibility.Visible;
             }
             else
             {
@@ -132,63 +131,62 @@ namespace Real_Estate_Agencies
             }
         }
 
-        private void SaveProperty_Click(object sender, RoutedEventArgs e)
+        private void UpdateProperty_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Validate required fields
-                if (string.IsNullOrWhiteSpace(EditNameTextBox.Text))
+                if (string.IsNullOrWhiteSpace(TxtPropertyName.Text))
                 {
                     MessageBox.Show("Property name is required.", "Validation Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditNameTextBox.Focus();
+                    TxtPropertyName.Focus();
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(EditLocationTextBox.Text))
+                if (string.IsNullOrWhiteSpace(TxtAddress.Text))
                 {
                     MessageBox.Show("Location is required.", "Validation Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditLocationTextBox.Focus();
+                    TxtAddress.Focus();
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(EditPriceTextBox.Text))
+                if (string.IsNullOrWhiteSpace(TxtPrice.Text))
                 {
                     MessageBox.Show("Price is required.", "Validation Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditPriceTextBox.Focus();
+                    TxtPrice.Focus();
                     return;
                 }
 
-                // Validate price format
-                if (!decimal.TryParse(EditPriceTextBox.Text, out decimal price) || price < 0)
+                if (!decimal.TryParse(TxtPrice.Text, out decimal price) || price < 0)
                 {
                     MessageBox.Show("Please enter a valid price.", "Validation Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditPriceTextBox.Focus();
+                    TxtPrice.Focus();
                     return;
                 }
 
                 if (SelectedProperty != null)
                 {
-                    SelectedProperty.Name = EditNameTextBox.Text.Trim();
-                    SelectedProperty.Location = EditLocationTextBox.Text.Trim();
-                    SelectedProperty.PropertyType = EditPropertyTypeComboBox.Text.Trim();
-                    SelectedProperty.Category = EditCategoryComboBox.Text.Trim();
+                    SelectedProperty.Name = TxtPropertyName.Text.Trim();
+                    SelectedProperty.Location = TxtAddress.Text.Trim();
+                    SelectedProperty.PropertyType = CmbPropertyType.Text.Trim();
                     SelectedProperty.Price = (double)price;
+                    SelectedProperty.Status = CmbStatus.Text.Trim();
 
-                    try
+                    _repository.Update(SelectedProperty);
+
+                    int index = ViewModel.Properties.IndexOf(SelectedProperty);
+                    if (index >= 0)
                     {
-                        _repository.Update(SelectedProperty); // save changes to database
-                        MessageBox.Show("Property updated successfully!", "Success",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                        EditPopupOverlay.Visibility = Visibility.Collapsed; // close overlay
+                        ViewModel.Properties.RemoveAt(index);
+                        ViewModel.Properties.Insert(index, SelectedProperty);
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error updating property: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+
+                    MessageBox.Show("Property updated successfully!", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    EditPropertyOverlay.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -203,14 +201,14 @@ namespace Real_Estate_Agencies
             }
         }
 
-        private void CloseEditPopup_Click(object sender, RoutedEventArgs e)
+        private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {
-            EditPopupOverlay.Visibility = Visibility.Collapsed; // Hide edit overlay
+            EditPropertyOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void ClosePopup_Click(object sender, RoutedEventArgs e)
         {
-            PopupOverlay.Visibility = Visibility.Collapsed; // hide view overlay
+            PopupOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void PreviousPage_Click(object sender, RoutedEventArgs e)

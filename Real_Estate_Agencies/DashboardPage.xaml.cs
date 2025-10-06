@@ -1,8 +1,13 @@
 using System;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows;
+using System.Windows.Data;
 
 namespace Real_Estate_Agencies
 {
@@ -11,14 +16,27 @@ namespace Real_Estate_Agencies
         private DispatcherTimer _scrollTimer;
         private double _scrollSpeed = 1; // pixels per tick
         private bool _scrollingRight = true; // direction
+        private DispatcherTimer _clockTimer;
 
         public DashboardPage()
         {
             InitializeComponent();
+
+            // Set DataContext
             DataContext = new DashboardViewModel();
+
+            // Animate bars after DataContext is set
+            Loaded += (s, e) =>
+            {
+                AnimateBars();
+                GenerateHourMarks();   // Add hour marks to clock
+                StartAnalogClock();    // Start live clock
+            };
         }
 
-        // Scroll with mouse wheel horizontally
+        // -----------------------------
+        // Horizontal scroll for properties
+        // -----------------------------
         private void PropertyScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (sender is ScrollViewer scrollViewer)
@@ -28,7 +46,6 @@ namespace Real_Estate_Agencies
             }
         }
 
-        // Start auto-scrolling on load
         private void TopPropertiesScrollViewer_Loaded(object sender, RoutedEventArgs e)
         {
             _scrollTimer = new DispatcherTimer
@@ -38,12 +55,10 @@ namespace Real_Estate_Agencies
             _scrollTimer.Tick += ScrollTimer_Tick;
             _scrollTimer.Start();
 
-            // Pause on hover
             TopPropertiesScrollViewer.MouseEnter += (s, ev) => _scrollTimer.Stop();
             TopPropertiesScrollViewer.MouseLeave += (s, ev) => _scrollTimer.Start();
         }
 
-        // Scroll logic
         private void ScrollTimer_Tick(object sender, EventArgs e)
         {
             if (TopPropertiesScrollViewer.ScrollableWidth == 0) return;
@@ -64,6 +79,112 @@ namespace Real_Estate_Agencies
             }
 
             TopPropertiesScrollViewer.ScrollToHorizontalOffset(newOffset);
+        }
+
+        // -----------------------------
+        // Animate Vertical Bars
+        // -----------------------------
+        private void AnimateBars()
+        {
+            if (DataContext is DashboardViewModel data)
+            {
+                AnimateBar(NewPropertiesBar, data.DashboardData.NewPropertiesProgress);
+                AnimateBar(AvgCommissionBar, data.DashboardData.AvgCommissionProgress);
+                AnimateBar(TopCategoryBar, data.DashboardData.TopCategoryProgress);
+            }
+        }
+
+        private void AnimateBar(Border bar, double progress)
+        {
+            double maxHeight = 80; // match container height
+            double targetHeight = progress * maxHeight;
+
+            var animation = new DoubleAnimation
+            {
+                From = 0,
+                To = targetHeight,
+                Duration = TimeSpan.FromMilliseconds(600),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            bar.BeginAnimation(HeightProperty, animation);
+        }
+
+        // -----------------------------
+        // Analog Clock Logic
+        // -----------------------------
+        private void GenerateHourMarks()
+        {
+            double centerX = AnalogClock.Width / 2;
+            double centerY = AnalogClock.Height / 2;
+            double radius = 60; // slightly smaller than canvas
+            int totalMarks = 12;
+
+            for (int i = 0; i < totalMarks; i++)
+            {
+                double angle = i * 30 * Math.PI / 180; // degrees to radians
+                double x1 = centerX + radius * Math.Sin(angle);
+                double y1 = centerY - radius * Math.Cos(angle);
+                double x2 = centerX + (radius - 8) * Math.Sin(angle);
+                double y2 = centerY - (radius - 8) * Math.Cos(angle);
+
+                Line mark = new Line
+                {
+                    X1 = x1,
+                    Y1 = y1,
+                    X2 = x2,
+                    Y2 = y2,
+                    Stroke = Brushes.Gray,
+                    StrokeThickness = 2,
+                    StrokeStartLineCap = PenLineCap.Round,
+                    StrokeEndLineCap = PenLineCap.Round
+                };
+
+                HourMarks.Children.Add(mark);
+            }
+        }
+
+        private void StartAnalogClock()
+        {
+            _clockTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _clockTimer.Tick += (s, e) =>
+            {
+                DateTime now = DateTime.Now;
+                double secAngle = now.Second * 6;   // 360/60
+                double minAngle = now.Minute * 6 + secAngle / 60;
+                double hourAngle = (now.Hour % 12) * 30 + minAngle / 12;
+
+                RotateTransform secRot = new RotateTransform(secAngle, 70, 70);
+                RotateTransform minRot = new RotateTransform(minAngle, 70, 70);
+                RotateTransform hourRot = new RotateTransform(hourAngle, 70, 70);
+
+                SecondHand.RenderTransform = secRot;
+                MinuteHand.RenderTransform = minRot;
+                HourHand.RenderTransform = hourRot;
+            };
+            _clockTimer.Start();
+        }
+    }
+
+    // -----------------------------
+    // Progress to Height Converter
+    // -----------------------------
+    public class ProgressToHeightConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return 0;
+            double progress = System.Convert.ToDouble(value);
+            double maxHeight = 80;
+            return progress * maxHeight;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -51,5 +51,11 @@ namespace Real_Estate_Agencies
         {
             // Implement pagination logic if needed
         }
+        private void ReturnBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (NavigationService.CanGoBack)
+                NavigationService.GoBack();
+        }
+
     }
 }

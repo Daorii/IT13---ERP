@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace Real_Estate_Agencies.Converters
+namespace Real_Estate_Agencies.Converter
 {
     public class ByteArrayToImageConverter : IValueConverter
     {

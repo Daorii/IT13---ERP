@@ -1,74 +1,152 @@
 ﻿using Real_Estate_Agencies.Data;
 using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.Repositories;
 using System;
-using System.Data.SqlClient;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Real_Estate_Agencies
 {
     public partial class AddSaleWindow : Window
     {
         public Sale NewSale { get; private set; }
+        private readonly PropertyRepository _propertyRepository;
+
+        // --- Agent Pagination ---
+        private List<string> allAgents = new List<string>
+        {
+            "Agent A", "Agent B", "Agent C", "Agent D", "Agent E",
+            "Agent F", "Agent G", "Agent H", "Agent I", "Agent J"
+        };
+        private List<string> filteredAgents = new List<string>();
+        private int currentAgentPage = 0;
+        private const int agentsPerPage = 5;
 
         public AddSaleWindow()
         {
             InitializeComponent();
+
+            _propertyRepository = new PropertyRepository();
+
             // Populate PaymentMode dropdown
             PaymentModeComboBox.Items.Add("One-time Payment");
             PaymentModeComboBox.Items.Add("Installment");
-
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        // ---------------------------
+        // CLIENT SEARCH
+        // ---------------------------
+        private void ClientSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtClientId.Text) ||
-                string.IsNullOrWhiteSpace(TxtPropertyId.Text) ||
-                string.IsNullOrWhiteSpace(TxtAgentId.Text) ||
-                !SaleDatePicker.SelectedDate.HasValue ||
-                PaymentModeComboBox.SelectedItem == null)
+            var query = ClientSearchBox.Text.ToLower();
+            if (string.IsNullOrWhiteSpace(query))
             {
-                MessageBox.Show("Please fill in all fields.", "Validation Error",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                ClientSuggestionsList.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            // ✅ Just create Sale, DO NOT insert here
-            NewSale = new Sale
+            // TODO: Replace with DB query
+            var allClients = new List<string>
             {
-                ClientId = int.Parse(TxtClientId.Text),
-                PropertyId = int.Parse(TxtPropertyId.Text),
-                AgentId = int.Parse(TxtAgentId.Text),
-                SaleDate = SaleDatePicker.SelectedDate.Value,
-                PaymentMode = PaymentModeComboBox.SelectedItem.ToString()
+                "John Smith", "Mary Johnson", "Michael Brown",
+                "Jane Williams", "Lucas Davis", "Sophia Miller"
             };
 
-            DialogResult = true; // close and return data
-            Close();
+            var matches = allClients.Where(c => c.ToLower().Contains(query)).ToList();
+            ClientSuggestionsList.ItemsSource = matches;
+            ClientSuggestionsList.Visibility = matches.Any() ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // Click handler wired in XAML: Click="Add_Click"
-        private void Add_Click(object sender, RoutedEventArgs e)
+        private void ClientSuggestionsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // validate numeric IDs
-            if (!int.TryParse(TxtClientId.Text?.Trim(), out int clientId))
+            if (ClientSuggestionsList.SelectedItem != null)
             {
-                MessageBox.Show("Invalid Client ID.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                TxtClientId.Focus();
+                ClientSearchBox.Text = ClientSuggestionsList.SelectedItem.ToString();
+                ClientSuggestionsList.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        // ---------------------------
+        // AGENT SEARCH WITH PAGINATION
+        // ---------------------------
+        private void AgentSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var query = AgentSearchBox.Text.ToLower();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                AgentSuggestionsList.Visibility = Visibility.Collapsed;
+                AgentPaginationPanel.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            if (!int.TryParse(TxtPropertyId.Text?.Trim(), out int propertyId))
+            filteredAgents = allAgents
+                .Where(a => a.ToLower().Contains(query))
+                .ToList();
+
+            currentAgentPage = 0;
+            ShowAgentPage();
+        }
+
+        private void ShowAgentPage()
+        {
+            var pageItems = filteredAgents
+                .Skip(currentAgentPage * agentsPerPage)
+                .Take(agentsPerPage)
+                .ToList();
+
+            AgentSuggestionsList.ItemsSource = pageItems;
+            AgentSuggestionsList.Visibility = pageItems.Any() ? Visibility.Visible : Visibility.Collapsed;
+
+            AgentPaginationPanel.Visibility =
+                filteredAgents.Count > agentsPerPage ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void NextAgentPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if ((currentAgentPage + 1) * agentsPerPage < filteredAgents.Count)
             {
-                MessageBox.Show("Invalid Property ID.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                TxtPropertyId.Focus();
+                currentAgentPage++;
+                ShowAgentPage();
+            }
+        }
+
+        private void PrevAgentPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentAgentPage > 0)
+            {
+                currentAgentPage--;
+                ShowAgentPage();
+            }
+        }
+
+        private void AgentSuggestionsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (AgentSuggestionsList.SelectedItem != null)
+            {
+                AgentSearchBox.Text = AgentSuggestionsList.SelectedItem.ToString();
+                AgentSuggestionsList.Visibility = Visibility.Collapsed;
+                AgentPaginationPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        // ---------------------------
+        // SAVE / CANCEL
+        // ---------------------------
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Validate entries
+            if (string.IsNullOrWhiteSpace(ClientSearchBox.Text))
+            {
+                MessageBox.Show("Please select a client.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (!int.TryParse(TxtAgentId.Text?.Trim(), out int agentId))
+            if (string.IsNullOrWhiteSpace(AgentSearchBox.Text))
             {
-                MessageBox.Show("Invalid Agent ID.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                TxtAgentId.Focus();
+                MessageBox.Show("Please select an agent.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -78,22 +156,18 @@ namespace Real_Estate_Agencies
                 return;
             }
 
-            string paymentMode = (PaymentModeComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
-
-
-            if (string.IsNullOrWhiteSpace(paymentMode))
+            string paymentMode = (PaymentModeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            if (string.IsNullOrWhiteSpace(paymentMode) || paymentMode.Contains("Select"))
             {
                 MessageBox.Show("Please select a payment mode.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Create the Sale object WITHOUT SaleId — DB will generate it
+            // Create Sale
             NewSale = new Sale
             {
-                ClientId = clientId,
-                PropertyId = propertyId,
-                AgentId = agentId,
-                SaleDate = SaleDatePicker.SelectedDate.Value, // ensure SaleDate is DateTime in model
+                // For now, just store text names instead of IDs
+                SaleDate = SaleDatePicker.SelectedDate.Value,
                 PaymentMode = paymentMode
             };
 
@@ -101,7 +175,6 @@ namespace Real_Estate_Agencies
             Close();
         }
 
-        // Click handler wired in XAML: Click="Cancel_Click"
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;

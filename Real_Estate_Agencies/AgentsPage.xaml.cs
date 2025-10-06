@@ -2,6 +2,7 @@
 using Real_Estate_Agencies.Model;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,7 +13,8 @@ namespace Real_Estate_Agencies
         private readonly AgentRepository _repo;
 
         public ObservableCollection<Agent> Agents { get; set; }
-        public Agent SelectedAgent { get; set; }
+
+        private Agent SelectedAgent; // for editing
 
         public AgentsPage()
         {
@@ -44,68 +46,24 @@ namespace Real_Estate_Agencies
             {
                 SelectedAgent = agent;
 
-                EditFirstNameTextBox.Text = agent.FirstName;
-                EditLastNameTextBox.Text = agent.LastName;
-                EditContactInfoTextBox.Text = agent.ContactInfo;
+                // Fill form fields
+                TxtAgentId.Text = agent.AgentId.ToString();
+                TxtFirstName.Text = agent.FirstName;
+                TxtLastName.Text = agent.LastName;
+                TxtContact.Text = agent.ContactInfo;
 
+                // Convert string to DateTime for DatePicker
                 if (DateTime.TryParse(agent.HireDate, out DateTime hireDate))
-                    EditHireDatePicker.SelectedDate = hireDate;
-
-                EditPopupOverlay.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MessageBox.Show("No agent selected.", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void SaveAgent_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(EditFirstNameTextBox.Text))
                 {
-                    MessageBox.Show("First name is required.", "Validation Error");
-                    return;
+                    DpHireDate.SelectedDate = hireDate;
+                }
+                else
+                {
+                    DpHireDate.SelectedDate = DateTime.Today; // Default to today if invalid
                 }
 
-                if (string.IsNullOrWhiteSpace(EditLastNameTextBox.Text))
-                {
-                    MessageBox.Show("Last name is required.", "Validation Error");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(EditContactInfoTextBox.Text))
-                {
-                    MessageBox.Show("Contact info is required.", "Validation Error");
-                    return;
-                }
-
-                if (EditHireDatePicker.SelectedDate == null)
-                {
-                    MessageBox.Show("Hire date is required.", "Validation Error");
-                    return;
-                }
-
-                if (SelectedAgent != null)
-                {
-                    SelectedAgent.FirstName = EditFirstNameTextBox.Text.Trim();
-                    SelectedAgent.LastName = EditLastNameTextBox.Text.Trim();
-                    SelectedAgent.ContactInfo = EditContactInfoTextBox.Text.Trim();
-                    SelectedAgent.HireDate = EditHireDatePicker.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
-
-                    _repo.UpdateAgent(SelectedAgent);
-
-                    MessageBox.Show("Agent updated successfully!", "Success");
-
-                    EditPopupOverlay.Visibility = Visibility.Collapsed;
-                    AgentsDataGrid.Items.Refresh();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving agent: {ex.Message}", "Error");
+                // Show overlay
+                EditAgentOverlay.Visibility = Visibility.Visible;
             }
         }
 
@@ -142,9 +100,52 @@ namespace Real_Estate_Agencies
             }
         }
 
-        private void CloseEditPopup_Click(object sender, RoutedEventArgs e)
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EditPopupOverlay.Visibility = Visibility.Collapsed;
+            string searchText = SearchTextBox.Text.Trim().ToLower();
+
+            var filtered = _repo.GetAllAgents()
+                .Where(a =>
+                    a.FirstName.ToLower().Contains(searchText) ||
+                    a.LastName.ToLower().Contains(searchText) ||
+                    a.AgentId.ToString().Contains(searchText))
+                .ToList();
+
+            Agents.Clear();
+            foreach (var a in filtered)
+                Agents.Add(a);
+        }
+
+        private void CloseEditAgentOverlay_Click(object sender, RoutedEventArgs e)
+        {
+            EditAgentOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void SaveAgent_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedAgent != null)
+            {
+                // Update the selected agent from form fields
+                SelectedAgent.FirstName = TxtFirstName.Text.Trim();
+                SelectedAgent.LastName = TxtLastName.Text.Trim();
+                SelectedAgent.ContactInfo = TxtContact.Text.Trim();
+
+                // Convert DateTime to string (yyyy-MM-dd format)
+                if (DpHireDate.SelectedDate.HasValue)
+                {
+                    SelectedAgent.HireDate = DpHireDate.SelectedDate.Value.ToString("yyyy-MM-dd");
+                }
+
+                // Update repository
+                _repo.UpdateAgent(SelectedAgent);
+
+                // Refresh ObservableCollection
+                int index = Agents.IndexOf(SelectedAgent);
+                Agents.RemoveAt(index);
+                Agents.Insert(index, SelectedAgent);
+            }
+
+            EditAgentOverlay.Visibility = Visibility.Collapsed;
         }
     }
 }

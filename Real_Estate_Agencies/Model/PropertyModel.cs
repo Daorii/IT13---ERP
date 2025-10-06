@@ -1,4 +1,6 @@
-﻿namespace Real_Estate_Agencies.Model
+﻿using System;
+
+namespace Real_Estate_Agencies.Model
 {
     public class PropertyModel
     {
@@ -11,7 +13,10 @@
         public string Location { get; set; }
         public string PropertyType { get; set; }
         public string Category { get; set; }
+
+        // Property price
         public double Price { get; set; }
+
         public string Status { get; set; }
 
         // Display order number (like row # in the table)
@@ -22,5 +27,9 @@
 
         // Optional: store image directly as byte[] if you want DB storage
         public byte[] Image { get; set; }
+
+        // ✅ New fields
+        public DateTime? SaleDate { get; set; }     // When the property was sold
+        public string PaymentMode { get; set; }     // Cash, Bank Financing, etc.
     }
 }

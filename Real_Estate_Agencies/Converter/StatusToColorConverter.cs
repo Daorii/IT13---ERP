@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Real_Estate_Agencies.Converters
+namespace Real_Estate_Agencies.Converter
 {
     public class StatusToColorConverter : IValueConverter
     {

@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add Agent"
-        Width="420" Height="570"
+        Width="420" Height="650"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
         AllowsTransparency="True"
@@ -24,55 +24,95 @@
                                   Opacity="0.35"/>
             </Border.Effect>
 
-            <StackPanel>
+            <Grid>
+                <!-- Two rows: Scrollable content + Buttons -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!-- Scrollable input + image -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Buttons -->
+                </Grid.RowDefinitions>
 
-                <!-- Title -->
-                <TextBlock Text="➕ Add New Agent"
-                           FontSize="22"
-                           FontWeight="Bold"
-                           Foreground="#FF3A4A60"
-                           Margin="0,0,0,24"
-                           HorizontalAlignment="Center"/>
+                <!-- Scrollable Content -->
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
 
-                <!-- Input Fields -->
-                <StackPanel>
-                    <TextBlock Text="Agent ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtEmployeeId"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="#F3F4F6"
-                             BorderBrush="#FFBFD6E5"
-                             BorderThickness="1"
-                             IsReadOnly="True"
-                             IsTabStop="False"
-                             Text="(Auto-generated)"/>
+                        <!-- Title -->
+                        <TextBlock Text="➕ Add New Agent"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#FF3A4A60"
+                                   Margin="0,0,0,24"
+                                   HorizontalAlignment="Center"/>
 
-                    <TextBlock Text="First Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtFirstName"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+                        <!-- Input Fields -->
+                        <StackPanel>
+                            <TextBlock Text="Agent ID" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                            <TextBox x:Name="TxtEmployeeId"
+                                     Margin="0,5,0,12" Padding="8"
+                                     Background="#F3F4F6"
+                                     BorderBrush="#FFBFD6E5"
+                                     BorderThickness="1"
+                                     IsReadOnly="True"
+                                     IsTabStop="False"
+                                     Text="(Auto-generated)"/>
 
-                    <TextBlock Text="Last Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtLastName"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+                            <TextBlock Text="First Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                            <TextBox x:Name="TxtFirstName"
+                                     Margin="0,5,0,12" Padding="8"
+                                     Background="White"
+                                     BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
-                    <TextBlock Text="Hire Date" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <DatePicker x:Name="DpHireDate"
-                                Margin="0,5,0,12" Padding="6"
-                                Background="White"
-                                BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+                            <TextBlock Text="Last Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                            <TextBox x:Name="TxtLastName"
+                                     Margin="0,5,0,12" Padding="8"
+                                     Background="White"
+                                     BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
-                    <TextBlock Text="Contact Info" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <TextBox x:Name="TxtContactInfo"
-                             Margin="0,5,0,12" Padding="8"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5" BorderThickness="1"/>
-                </StackPanel>
+                            <TextBlock Text="Hire Date" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                            <DatePicker x:Name="DpHireDate"
+                                        Margin="0,5,0,12" Padding="6"
+                                        Background="White"
+                                        BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+
+                            <TextBlock Text="Contact Info" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                            <TextBox x:Name="TxtContactInfo"
+                                     Margin="0,5,0,12" Padding="8"
+                                     Background="White"
+                                     BorderBrush="#FFBFD6E5" BorderThickness="1"/>
+
+                            <!-- Image Upload -->
+                            <TextBlock Text="Profile Image" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,12">
+                                <Button Content="Upload Image"
+                                        Width="120"
+                                        Height="32"
+                                        Background="#FFBFD6E5"
+                                        BorderBrush="#FFAACDEB"
+                                        BorderThickness="1.2"
+                                        FontWeight="SemiBold"
+                                        Cursor="Hand"
+                                        Click="UploadImageButton_Click"/>
+                                <TextBlock x:Name="TxtImagePath"
+                                           Text="No file selected"
+                                           Margin="10,5,0,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="#FF4A5568"/>
+                            </StackPanel>
+
+                            <Image x:Name="PreviewImage"
+                                   Width="150" Height="150"
+                                   Margin="0,0,0,12"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Visibility="Collapsed"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
 
                 <!-- Buttons -->
-                <StackPanel Orientation="Horizontal"
+                <StackPanel Grid.Row="1" Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             Margin="0,20,0,0">
                     <Button Content="Cancel" Width="100" Height="38"
@@ -94,7 +134,7 @@
                             Cursor="Hand"
                             Click="Add_Click"/>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Close Button -->

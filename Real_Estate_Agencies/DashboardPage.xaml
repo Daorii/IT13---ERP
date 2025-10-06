@@ -4,6 +4,8 @@
       xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       xmlns:local="clr-namespace:Real_Estate_Agencies"
       xmlns:converter="clr-namespace:Real_Estate_Agencies.Converter"
+            xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+
       Title="DashboardPage"
       Background="#F5F5F5">
 
@@ -75,30 +77,32 @@
         <StackPanel Margin="20">
 
             <!-- HEADER -->
-            <Grid Margin="0,0,0,20">
+            <!-- ========================= -->
+            <!-- DASHBOARD HEADER -->
+            <!-- ========================= -->
+            <Grid Margin="20,0,20,20">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+
                 <!-- Welcome Card -->
-                <Border Grid.Column="0" CornerRadius="25"
-        Padding="0" BorderBrush="#E0E0E0" BorderThickness="1" 
-        Margin="0,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Top" 
-        Height="120" Width="280">
+                <Border CornerRadius="25" Padding="0" BorderBrush="#E0E0E0" BorderThickness="1" 
+            HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="280">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
                     </Border.Effect>
 
                     <Grid>
-                        <!-- ✅ Rounded Clip for the Image -->
+                        <!-- Rounded Clip for the Image -->
                         <Image Source="C:\Users\maria\Pictures\Screenshots\Screenshot 2025-09-24 182619.png"
-               Stretch="Fill">
+                   Stretch="Fill">
                             <Image.Clip>
                                 <RectangleGeometry RadiusX="26" RadiusY="26" Rect="0,0,280,120"/>
                             </Image.Clip>
                         </Image>
 
-                        <!-- 🔆 Very light semi-transparent overlay -->
+                        <!-- Semi-transparent overlay -->
                         <Rectangle Fill="#19000000" RadiusX="25" RadiusY="25"/>
 
                         <!-- Text Content -->
@@ -108,20 +112,17 @@
                                     <DropShadowEffect Color="Black" BlurRadius="4" Opacity="0.6" ShadowDepth="1"/>
                                 </TextBlock.Effect>
                             </TextBlock>
-
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding CurrentDate}" FontSize="14" Foreground="White">
                                     <TextBlock.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="3" Opacity="0.6" ShadowDepth="1"/>
                                     </TextBlock.Effect>
                                 </TextBlock>
-
                                 <TextBlock Text=" • " FontSize="12" Foreground="White" Margin="4,0">
                                     <TextBlock.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="3" Opacity="0.6" ShadowDepth="1"/>
                                     </TextBlock.Effect>
                                 </TextBlock>
-
                                 <TextBlock Text="{Binding CurrentTime}" FontSize="14" Foreground="White">
                                     <TextBlock.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="3" Opacity="0.6" ShadowDepth="1"/>
@@ -132,14 +133,38 @@
                     </Grid>
                 </Border>
 
+                <!-- Fixed Analog Clock -->
+                <Canvas x:Name="AnalogClock"
+            Grid.Column="1"
+            Width="140" Height="140"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="0,30,500,0">
+                    <!-- distance from top-right corner -->
+
+                    <Ellipse Width="140" Height="140" StrokeThickness="0">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                <GradientStop Color="#FFFFFF" Offset="0"/>
+                                <GradientStop Color="#E0E0E0" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                        <Ellipse.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                        </Ellipse.Effect>
+                    </Ellipse>
+
+                    <Canvas x:Name="HourMarks" Width="140" Height="140"/>
+                    <Line x:Name="HourHand" X1="70" Y1="70" X2="70" Y2="40" Stroke="#333" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Line x:Name="MinuteHand" X1="70" Y1="70" X2="70" Y2="25" Stroke="#666" StrokeThickness="2.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Line x:Name="SecondHand" X1="70" Y1="70" X2="70" Y2="15" Stroke="#FF5252" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                    <Ellipse Width="6" Height="6" Fill="#333" Canvas.Left="67" Canvas.Top="67"/>
+                </Canvas>
 
 
 
 
-
-
-                <!-- KPI CARDS -->
-                <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -149,33 +174,129 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220">
+                    <!-- KPI Cards: Property Sales, Agents, Commission, Properties Listed -->
+
+
+                    <!-- Example: Property Sales -->
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="ScaleTransform1" ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform1" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform1" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform1" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform1" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Border.Triggers>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Property Sales" Foreground="Gray" FontSize="12"/>
-                            <TextBlock Text="{Binding DashboardData.SalesCount}" FontSize="18" FontWeight="SemiBold"/>
+                            <materialDesign:PackIcon Kind="Home" Width="28" Height="28" Foreground="#3B82F6" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Property Sales" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding DashboardData.SalesCount}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220">
+                    <!-- Agents -->
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="ScaleTransform2" ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform2" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform2" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform2" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform2" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Border.Triggers>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Agents" Foreground="Gray" FontSize="12"/>
-                            <TextBlock Text="{Binding DashboardData.AgentCount}" FontSize="18" FontWeight="SemiBold"/>
+                            <materialDesign:PackIcon Kind="AccountMultiple" Width="28" Height="28" Foreground="#F59E0B" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Agents" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding DashboardData.AgentCount}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220">
+                    <!-- Commission -->
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="ScaleTransform3" ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform3" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform3" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform3" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform3" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Border.Triggers>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Commission" Foreground="Gray" FontSize="12"/>
-                            <TextBlock Text="{Binding DashboardData.Commission}" FontSize="18" FontWeight="SemiBold"/>
+                            <materialDesign:PackIcon Kind="CashMultiple" Width="28" Height="28" Foreground="#10B981" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Commission" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding DashboardData.Commission}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220">
+                    <!-- Properties Listed -->
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="ScaleTransform4" ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform4" Storyboard.TargetProperty="ScaleX" To="1.05" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform4" Storyboard.TargetProperty="ScaleY" To="1.05" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform4" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform4" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Border.Triggers>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="Properties" Foreground="Gray" FontSize="12"/>
-                            <TextBlock Text="{Binding DashboardData.PropertiesListed}" FontSize="18" FontWeight="SemiBold"/>
+                            <materialDesign:PackIcon Kind="HomeCity" Width="28" Height="28" Foreground="#EF4444" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Properties Listed" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding DashboardData.PropertiesCount}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
+
                 </Grid>
             </Grid>
 
@@ -323,120 +444,130 @@
                             </DataGrid>
                         </Border>
                     </StackPanel>
+
+
                 </Grid>
             </StackPanel>
 
             <!-- ENHANCED ANALYTICS SECTION -->
             <StackPanel Margin="0,40,0,20">
-                <TextBlock Text="" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="0,0,0,20"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Mini Map & Top Agent -->
-                    <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Top" >
-
+                    <!-- Top Agents Panel -->
+                    <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Top">
                         <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#DDD" BorderThickness="1" Margin="0,10,0,0">
                             <StackPanel>
                                 <!-- Panel Header -->
-                                <TextBlock Text="📝 Tasks / To-Do" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,8"/>
-                                <TextBlock Text="Pending tasks related to properties or clients:" FontSize="12" Foreground="#777" Margin="0,0,0,15"/>
+                                <TextBlock Text="🏆 Top Agents" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,8"/>
+                                <TextBlock Text="Top-performing agents this month based on sales:" FontSize="12" Foreground="#777" Margin="0,0,0,15"/>
 
-                                <!-- Task Items -->
+                                <!-- Top Agent Items -->
                                 <StackPanel>
-                                    <!-- Task Item Template -->
+                                    <!-- Agent 1 -->
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0">
-                                            <CheckBox.Style>
-                                                <Style TargetType="CheckBox">
-                                                    <Setter Property="Foreground" Value="#4CAF50"/>
-                                                    <Setter Property="Background" Value="White"/>
-                                                    <Setter Property="BorderBrush" Value="#CCC"/>
-                                                    <Setter Property="BorderThickness" Value="2"/>
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="BorderBrush" Value="#4CAF50"/>
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Background" Value="#4CAF50"/>
-                                                            <Setter Property="BorderBrush" Value="#4CAF50"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </CheckBox.Style>
-                                        </CheckBox>
-                                        <TextBlock Text="Follow-up with clients" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                        <Grid Width="40" Height="40">
+                                            <Ellipse Fill="#3B82F6"/>
+                                            <TextBlock Text="A1" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <StackPanel Margin="10,0,0,0">
+                                            <TextBlock Text="Alice Johnson" FontSize="14" FontWeight="Bold" Foreground="#444"/>
+                                            <TextBlock Text="Sales: 25" FontSize="12" Foreground="#777"/>
+                                        </StackPanel>
                                     </StackPanel>
 
+                                    <!-- Agent 2 -->
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0" Style="{StaticResource {x:Type CheckBox}}"/>
-                                        <TextBlock Text="Approve listings" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                        <Grid Width="40" Height="40">
+                                            <Ellipse Fill="#F59E0B"/>
+                                            <TextBlock Text="B2" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <StackPanel Margin="10,0,0,0">
+                                            <TextBlock Text="Brian Lee" FontSize="14" FontWeight="Bold" Foreground="#444"/>
+                                            <TextBlock Text="Sales: 20" FontSize="12" Foreground="#777"/>
+                                        </StackPanel>
                                     </StackPanel>
 
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0" Style="{StaticResource {x:Type CheckBox}}"/>
-                                        <TextBlock Text="Update property status" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
-                                    </StackPanel>
-
+                                    <!-- Agent 3 -->
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <CheckBox Width="20" Height="20" Margin="0,0,10,0" Style="{StaticResource {x:Type CheckBox}}"/>
-                                        <TextBlock Text="Schedule client meetings" FontSize="14" VerticalAlignment="Center" Foreground="#444"/>
+                                        <Grid Width="40" Height="40">
+                                            <Ellipse Fill="#10B981"/>
+                                            <TextBlock Text="C3" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
+                                        <StackPanel Margin="10,0,0,0">
+                                            <TextBlock Text="Carla Diaz" FontSize="14" FontWeight="Bold" Foreground="#444"/>
+                                            <TextBlock Text="Sales: 18" FontSize="12" Foreground="#777"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
-
-
-
                     </StackPanel>
 
+                    <!-- Vertical Bar Metrics -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
 
-
-
-
-                    <!-- Mini KPI Cards / Trend Indicators -->
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Top">
-
-                        <!-- New Properties This Month -->
-                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,10">
-                            <StackPanel>
-                                <TextBlock Text="New Properties This Month" FontSize="14" Foreground="#555"/>
-                                <TextBlock Text="{Binding DashboardData.NewProperties}" FontSize="18" FontWeight="SemiBold" Margin="0,1,0,1"/>
-                                <Border Background="#E0E0E0" CornerRadius="3" Height="6" HorizontalAlignment="Stretch">
-                                    <Border Width="{Binding DashboardData.NewPropertiesProgress, Converter={StaticResource ProgressToWidthConverter}}" 
-                        Background="#4CAF50" CornerRadius="3" HorizontalAlignment="Left"/>
+                        <!-- New Properties -->
+                        <StackPanel Width="80" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                            <TextBlock Text="New Properties" FontSize="10" Foreground="#555" TextAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding DashboardData.NewProperties}" FontSize="12" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,4"/>
+                            <Border Width="20" Height="80" Background="#E0E0E0" CornerRadius="5" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                                <Border x:Name="NewPropertiesBar" Width="20" VerticalAlignment="Bottom" CornerRadius="5" Height="0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                                            <GradientStop Color="#4CAF50" Offset="0"/>
+                                            <GradientStop Color="#A5D6A7" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.3" Color="Black"/>
+                                    </Border.Effect>
                                 </Border>
-                            </StackPanel>
-                        </Border>
+                            </Border>
+                        </StackPanel>
 
-                        <!-- Average Commission -->
-                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,10">
-                            <StackPanel>
-                                <TextBlock Text="Average Commission" FontSize="14" Foreground="#555"/>
-                                <TextBlock Text="{Binding DashboardData.AvgCommission}" FontSize="18" FontWeight="SemiBold" Margin="0,1,0,1"/>
-                                <Border Background="#E0E0E0" CornerRadius="3" Height="6" HorizontalAlignment="Stretch">
-                                    <Border Width="{Binding DashboardData.AvgCommissionProgress, Converter={StaticResource ProgressToWidthConverter}}" 
-                        Background="#FF9800" CornerRadius="3" HorizontalAlignment="Left"/>
+                        <!-- Avg Commission -->
+                        <StackPanel Width="80" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                            <TextBlock Text="Avg Commission" FontSize="10" Foreground="#555" TextAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding DashboardData.AvgCommission}" FontSize="12" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,4"/>
+                            <Border Width="20" Height="80" Background="#E0E0E0" CornerRadius="5" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                                <Border x:Name="AvgCommissionBar" Width="20" VerticalAlignment="Bottom" CornerRadius="5" Height="0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                                            <GradientStop Color="#FF9800" Offset="0"/>
+                                            <GradientStop Color="#FFCC80" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.3" Color="Black"/>
+                                    </Border.Effect>
                                 </Border>
-                            </StackPanel>
-                        </Border>
+                            </Border>
+                        </StackPanel>
 
                         <!-- Top Category Sales -->
-                        <Border Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Top Category Sales" FontSize="14" Foreground="#555"/>
-                                <TextBlock Text="{Binding DashboardData.TopCategorySales}" FontSize="18" FontWeight="SemiBold" Margin="0,1,0,1"/>
-                                <Border Background="#E0E0E0" CornerRadius="3" Height="6" HorizontalAlignment="Stretch">
-                                    <Border Width="{Binding DashboardData.TopCategoryProgress, Converter={StaticResource ProgressToWidthConverter}}" 
-                        Background="#2196F3" CornerRadius="3" HorizontalAlignment="Left"/>
+                        <StackPanel Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                            <TextBlock Text="Top Category" FontSize="10" Foreground="#555" TextAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding DashboardData.TopCategorySales}" FontSize="12" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,4"/>
+                            <Border Width="20" Height="80" Background="#E0E0E0" CornerRadius="5" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                                <Border x:Name="TopCategoryBar" Width="20" VerticalAlignment="Bottom" CornerRadius="5" Height="0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                                            <GradientStop Color="#2196F3" Offset="0"/>
+                                            <GradientStop Color="#90CAF9" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.3" Color="Black"/>
+                                    </Border.Effect>
                                 </Border>
-                            </StackPanel>
-                        </Border>
+                            </Border>
+                        </StackPanel>
 
                     </StackPanel>
-
                 </Grid>
             </StackPanel>
         </StackPanel>
