@@ -249,8 +249,11 @@
                             <StackPanel Orientation="Vertical">
                                 <TextBox x:Name="TxtIncentiveId" Visibility="Collapsed"/>
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Agent Name  " FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
-                                    <TextBox x:Name="TxtAgentId" Height="40" Padding="10" BorderBrush="#E1E8ED" BorderThickness="1" Background="#F5F6FA" Foreground="#5C677D" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                    <TextBlock Text="Agent Name" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBox x:Name="TxtAgentName" Height="40" Padding="10" BorderBrush="#E1E8ED"
+         BorderThickness="1" Background="#F5F6FA" Foreground="#5C677D"
+         IsReadOnly="True" VerticalContentAlignment="Center"/>
+
                                 </StackPanel>
                                 <StackPanel Margin="0,0,0,12">
                                     <TextBlock Text="Incentive Type" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>

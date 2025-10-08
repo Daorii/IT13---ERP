@@ -55,7 +55,7 @@ namespace Real_Estate_Agencies
             if (incentive != null)
             {
                 TxtIncentiveId.Text = incentive.IncentiveId;
-                TxtAgentId.Text = incentive.AgentId;
+                TxtAgentName.Text = incentive.AgentName; // ✅ agent name field
                 CmbIncentiveType.Text = incentive.IncentiveType;
                 TxtAmount.Text = incentive.Amount.Replace("₱", "").Replace(",", "");
                 TxtReleaseDate.Text = incentive.ReleaseDate;
@@ -63,6 +63,7 @@ namespace Real_Estate_Agencies
                 EditIncentiveOverlay.Visibility = Visibility.Visible;
             }
         }
+
 
         private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {
@@ -73,35 +74,36 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                // Parse real values from the edit fields
                 int incentiveId = int.Parse(TxtIncentiveId.Text.Replace("I", ""));
-                int agentId = int.Parse(TxtAgentId.Text.Replace("A", ""));
+                var existing = allIncentives.FirstOrDefault(x => x.IncentiveId == "I" + incentiveId.ToString("D3"));
+                if (existing == null)
+                {
+                    MessageBox.Show("Incentive not found.");
+                    return;
+                }
+
                 string incentiveType = CmbIncentiveType.Text;
                 decimal amount = decimal.Parse(TxtAmount.Text);
                 DateTime releaseDate = DateTime.Parse(TxtReleaseDate.Text);
 
-                // Create actual Incentive object
+                // ✅ Convert AgentId (string) → int
+                int agentId = int.Parse(existing.AgentId);
+
                 var updatedIncentive = new Incentive
                 {
                     IncentiveId = incentiveId,
-                    AgentId = agentId,
+                    AgentId = agentId, // ✅ fixed
                     IncentiveType = incentiveType,
                     Amount = amount,
                     ReleaseDate = releaseDate
                 };
 
-                // Update DB
                 repo.UpdateIncentive(updatedIncentive);
 
-                // Update UI list
-                var displayItem = allIncentives.FirstOrDefault(x => x.IncentiveId == "I" + incentiveId.ToString("D3"));
-                if (displayItem != null)
-                {
-                    displayItem.AgentId = "A" + agentId.ToString("D3");
-                    displayItem.IncentiveType = incentiveType;
-                    displayItem.Amount = "₱" + amount.ToString("N0");
-                    displayItem.ReleaseDate = releaseDate.ToString("yyyy-MM-dd");
-                }
+                // Update UI
+                existing.IncentiveType = incentiveType;
+                existing.Amount = "₱" + amount.ToString("N0");
+                existing.ReleaseDate = releaseDate.ToString("yyyy-MM-dd");
 
                 ApplyFilter(SearchTextBox.Text);
                 MessageBox.Show("Incentive updated successfully!");
@@ -113,6 +115,8 @@ namespace Real_Estate_Agencies
 
             EditIncentiveOverlay.Visibility = Visibility.Collapsed;
         }
+
+
 
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -159,30 +163,35 @@ namespace Real_Estate_Agencies
                 searchText = searchText.ToLower();
                 filteredIncentives = allIncentives
                     .Where(x => x.IncentiveId.ToLower().Contains(searchText)
-                             || (x.AgentId != null && x.AgentId.ToLower().Contains(searchText))
+                             || (x.AgentName != null && x.AgentName.ToLower().Contains(searchText))
                              || (x.IncentiveType != null && x.IncentiveType.ToLower().Contains(searchText)))
                     .ToList();
             }
             RefreshGrid();
         }
 
+
         private IncentiveDisplayItem ConvertToDisplayItem(Incentive incentive)
         {
             return new IncentiveDisplayItem
             {
                 IncentiveId = "I" + incentive.IncentiveId.ToString("D3"),
-                AgentId = "A" + incentive.AgentId.ToString("D3"),
+                AgentId = incentive.AgentId.ToString(), // ✅ fixed: convert int → string
+                AgentName = incentive.AgentName,
                 IncentiveType = incentive.IncentiveType,
                 Amount = "₱" + incentive.Amount.ToString("N0"),
                 ReleaseDate = incentive.ReleaseDate.ToString("yyyy-MM-dd")
             };
         }
+
+
     }
 
     public class IncentiveDisplayItem
     {
         public string IncentiveId { get; set; }
         public string AgentId { get; set; }
+        public string AgentName { get; set; }             // ✅ for displa
         public string IncentiveType { get; set; }
         public string Amount { get; set; }
         public string ReleaseDate { get; set; }

@@ -1,16 +1,12 @@
-﻿using System;
-
-namespace Real_Estate_Agencies.Models
+﻿namespace Real_Estate_Agencies.Models
 {
-    public class Commission
+    public class CommissionDisplayItem
     {
-        public int CommissionId { get; set; }   // Auto-increment
-        public int SalesId { get; set; }        // FK → Sale
-        public int AgentId { get; set; }        // FK → Agent
-        public int PaymentId { get; set; }      // Auto-increment
-        public decimal CommissionRate { get; set; }
-        public decimal CommissionAmount { get; set; }
-        public string Status { get; set; }
-        public DateTime ReleaseDate { get; set; }
+        public string CommissionID { get; set; }
+        public string SalesID { get; set; }
+        public string AgentID { get; set; }
+        public string AgentName { get; set; } // ✅ this property fixes the error
+        public string CommissionAmount { get; set; }
+        public string ReleaseDate { get; set; }
     }
 }

@@ -4,6 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Real_Estate_Agencies.Models;
+using System.Configuration;
+
+
 
 namespace Real_Estate_Agencies
 {
@@ -21,15 +25,20 @@ namespace Real_Estate_Agencies
 
         private void LoadCommissions()
         {
-            allCommissionsModels = new List<Commission>
+            try
             {
-                new Commission { CommissionId = 1, SalesId = 1, AgentId = 1, CommissionAmount = 125000, ReleaseDate = new DateTime(2024, 1, 15) },
-                new Commission { CommissionId = 2, SalesId = 2, AgentId = 2, CommissionAmount = 139500, ReleaseDate = new DateTime(2024, 2, 20) },
-                new Commission { CommissionId = 3, SalesId = 3, AgentId = 3, CommissionAmount = 200000, ReleaseDate = new DateTime(2024, 3, 10) }
-            };
+                var repo = new Repository.CommissionRepository();
 
-            RefreshDataGrid();
+                var commissions = repo.GetAllCommissions();
+
+                CommissionsDataGrid.ItemsSource = commissions;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database error (GetAllCommissions): {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
 
         private void RefreshDataGrid()
         {
@@ -79,14 +88,7 @@ namespace Real_Estate_Agencies
         }
     }
 
-    public class CommissionDisplayItem
-    {
-        public string CommissionID { get; set; }
-        public string SalesID { get; set; }
-        public string AgentID { get; set; }
-        public string CommissionAmount { get; set; }
-        public string ReleaseDate { get; set; }
-    }
+   
 
     public class Commission
     {

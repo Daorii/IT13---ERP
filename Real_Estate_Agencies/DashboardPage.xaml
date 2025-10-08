@@ -76,7 +76,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="20">
 
-            <!-- HEADER -->
+
             <!-- ========================= -->
             <!-- DASHBOARD HEADER -->
             <!-- ========================= -->
@@ -87,7 +87,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Welcome Card -->
-                <Border CornerRadius="25" Padding="0" BorderBrush="#E0E0E0" BorderThickness="1" 
+                <Border CornerRadius="25" Padding="0" BorderBrush="#E0E0E0" BorderThickness="1"
             HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="280">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
@@ -178,10 +178,15 @@
 
 
                     <!-- Example: Property Sales -->
-                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                    <Border Grid.Row="0" Grid.Column="0"
+        Style="{StaticResource KpiCardStyle}"
+        Width="220" Margin="5"
+        Cursor="Hand"
+        MouseLeftButtonDown="PropertySalesCard_Click">
                         <Border.RenderTransform>
                             <ScaleTransform x:Name="ScaleTransform1" ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
+
                         <Border.Triggers>
                             <EventTrigger RoutedEvent="MouseEnter">
                                 <BeginStoryboard>
@@ -200,6 +205,7 @@
                                 </BeginStoryboard>
                             </EventTrigger>
                         </Border.Triggers>
+
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="Home" Width="28" Height="28" Foreground="#3B82F6" HorizontalAlignment="Center"/>
                             <TextBlock Text="Property Sales" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
@@ -207,11 +213,16 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Agents -->
-                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+
+                    <Border Grid.Row="0" Grid.Column="1"
+        Style="{StaticResource KpiCardStyle}"
+        Width="220" Margin="5"
+        Cursor="Hand"
+        MouseLeftButtonDown="AgentsCard_Click">
                         <Border.RenderTransform>
                             <ScaleTransform x:Name="ScaleTransform2" ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
+
                         <Border.Triggers>
                             <EventTrigger RoutedEvent="MouseEnter">
                                 <BeginStoryboard>
@@ -230,6 +241,7 @@
                                 </BeginStoryboard>
                             </EventTrigger>
                         </Border.Triggers>
+
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="AccountMultiple" Width="28" Height="28" Foreground="#F59E0B" HorizontalAlignment="Center"/>
                             <TextBlock Text="Agents" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
@@ -237,11 +249,17 @@
                         </StackPanel>
                     </Border>
 
+
                     <!-- Commission -->
-                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                    <Border Grid.Row="1" Grid.Column="0"
+        Style="{StaticResource KpiCardStyle}"
+        Width="220" Margin="5"
+        Cursor="Hand"
+        MouseLeftButtonDown="CommissionCard_Click">
                         <Border.RenderTransform>
                             <ScaleTransform x:Name="ScaleTransform3" ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
+
                         <Border.Triggers>
                             <EventTrigger RoutedEvent="MouseEnter">
                                 <BeginStoryboard>
@@ -260,6 +278,7 @@
                                 </BeginStoryboard>
                             </EventTrigger>
                         </Border.Triggers>
+
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="CashMultiple" Width="28" Height="28" Foreground="#10B981" HorizontalAlignment="Center"/>
                             <TextBlock Text="Commission" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
@@ -267,8 +286,12 @@
                         </StackPanel>
                     </Border>
 
+
                     <!-- Properties Listed -->
-                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource KpiCardStyle}" Width="220" Margin="5">
+                    <Border Grid.Row="1" Grid.Column="1"
+        Style="{StaticResource KpiCardStyle}"
+        Width="220" Margin="5"
+        MouseLeftButtonDown="PropertiesCard_Click">
                         <Border.RenderTransform>
                             <ScaleTransform x:Name="ScaleTransform4" ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
@@ -290,12 +313,14 @@
                                 </BeginStoryboard>
                             </EventTrigger>
                         </Border.Triggers>
+
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="HomeCity" Width="28" Height="28" Foreground="#EF4444" HorizontalAlignment="Center"/>
                             <TextBlock Text="Properties Listed" Foreground="Gray" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center"/>
                             <TextBlock Text="{Binding DashboardData.PropertiesCount}" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
+
 
                 </Grid>
             </Grid>

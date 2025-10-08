@@ -1,10 +1,13 @@
-﻿using Real_Estate_Agencies.Model;
+﻿using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
 
 namespace Real_Estate_Agencies
 {
@@ -13,12 +16,9 @@ namespace Real_Estate_Agencies
         public Incentive NewIncentive { get; set; }
 
         // Simulated agent data — replace with DB fetch later
-        private List<string> allAgents = new List<string>
-        {
-            "Agent A", "Agent B", "Agent C", "Agent D", "Agent E",
-            "Agent F", "Agent G", "Agent H", "Agent I", "Agent J"
-        };
-        private List<string> filteredAgents = new List<string>();
+        private List<Agent> allAgents = new List<Agent>();
+        private List<Agent> filteredAgents = new List<Agent>();
+
         private int currentAgentPage = 0;
         private const int agentsPerPage = 5;
 
@@ -28,7 +28,12 @@ namespace Real_Estate_Agencies
         {
             InitializeComponent();
             TxtReleaseDate.Text = DateTime.Now.ToString("yyyy-MM-dd");
+
+            // Load agents from DB
+            var agentRepo = new AgentRepository();
+            allAgents = agentRepo.GetAllAgents();
         }
+
 
         // ----------------------------
         // AGENT SEARCH WITH PAGINATION
@@ -44,7 +49,7 @@ namespace Real_Estate_Agencies
             }
 
             filteredAgents = allAgents
-                .Where(a => a.ToLower().Contains(query))
+                .Where(a => ($"{a.FirstName} {a.LastName}").ToLower().Contains(query))
                 .ToList();
 
             currentAgentPage = 0;
@@ -56,6 +61,7 @@ namespace Real_Estate_Agencies
             var pageItems = filteredAgents
                 .Skip(currentAgentPage * agentsPerPage)
                 .Take(agentsPerPage)
+                .Select(a => $"{a.FirstName} {a.LastName}")
                 .ToList();
 
             AgentSuggestionsList.ItemsSource = pageItems;
@@ -101,9 +107,19 @@ namespace Real_Estate_Agencies
 
             try
             {
+                var selectedAgent = allAgents.FirstOrDefault(a =>
+                    $"{a.FirstName} {a.LastName}".Equals(AgentSearchBox.Text, StringComparison.OrdinalIgnoreCase));
+
+                if (selectedAgent == null)
+                {
+                    MessageBox.Show("Please select a valid agent.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 NewIncentive = new Incentive
                 {
-                    // For now, store Agent Name only (can map to AgentId later)
+                    AgentId = selectedAgent.AgentId,
+                    AgentName = $"{selectedAgent.FirstName} {selectedAgent.LastName}",
                     IncentiveType = (CmbIncentiveType.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "",
                     Amount = decimal.Parse(TxtAmount.Text),
                     ReleaseDate = DateTime.Parse(TxtReleaseDate.Text)
@@ -117,6 +133,7 @@ namespace Real_Estate_Agencies
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private bool ValidateInput()
         {

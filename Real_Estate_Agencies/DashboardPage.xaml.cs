@@ -81,6 +81,24 @@ namespace Real_Estate_Agencies
             TopPropertiesScrollViewer.ScrollToHorizontalOffset(newOffset);
         }
 
+        private void PropertySalesCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.NavigationService?.Navigate(new PropertiesPage());
+        }
+        private void AgentsCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.NavigationService?.Navigate(new AgentsPage());
+        }
+        private void CommissionCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.NavigationService?.Navigate(new CommissionsPage());
+        }
+
+        private void PropertiesCard_Click(object sender, MouseButtonEventArgs e)
+        {
+            NavigationService.Navigate(new PropertiesPage());
+        }
+
         // -----------------------------
         // Animate Vertical Bars
         // -----------------------------
@@ -169,6 +187,7 @@ namespace Real_Estate_Agencies
         }
     }
 
+
     // -----------------------------
     // Progress to Height Converter
     // -----------------------------
@@ -186,5 +205,7 @@ namespace Real_Estate_Agencies
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

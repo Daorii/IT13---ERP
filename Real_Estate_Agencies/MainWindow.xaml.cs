@@ -138,7 +138,7 @@ namespace Real_Estate_Agencies
             else if (clicked == BtnClients) AnimateFrameContent(new ClientsPage());
             else if (clicked == BtnProperties) AnimateFrameContent(new PropertiesPage());
             else if (clicked == BtnAgents) AnimateFrameContent(new AgentsPage());
-            else if (clicked == BtnSales) NavigateToSales();
+            else if (clicked == BtnSales) MainFrame.Content = new SalesPage();
             else if (clicked == BtnCommissions) AnimateFrameContent(new CommissionsPage());
             else if (clicked == BtnIncentives) AnimateFrameContent(new IncentivesPage());
         }

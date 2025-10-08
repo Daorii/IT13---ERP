@@ -20,7 +20,12 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = "SELECT IncentiveID, AgentID, IncentiveType, Amount, ReleaseDate FROM Incentives";
+                    string sql = @"
+    SELECT i.IncentiveID, i.AgentID, a.FirstName + ' ' + a.LastName AS AgentName,
+           i.IncentiveType, i.Amount, i.ReleaseDate
+    FROM Incentives i
+    INNER JOIN Agents a ON i.AgentID = a.AgentID";
+
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     using (var reader = cmd.ExecuteReader())
@@ -31,11 +36,13 @@ namespace Real_Estate_Agencies.Data
                             {
                                 IncentiveId = reader.GetInt32(0),
                                 AgentId = reader.GetInt32(1),
-                                IncentiveType = reader.GetString(2),
-                                Amount = reader.GetDecimal(3),
-                                ReleaseDate = reader.GetDateTime(4)
+                                AgentName = reader.GetString(2),
+                                IncentiveType = reader.GetString(3),
+                                Amount = reader.GetDecimal(4),
+                                ReleaseDate = reader.GetDateTime(5)
                             });
                         }
+
                     }
                 }
             }
