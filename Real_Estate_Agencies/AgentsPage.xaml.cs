@@ -147,5 +147,31 @@ namespace Real_Estate_Agencies
 
             EditAgentOverlay.Visibility = Visibility.Collapsed;
         }
+        private void ViewAgentDetails_Click(object sender, RoutedEventArgs e)
+{
+    if ((sender as Button)?.CommandParameter is Agent agent)
+    {
+        // Populate the overlay details
+        DetailsFullName.Text = $"{agent.FirstName} {agent.LastName}";
+        DetailsContact.Text = agent.ContactInfo;
+        DetailsAgentId.Text = agent.AgentId.ToString();
+        DetailsAddress.Text = agent.Address; // Make sure your Agent model has Address
+        DetailsHireDate.Text = agent.HireDate;
+        DetailsUnitSales.Text = agent.NumberOfUnitSales.ToString(); // Add property in Agent class
+        DetailsCommissionBalance.Text = $"₱ {agent.CommissionBalance:N2}"; // Add property in Agent class
+
+        // Show image if exists
+        if (agent.ProfileBitmap != null)
+            DetailsProfileImage.Source = agent.ProfileBitmap;
+
+        // Show overlay
+        AgentDetailsOverlay.Visibility = Visibility.Visible;
+    }
+}
+
+private void CloseAgentDetailsOverlay_Click(object sender, RoutedEventArgs e)
+{
+    AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+}
     }
 }

@@ -11,7 +11,11 @@ namespace Real_Estate_Agencies.Model
         public string LastName { get; set; } = string.Empty;
         public string HireDate { get; set; } = string.Empty;    // yyyy-MM-dd
         public string ContactInfo { get; set; } = string.Empty;
-     //    public string ImagePath { get; set; } = ""; // default empty
+        public string Address { get; set; }
+        public int NumberOfUnitSales { get; set; }
+        public decimal CommissionBalance { get; set; }
+
+        //    public string ImagePath { get; set; } = ""; // default empty
 
 
         public byte[] ProfileImage { get; set; } = null;
