@@ -1,4 +1,7 @@
-﻿namespace Real_Estate_Agencies.Model
+﻿using System.Windows.Media.Imaging;
+using System.IO;
+
+namespace Real_Estate_Agencies.Model
 {
     public class Agent
     {
@@ -8,7 +11,28 @@
         public string LastName { get; set; } = string.Empty;
         public string HireDate { get; set; } = string.Empty;    // yyyy-MM-dd
         public string ContactInfo { get; set; } = string.Empty;
-        public string ImagePath { get; set; } = ""; // default empty
+     //    public string ImagePath { get; set; } = ""; // default empty
 
+
+        public byte[] ProfileImage { get; set; } = null;
+
+        public BitmapImage ProfileBitmap
+        {
+            get
+            {
+                if (ProfileImage == null || ProfileImage.Length == 0)
+                    return null;
+
+                BitmapImage bitmap = new BitmapImage();
+                using (MemoryStream ms = new MemoryStream(ProfileImage))
+                {
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.StreamSource = ms;
+                    bitmap.EndInit();
+                }
+                return bitmap;
+            }
+        }
     }
 }

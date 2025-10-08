@@ -14,6 +14,17 @@ namespace Real_Estate_Agencies
     {
         private ToggleButton ActiveButton = null;
 
+        private SalesPage salesPageInstance;
+
+        private void NavigateToSales()
+        {
+            if (salesPageInstance == null)
+                salesPageInstance = new SalesPage();
+
+            MainFrame.Content = salesPageInstance;
+        }
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,6 +39,8 @@ namespace Real_Estate_Agencies
             Sidebar.MouseEnter += Sidebar_MouseEnter;
             Sidebar.MouseLeave += Sidebar_MouseLeave;
         }
+
+
 
         private void Sidebar_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -49,6 +62,11 @@ namespace Real_Estate_Agencies
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } };
             Sidebar.BeginAnimation(WidthProperty, anim);
         }
+
+
+      
+
+
 
         private void HideAllLabels()
         {
@@ -120,10 +138,12 @@ namespace Real_Estate_Agencies
             else if (clicked == BtnClients) AnimateFrameContent(new ClientsPage());
             else if (clicked == BtnProperties) AnimateFrameContent(new PropertiesPage());
             else if (clicked == BtnAgents) AnimateFrameContent(new AgentsPage());
-            else if (clicked == BtnSales) AnimateFrameContent(new SalesPage());
+            else if (clicked == BtnSales) NavigateToSales();
             else if (clicked == BtnCommissions) AnimateFrameContent(new CommissionsPage());
             else if (clicked == BtnIncentives) AnimateFrameContent(new IncentivesPage());
         }
+
+
 
         private void AnimateFrameContent(UIElement newContent)
         {

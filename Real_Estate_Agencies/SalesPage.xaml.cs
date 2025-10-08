@@ -1,5 +1,6 @@
 ﻿using Real_Estate_Agencies.Data;
 using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +28,34 @@ namespace Real_Estate_Agencies
 
         private void LoadSales()
         {
-            AllSales = _repo.GetAllSales();
+            // Clear previous sales to prevent duplication
+            AllSales = new List<Sale>();
+
+            var salesFromDb = _repo.GetAllSales();
+            AllSales.AddRange(salesFromDb);
+
+            // map clients, agents, properties
+            var clientRepo = new ClientRepository();
+            var agentRepo = new AgentRepository();
+            var propertyRepo = new PropertyRepository();
+
+            var allClients = clientRepo.GetAllClients();
+            var allAgents = agentRepo.GetAllAgents();
+            var allProperties = propertyRepo.GetAll();
+
+            foreach (var sale in AllSales)
+            {
+                var client = allClients.FirstOrDefault(c => c.ClientId == sale.ClientId);
+                sale.ClientName = client != null ? $"{client.FirstName} {client.LastName}" : "Unknown";
+
+                var agent = allAgents.FirstOrDefault(a => a.AgentId == sale.AgentId);
+                sale.AgentName = agent != null ? $"{agent.FirstName} {agent.LastName}" : "Unknown";
+
+                var property = allProperties.FirstOrDefault(p => p.PropertyId == sale.PropertyId);
+                sale.PropertyType = property != null ? property.PropertyType : "Unknown";
+            }
         }
+
 
         private void ApplyFilter()
         {
@@ -100,10 +127,26 @@ namespace Real_Estate_Agencies
             {
                 var newSale = addWindow.NewSale;
 
-                // ✅ Only one insert happens here
+                // Insert into DB
                 _repo.AddSale(newSale);
 
+                // Option A: Add just this new sale to the list
                 AllSales.Add(newSale);
+
+                // Re-apply mapping for names and property type for this new sale
+                var clientRepo = new ClientRepository();
+                var agentRepo = new AgentRepository();
+                var propertyRepo = new PropertyRepository();
+
+                var client = clientRepo.GetAllClients().FirstOrDefault(c => c.ClientId == newSale.ClientId);
+                newSale.ClientName = client != null ? $"{client.FirstName} {client.LastName}" : "Unknown";
+
+                var agent = agentRepo.GetAllAgents().FirstOrDefault(a => a.AgentId == newSale.AgentId);
+                newSale.AgentName = agent != null ? $"{agent.FirstName} {agent.LastName}" : "Unknown";
+
+                var property = propertyRepo.GetAll().FirstOrDefault(p => p.PropertyId == newSale.PropertyId);
+                newSale.PropertyType = property != null ? property.PropertyType : "Unknown";
+
                 ApplyFilter();
             }
         }

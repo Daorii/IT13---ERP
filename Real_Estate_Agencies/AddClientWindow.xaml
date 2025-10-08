@@ -62,16 +62,7 @@
                              Background="White"
                              BorderBrush="#FFBFD6E5" BorderThickness="1"/>
 
-                    <TextBlock Text="Preferred Property Type" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                    <ComboBox x:Name="TxtPreferredType"
-                              Margin="0,5,0,12" Padding="8"
-                              Background="White"
-                              BorderBrush="#FFBFD6E5" BorderThickness="1">
-                        <ComboBoxItem Content="House"/>
-                        <ComboBoxItem Content="Condo"/>
-                        <ComboBoxItem Content="Lot"/>
-                        <ComboBoxItem Content="Apartment"/>
-                    </ComboBox>
+                 
                 </StackPanel>
 
                 <!-- Buttons -->

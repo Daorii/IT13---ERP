@@ -27,7 +27,7 @@ namespace Real_Estate_Agencies
                     LastName = TxtLastName.Text.Trim(),
                     ContactInfo = TxtContactInfo.Text.Trim(),
                     Address = TxtAddress.Text.Trim(),
-                    PreferredPropertyType = (TxtPreferredType.SelectedItem as ComboBoxItem)?.Content.ToString() ?? ""
+                   
                 };
 
                 DialogResult = true;
@@ -76,11 +76,7 @@ namespace Real_Estate_Agencies
                 return false;
             }
 
-            if (TxtPreferredType.SelectedItem == null)
-            {
-                MessageBox.Show("Please select Preferred Property Type.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
+          
 
             return true;
         }

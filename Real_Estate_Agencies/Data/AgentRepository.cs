@@ -20,7 +20,7 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = "SELECT AgentID, FirstName, LastName, HireDate, ContactInfo FROM Agents";
+                    string sql = "SELECT AgentID, FirstName, LastName, HireDate, ContactInfo, ProfileImage FROM Agents";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -35,7 +35,8 @@ namespace Real_Estate_Agencies.Data
                                 FirstName = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
                                 LastName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
                                 HireDate = reader.IsDBNull(3) ? string.Empty : reader.GetDateTime(3).ToString("yyyy-MM-dd"),
-                                ContactInfo = reader.IsDBNull(4) ? string.Empty : reader.GetString(4)
+                                ContactInfo = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
+                                ProfileImage = reader.IsDBNull(5) ? null : (byte[])reader[5]
                             });
                         }
                     }
@@ -56,9 +57,9 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = @"INSERT INTO Agents (FirstName, LastName, HireDate, ContactInfo)
-                                   VALUES (@FirstName, @LastName, @HireDate, @ContactInfo);
-                                   SELECT CAST(scope_identity() AS int);";
+                    string sql = @"INSERT INTO Agents (FirstName, LastName, HireDate, ContactInfo, ProfileImage)
+                           VALUES (@FirstName, @LastName, @HireDate, @ContactInfo, @ProfileImage);
+                           SELECT CAST(scope_identity() AS int);";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
@@ -70,7 +71,11 @@ namespace Real_Estate_Agencies.Data
 
                         cmd.Parameters.AddWithValue("@ContactInfo", agent.ContactInfo ?? string.Empty);
 
-                        agent.AgentId = (int)cmd.ExecuteScalar(); // get newly created ID
+                        // Explicitly type the ProfileImage parameter as varbinary(max)
+                        cmd.Parameters.Add("@ProfileImage", System.Data.SqlDbType.VarBinary, -1).Value =
+                            agent.ProfileImage ?? (object)DBNull.Value;
+
+                        agent.AgentId = (int)cmd.ExecuteScalar();
                     }
                 }
             }
@@ -79,6 +84,7 @@ namespace Real_Estate_Agencies.Data
                 MessageBox.Show($"Database error (AddAgent): {ex.Message}", "DB Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         public void UpdateAgent(Agent agent)
         {
@@ -89,7 +95,7 @@ namespace Real_Estate_Agencies.Data
                     conn.Open();
                     string sql = @"UPDATE Agents
                                    SET FirstName=@FirstName, LastName=@LastName, HireDate=@HireDate,
-                                       ContactInfo=@ContactInfo
+                                       ContactInfo=@ContactInfo, ProfileImage=@ProfileImage
                                    WHERE AgentID=@AgentId";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -102,6 +108,9 @@ namespace Real_Estate_Agencies.Data
                         cmd.Parameters.AddWithValue("@HireDate", hireDate);
 
                         cmd.Parameters.AddWithValue("@ContactInfo", agent.ContactInfo ?? string.Empty);
+                        cmd.Parameters.Add("@ProfileImage", System.Data.SqlDbType.VarBinary, -1).Value =
+      agent.ProfileImage ?? (object)DBNull.Value;
+
 
                         cmd.ExecuteNonQuery();
                     }
@@ -121,6 +130,7 @@ namespace Real_Estate_Agencies.Data
                 {
                     conn.Open();
                     string sql = "DELETE FROM Agents WHERE AgentID = @AgentId";
+
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@AgentId", agentId);

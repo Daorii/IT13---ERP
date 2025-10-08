@@ -10,7 +10,7 @@ namespace Real_Estate_Agencies.Model
         public string LastName { get; set; } = string.Empty;
         public string ContactInfo { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
-        public string PreferredPropertyType { get; set; } = string.Empty;
+       
 
         // Profile / payment info
         public decimal Balance { get; set; } = 0m;          // Current balance

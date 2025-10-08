@@ -72,15 +72,46 @@
                 </Grid>
 
                 <!-- PROPERTY -->
-                <TextBlock Text="Property Type" FontWeight="SemiBold" Foreground="#FF4A5568"/>
-                <ComboBox x:Name="PropertyNameComboBox"
-                          Margin="0,5,0,12" Padding="8"
-                          Background="LightGray"
-                          BorderBrush="#FFBFD6E5"
-                          BorderThickness="1"
-                          IsEnabled="False">
-                    <ComboBoxItem Content="(Auto-filled from client selection)" IsSelected="True" Foreground="Gray"/>
-                </ComboBox>
+                <TextBlock Text="Property Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
+                <Grid Margin="0,5,0,12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Search Box with placeholder -->
+                    <Grid Grid.Row="0">
+                        <TextBox x:Name="PropertySearchBox"
+                 Padding="8"
+                 Background="White"
+                 BorderBrush="#FFBFD6E5"
+                 BorderThickness="1"
+                 Height="32"
+                 IsEnabled="False"
+                 TextChanged="PropertySearchBox_TextChanged"/>
+                        <TextBlock Text="Search properties..."
+                   Foreground="Gray"
+                   Margin="12,0,0,0"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False"
+                   Visibility="{Binding Text.IsEmpty, ElementName=PropertySearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    </Grid>
+
+                    <ListBox x:Name="PropertySuggestionsList"
+             Grid.Row="1"
+             Margin="0,2,0,0"
+             Background="White"
+             BorderBrush="#FFBFD6E5"
+             BorderThickness="1"
+             MaxHeight="120"
+             Visibility="Collapsed"
+             MouseDoubleClick="PropertySuggestionsList_MouseDoubleClick"/>
+                </Grid>
+
+
+
+
+
 
                 <!-- AGENT SEARCH -->
                 <TextBlock Text="Agent" FontWeight="SemiBold" Foreground="#FF4A5568"/>
@@ -118,24 +149,7 @@
                              Visibility="Collapsed"
                              MouseDoubleClick="AgentSuggestionsList_MouseDoubleClick"/>
 
-                    <StackPanel Grid.Row="2"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Margin="0,4,0,0"
-                                Visibility="Collapsed"
-                                x:Name="AgentPaginationPanel">
-                        <Button x:Name="PrevAgentPageButton"
-                                Content="❮ Prev"
-                                Width="60"
-                                Height="24"
-                                Margin="0,0,4,0"
-                                Click="PrevAgentPageButton_Click"/>
-                        <Button x:Name="NextAgentPageButton"
-                                Content="Next ❯"
-                                Width="60"
-                                Height="24"
-                                Click="NextAgentPageButton_Click"/>
-                    </StackPanel>
+                   
                 </Grid>
 
                 <!-- SALE DATE -->
@@ -164,9 +178,9 @@
                           BorderBrush="#FFBFD6E5"
                           BorderThickness="1">
                     <ComboBoxItem Content="-- Select payment mode --" IsSelected="True" Foreground="Gray"/>
-                    <ComboBoxItem Content="Cash"/>
-                    <ComboBoxItem Content="Bank Transfer"/>
-                    <ComboBoxItem Content="Credit"/>
+                    <ComboBoxItem Content="One-time Payment"/>
+                    <ComboBoxItem Content="Installment"/>
+                    
                 </ComboBox>
 
                 <!-- BUTTONS -->

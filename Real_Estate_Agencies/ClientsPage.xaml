@@ -243,8 +243,7 @@
                         <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="3" Text="Contact Info" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="4" Text="Address" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="5" Text="Preferred Property" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="6" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="5" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
                     </Grid>
                 </Border>
 
@@ -271,9 +270,8 @@
                                             <TextBlock Grid.Column="2" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
                                             <TextBlock Grid.Column="3" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
                                             <TextBlock Grid.Column="4" Text="{Binding Address}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
-                                            <TextBlock Grid.Column="5" Text="{Binding PreferredPropertyType}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
 
-                                            <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Edit" Margin="2,0" Click="EditClient_Click" CommandParameter="{Binding}">
                                                     <TextBlock Text="✏️" FontSize="12"/>
                                                 </Button>
@@ -414,27 +412,7 @@
                                  AcceptsReturn="True"/>
                                 </StackPanel>
 
-                                <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Preferred Property Type"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="#5C677D"/>
-                                    <ComboBox x:Name="EditPreferredPropertyTypeComboBox"
-                                  Height="40"
-                                  Padding="8,4"
-                                  BorderBrush="#E1E8ED"
-                                  BorderThickness="1"
-                                  Background="White"
-                                  Foreground="#2C3E50"
-                                  VerticalContentAlignment="Center">
-                                        <ComboBoxItem Content="Apartment"/>
-                                        <ComboBoxItem Content="House"/>
-                                        <ComboBoxItem Content="Condo"/>
-                                        <ComboBoxItem Content="Townhouse"/>
-                                        <ComboBoxItem Content="Villa"/>
-                                    </ComboBox>
                                 </StackPanel>
-                            </StackPanel>
                         </ScrollViewer>
 
                         <!-- Footer Buttons -->

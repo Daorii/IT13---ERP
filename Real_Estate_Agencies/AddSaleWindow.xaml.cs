@@ -6,35 +6,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
+
+
 
 namespace Real_Estate_Agencies
 {
     public partial class AddSaleWindow : Window
     {
+
         public Sale NewSale { get; private set; }
         private readonly PropertyRepository _propertyRepository;
 
-        // --- Agent Pagination ---
-        private List<string> allAgents = new List<string>
-        {
-            "Agent A", "Agent B", "Agent C", "Agent D", "Agent E",
-            "Agent F", "Agent G", "Agent H", "Agent I", "Agent J"
-        };
-        private List<string> filteredAgents = new List<string>();
-        private int currentAgentPage = 0;
-        private const int agentsPerPage = 5;
+
+        private readonly ClientRepository _clientRepository;
+        private List<Client> allClients;
+        private List<PropertyModel> filteredProperties; // properties for the selected client
+
+        private readonly AgentRepository _agentRepository;
+        private List<Agent> allAgents;
+
+
+
 
         public AddSaleWindow()
         {
             InitializeComponent();
 
+            _clientRepository = new ClientRepository();
             _propertyRepository = new PropertyRepository();
+            _agentRepository = new AgentRepository();   // initialize here
 
-            // Populate PaymentMode dropdown
-            PaymentModeComboBox.Items.Add("One-time Payment");
-            PaymentModeComboBox.Items.Add("Installment");
+            allClients = _clientRepository.GetAllClients();
+            allAgents = _agentRepository.GetAllAgents(); // get all agents
         }
+
 
         // ---------------------------
         // CLIENT SEARCH
@@ -48,14 +55,11 @@ namespace Real_Estate_Agencies
                 return;
             }
 
-            // TODO: Replace with DB query
-            var allClients = new List<string>
-            {
-                "John Smith", "Mary Johnson", "Michael Brown",
-                "Jane Williams", "Lucas Davis", "Sophia Miller"
-            };
+            var matches = allClients
+                .Where(c => $"{c.FirstName} {c.LastName}".ToLower().Contains(query))
+                .Select(c => $"{c.FirstName} {c.LastName}")
+                .ToList();
 
-            var matches = allClients.Where(c => c.ToLower().Contains(query)).ToList();
             ClientSuggestionsList.ItemsSource = matches;
             ClientSuggestionsList.Visibility = matches.Any() ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -64,116 +68,181 @@ namespace Real_Estate_Agencies
         {
             if (ClientSuggestionsList.SelectedItem != null)
             {
-                ClientSearchBox.Text = ClientSuggestionsList.SelectedItem.ToString();
+                string selectedClientName = ClientSuggestionsList.SelectedItem.ToString();
+                ClientSearchBox.Text = selectedClientName;
                 ClientSuggestionsList.Visibility = Visibility.Collapsed;
+
+                // Load properties for this client
+                var selectedClient = allClients.FirstOrDefault(c => $"{c.FirstName} {c.LastName}" == selectedClientName);
+                if (selectedClient != null)
+                    // Enable PropertyNameComboBox
+                    PropertySearchBox.IsEnabled = true;
+                PropertySearchBox.Text = "";
+                filteredProperties = _propertyRepository.GetAll().ToList();
+                PropertySuggestionsList.ItemsSource = filteredProperties.Select(p => p.Name).ToList();
+                PropertySuggestionsList.Visibility = Visibility.Collapsed;
+                LblPrice.Content = "N/A";
+
+
+
+                PropertySuggestionsList.ItemsSource = filteredProperties.Select(p => p.Name).ToList();
+                PropertySuggestionsList.Visibility = Visibility.Collapsed;
+                PropertySearchBox.Text = "";
+                LblPrice.Content = "N/A";
+
+
+                {
+
+                }
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
         // ---------------------------
         // AGENT SEARCH WITH PAGINATION
         // ---------------------------
         private void AgentSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var query = AgentSearchBox.Text.ToLower();
+            string query = AgentSearchBox.Text.ToLower();
             if (string.IsNullOrWhiteSpace(query))
             {
                 AgentSuggestionsList.Visibility = Visibility.Collapsed;
-                AgentPaginationPanel.Visibility = Visibility.Collapsed;
                 return;
             }
 
-            filteredAgents = allAgents
-                .Where(a => a.ToLower().Contains(query))
+            var matches = allAgents
+                .Where(a => $"{a.FirstName} {a.LastName}".ToLower().Contains(query))
+                .Select(a => $"{a.FirstName} {a.LastName}")
                 .ToList();
 
-            currentAgentPage = 0;
-            ShowAgentPage();
-        }
-
-        private void ShowAgentPage()
-        {
-            var pageItems = filteredAgents
-                .Skip(currentAgentPage * agentsPerPage)
-                .Take(agentsPerPage)
-                .ToList();
-
-            AgentSuggestionsList.ItemsSource = pageItems;
-            AgentSuggestionsList.Visibility = pageItems.Any() ? Visibility.Visible : Visibility.Collapsed;
-
-            AgentPaginationPanel.Visibility =
-                filteredAgents.Count > agentsPerPage ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void NextAgentPageButton_Click(object sender, RoutedEventArgs e)
-        {
-            if ((currentAgentPage + 1) * agentsPerPage < filteredAgents.Count)
-            {
-                currentAgentPage++;
-                ShowAgentPage();
-            }
-        }
-
-        private void PrevAgentPageButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentAgentPage > 0)
-            {
-                currentAgentPage--;
-                ShowAgentPage();
-            }
+            AgentSuggestionsList.ItemsSource = matches;
+            AgentSuggestionsList.Visibility = matches.Any() ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void AgentSuggestionsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (AgentSuggestionsList.SelectedItem != null)
+            if (AgentSuggestionsList.SelectedItem == null) return;
+
+            AgentSearchBox.Text = AgentSuggestionsList.SelectedItem.ToString();
+            AgentSuggestionsList.Visibility = Visibility.Collapsed;
+        }
+
+
+
+
+
+
+
+        private void PropertySearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (filteredProperties == null || !PropertySearchBox.IsEnabled) return;
+
+            string query = PropertySearchBox.Text.ToLower();
+            var matches = filteredProperties
+                .Where(p => p.Name.ToLower().Contains(query))
+                .Select(p => p.Name)
+                .ToList();
+
+            PropertySuggestionsList.ItemsSource = matches;
+            PropertySuggestionsList.Visibility = matches.Any() ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+
+        private void PropertySuggestionsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (PropertySuggestionsList.SelectedItem != null)
             {
-                AgentSearchBox.Text = AgentSuggestionsList.SelectedItem.ToString();
-                AgentSuggestionsList.Visibility = Visibility.Collapsed;
-                AgentPaginationPanel.Visibility = Visibility.Collapsed;
+                string selectedPropertyName = PropertySuggestionsList.SelectedItem.ToString();
+                PropertySearchBox.Text = selectedPropertyName;
+                PropertySuggestionsList.Visibility = Visibility.Collapsed;
+
+                var selectedProperty = filteredProperties.FirstOrDefault(p => p.Name == selectedPropertyName);
+                if (selectedProperty != null)
+                {
+                    LblPrice.Content = selectedProperty.Price.ToString("C");
+                }
             }
         }
 
-        // ---------------------------
-        // SAVE / CANCEL
-        // ---------------------------
+
+
+
+
+
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Validate entries
-            if (string.IsNullOrWhiteSpace(ClientSearchBox.Text))
+            var selectedClient = allClients.FirstOrDefault(c => $"{c.FirstName} {c.LastName}" == ClientSearchBox.Text);
+            if (selectedClient == null)
             {
-                MessageBox.Show("Please select a client.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please select a valid client.", "Validation Error");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(AgentSearchBox.Text))
+            var selectedPropertyName = PropertySearchBox.Text;
+            if (filteredProperties == null || string.IsNullOrEmpty(selectedPropertyName))
             {
-                MessageBox.Show("Please select an agent.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please select a valid property.", "Validation Error");
                 return;
             }
 
-            if (!SaleDatePicker.SelectedDate.HasValue)
+            var selectedProperty = filteredProperties.FirstOrDefault(p => p.Name == selectedPropertyName);
+            if (selectedProperty == null)
             {
-                MessageBox.Show("Please pick a sale date.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please select a valid property.", "Validation Error");
                 return;
             }
 
-            string paymentMode = (PaymentModeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-            if (string.IsNullOrWhiteSpace(paymentMode) || paymentMode.Contains("Select"))
+            var selectedAgentName = AgentSearchBox.Text;
+            var selectedAgent = allAgents.FirstOrDefault(a => $"{a.FirstName} {a.LastName}" == selectedAgentName);
+            if (selectedAgent == null)
             {
-                MessageBox.Show("Please select a payment mode.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Please select a valid agent.", "Validation Error");
                 return;
             }
 
-            // Create Sale
+            // Create the sale with all necessary info
             NewSale = new Sale
             {
-                // For now, just store text names instead of IDs
-                SaleDate = SaleDatePicker.SelectedDate.Value,
-                PaymentMode = paymentMode
+                ClientId = selectedClient.ClientId,
+                ClientName = $"{selectedClient.FirstName} {selectedClient.LastName}", // store name for display
+                PropertyId = selectedProperty.PropertyId,
+                PropertyName = selectedProperty.Name,
+                PropertyType = selectedProperty.PropertyType, // store type for display
+                AgentId = selectedAgent.AgentId,
+                AgentName = $"{selectedAgent.FirstName} {selectedAgent.LastName}", // store name for display
+                SaleDate = SaleDatePicker.SelectedDate ?? DateTime.Now,
+                PaymentMode = (PaymentModeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()
             };
+
+            // Save to database
+            var salesRepo = new SalesRepository();
+
 
             DialogResult = true;
             Close();
         }
+
+
+
+
+
+
+
+
+
+
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {

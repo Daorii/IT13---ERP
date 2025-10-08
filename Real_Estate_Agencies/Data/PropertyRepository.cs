@@ -29,7 +29,7 @@ namespace Real_Estate_Agencies.Repositories
                             {
                                 properties.Add(new PropertyModel
                                 {
-                                    Id = reader.GetInt32(0),
+                                    PropertyId = reader.GetInt32(0),
                                     Name = reader.IsDBNull(1) ? null : reader.GetString(1),
                                     Location = reader.IsDBNull(2) ? null : reader.GetString(2),
                                     PropertyType = reader.IsDBNull(3) ? null : reader.GetString(3), // map "Type" to PropertyType

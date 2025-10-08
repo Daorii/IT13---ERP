@@ -4,6 +4,8 @@ namespace Real_Estate_Agencies.Model
 {
     public class PropertyModel
     {
+
+        public int PropertyId { get; set; }
         public int Id { get; set; }
 
         // Unique identifier you want to display (like PROP-1001)

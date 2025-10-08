@@ -19,7 +19,7 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = "SELECT ClientId, FirstName, LastName, ContactInfo, Address, PreferredPropertyType FROM Clients";
+                    string sql = "SELECT ClientId, FirstName, LastName, ContactInfo, Address FROM Clients";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -32,8 +32,7 @@ namespace Real_Estate_Agencies.Data
                                 FirstName = reader.GetString(1),
                                 LastName = reader.GetString(2),
                                 ContactInfo = reader.GetString(3),
-                                Address = reader.GetString(4),
-                                PreferredPropertyType = reader.GetString(5)
+                                Address = reader.GetString(4)
                             });
                         }
                     }
@@ -54,9 +53,9 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = @"INSERT INTO Clients (FirstName, LastName, ContactInfo, Address, PreferredPropertyType)
-                                   VALUES (@FirstName, @LastName, @ContactInfo, @Address, @PreferredPropertyType);
-                                   SELECT CAST(SCOPE_IDENTITY() AS int);";
+                    string sql = @"INSERT INTO Clients (FirstName, LastName, ContactInfo, Address)
+               VALUES (@FirstName, @LastName, @ContactInfo, @Address);
+               SELECT CAST(SCOPE_IDENTITY() AS int);";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
@@ -64,7 +63,6 @@ namespace Real_Estate_Agencies.Data
                         cmd.Parameters.AddWithValue("@LastName", client.LastName);
                         cmd.Parameters.AddWithValue("@ContactInfo", client.ContactInfo);
                         cmd.Parameters.AddWithValue("@Address", client.Address);
-                        cmd.Parameters.AddWithValue("@PreferredPropertyType", client.PreferredPropertyType);
 
                         client.ClientId = (int)cmd.ExecuteScalar();
                     }
@@ -85,10 +83,9 @@ namespace Real_Estate_Agencies.Data
                 {
                     conn.Open();
                     string sql = @"UPDATE Clients
-                                   SET FirstName=@FirstName, LastName=@LastName,
-                                       ContactInfo=@ContactInfo, Address=@Address,
-                                       PreferredPropertyType=@PreferredPropertyType
-                                   WHERE ClientId=@ClientId";
+               SET FirstName=@FirstName, LastName=@LastName,
+                   ContactInfo=@ContactInfo, Address=@Address
+               WHERE ClientId=@ClientId";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
@@ -97,7 +94,6 @@ namespace Real_Estate_Agencies.Data
                         cmd.Parameters.AddWithValue("@LastName", client.LastName);
                         cmd.Parameters.AddWithValue("@ContactInfo", client.ContactInfo);
                         cmd.Parameters.AddWithValue("@Address", client.Address);
-                        cmd.Parameters.AddWithValue("@PreferredPropertyType", client.PreferredPropertyType);
 
                         cmd.ExecuteNonQuery();
                     }

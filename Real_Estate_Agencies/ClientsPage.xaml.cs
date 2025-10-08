@@ -49,8 +49,6 @@ namespace Real_Estate_Agencies
                 EditLastNameTextBox.Text = client.LastName;
                 EditContactInfoTextBox.Text = client.ContactInfo;
                 EditAddressTextBox.Text = client.Address;
-                EditPreferredPropertyTypeComboBox.Text = client.PreferredPropertyType;
-
                 EditPopupOverlay.Visibility = Visibility.Visible;
             }
             else
@@ -113,7 +111,7 @@ namespace Real_Estate_Agencies
                     SelectedClient.LastName = EditLastNameTextBox.Text.Trim();
                     SelectedClient.ContactInfo = EditContactInfoTextBox.Text.Trim();
                     SelectedClient.Address = EditAddressTextBox.Text.Trim();
-                    SelectedClient.PreferredPropertyType = EditPreferredPropertyTypeComboBox.Text.Trim();
+
 
                     _repo.UpdateClient(SelectedClient);
 
@@ -150,7 +148,7 @@ namespace Real_Estate_Agencies
                 ProfileFullName.Text = $"{client.FirstName} {client.LastName}";
                 ProfileContactInfo.Text = client.ContactInfo;
                 ProfileAddress.Text = client.Address;
-                ProfilePreferredProperty.Text = client.PreferredPropertyType;
+               
                 ProfileBalance.Text = client.Balance.ToString("C");
                 ProfilePaymentDate.Text = client.PaymentDate.ToShortDateString();
                 ProfileAmountPaid.Text = client.AmountPaid.ToString("C");

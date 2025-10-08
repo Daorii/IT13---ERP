@@ -16,6 +16,7 @@ namespace Real_Estate_Agencies
         public AddAgentWindow()
         {
             InitializeComponent();
+            NewAgent = new Agent();
         }
 
         // New constructor for Edit mode
@@ -26,12 +27,12 @@ namespace Real_Estate_Agencies
                 isEditMode = true;
                 NewAgent = new Agent
                 {
-                    AgentId = agentToEdit.AgentId, // Preserve ID
+                    AgentId = agentToEdit.AgentId,
                     FirstName = agentToEdit.FirstName,
                     LastName = agentToEdit.LastName,
                     ContactInfo = agentToEdit.ContactInfo,
                     HireDate = agentToEdit.HireDate,
-                    ImagePath = agentToEdit.ImagePath
+                    ProfileImage = agentToEdit.ProfileImage // use bytes instead of ImagePath
                 };
 
                 // Fill form fields with existing data
@@ -40,14 +41,12 @@ namespace Real_Estate_Agencies
                 TxtContactInfo.Text = NewAgent.ContactInfo;
                 DpHireDate.SelectedDate = DateTime.TryParse(NewAgent.HireDate, out var dt) ? dt : (DateTime?)null;
 
-                if (!string.IsNullOrEmpty(NewAgent.ImagePath))
+                // Load profile image from database bytes
+                if (NewAgent.ProfileImage != null)
                 {
-                    ImagePath = NewAgent.ImagePath;
-                    TxtImagePath.Text = Path.GetFileName(ImagePath);
-
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(ImagePath);
+                    bitmap.StreamSource = new MemoryStream(NewAgent.ProfileImage);
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.EndInit();
 
@@ -67,12 +66,12 @@ namespace Real_Estate_Agencies
 
             if (openFileDialog.ShowDialog() == true)
             {
-                ImagePath = openFileDialog.FileName;
-                TxtImagePath.Text = Path.GetFileName(ImagePath);
+                string path = openFileDialog.FileName;
+                NewAgent.ProfileImage = File.ReadAllBytes(path); // store bytes
 
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri(ImagePath);
+                bitmap.StreamSource = new MemoryStream(NewAgent.ProfileImage);
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
 
@@ -94,19 +93,21 @@ namespace Real_Estate_Agencies
                 return;
             }
 
-            if (!isEditMode)
-                NewAgent = new Agent(); // Create new agent if not editing
+            // DO NOT overwrite NewAgent in Add mode
+            // if (!isEditMode)
+            //     NewAgent = new Agent(); // REMOVE this
 
             // Set properties
             NewAgent.FirstName = TxtFirstName.Text.Trim();
             NewAgent.LastName = TxtLastName.Text.Trim();
             NewAgent.ContactInfo = TxtContactInfo.Text.Trim();
             NewAgent.HireDate = DpHireDate.SelectedDate?.ToString("yyyy-MM-dd") ?? "";
-            NewAgent.ImagePath = this.ImagePath;
 
             DialogResult = true;
             Close();
         }
+
+
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
