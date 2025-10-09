@@ -10,6 +10,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Windows.Media.Effects;
+using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Model;
+
+
+
 
 namespace Real_Estate_Agencies
 {
@@ -24,6 +29,8 @@ namespace Real_Estate_Agencies
         {
             InitializeComponent();
 
+            LoadTopSoldProperties();
+
             // Set DataContext
             DataContext = new DashboardViewModel();
 
@@ -36,9 +43,23 @@ namespace Real_Estate_Agencies
             };
         }
 
+
+
+
         // -----------------------------
         // Horizontal scroll for properties
         // -----------------------------
+
+        private void LoadTopSoldProperties()
+        {
+            var repo = new DashboardRepository();
+            var topProperties = repo.GetTopSoldProperties(5);
+
+            TopPropertiesItemsControl.ItemsSource = topProperties;
+        }
+
+
+
         private void PropertyScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (sender is ScrollViewer scrollViewer)

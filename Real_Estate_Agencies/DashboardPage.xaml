@@ -13,6 +13,9 @@
         <!-- ✅ Converters -->
         <converter:StaggerDelayConverter x:Key="DelayConverter"/>
         <converter:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
+        <converter:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
+        
+        
 
         <!-- KPI Card Style -->
         <Style x:Key="KpiCardStyle" TargetType="Border">
@@ -347,7 +350,7 @@
                   CanContentScroll="True"
                   Loaded="TopPropertiesScrollViewer_Loaded"
                   PreviewMouseWheel="PropertyScrollViewer_PreviewMouseWheel">
-                            <ItemsControl ItemsSource="{Binding OnSellProperties}">
+                            <ItemsControl x:Name="TopPropertiesItemsControl">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
@@ -367,7 +370,8 @@
                             Opacity="1">
                                             <StackPanel>
                                                 <Border CornerRadius="10" BorderThickness="1" BorderBrush="#DDD" Height="140" Margin="0,0,0,8">
-                                                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill" ClipToBounds="True"/>
+                                                    <Image Source="{Binding ImagePath, Converter={StaticResource Base64ToImageConverter}}" Stretch="UniformToFill" ClipToBounds="True"/>
+
                                                 </Border>
                                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap"/>
                                                 <TextBlock Text="{Binding Location}" FontSize="12" Margin="0,2,0,0"/>
@@ -497,136 +501,65 @@
                                     <TextBlock Text="Top-performing agents this month based on sales:" FontSize="11" Foreground="#777" Margin="0,0,0,15"/>
 
                                     <!-- Top Agent Items -->
-                                    <StackPanel>
-                                        <!-- Agent 1 -->
-                                        <Button Click="Agent_Click" Tag="Alice Johnson" Background="Transparent" BorderThickness="0" Padding="5" Margin="0,0,0,8" Cursor="Hand">
-                                            <Button.RenderTransform>
-                                                <ScaleTransform x:Name="ButtonScaleTransform1" ScaleX="1" ScaleY="1"/>
-                                            </Button.RenderTransform>
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="BorderThickness" Value="0"/>
-                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="#F3F4F6"/>
-                                                                        <Setter Property="RenderTransform">
-                                                                            <Setter.Value>
-                                                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                                                            </Setter.Value>
-                                                                        </Setter>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </Button.Style>
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <Grid Width="35" Height="35">
-                                                    <Ellipse Fill="#3B82F6"/>
-                                                    <TextBlock Text="A1" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Grid>
-                                                <StackPanel Margin="10,0,0,0">
-                                                    <TextBlock Text="Alice Johnson" FontSize="13" FontWeight="Bold" Foreground="#444"/>
-                                                    <TextBlock Text="Sales: 25" FontSize="11" Foreground="#777"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Button>
+                                    <ItemsControl ItemsSource="{Binding TopAgents}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
 
-                                        <!-- Agent 2 -->
-                                        <Button Click="Agent_Click" Tag="Brian Lee" Background="Transparent" BorderThickness="0" Padding="5" Margin="0,0,0,8" Cursor="Hand">
-                                            <Button.RenderTransform>
-                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                            </Button.RenderTransform>
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="BorderThickness" Value="0"/>
-                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="#F3F4F6"/>
-                                                                        <Setter Property="RenderTransform">
-                                                                            <Setter.Value>
-                                                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                                                            </Setter.Value>
-                                                                        </Setter>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </Button.Style>
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <Grid Width="35" Height="35">
-                                                    <Ellipse Fill="#F59E0B"/>
-                                                    <TextBlock Text="B2" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Grid>
-                                                <StackPanel Margin="10,0,0,0">
-                                                    <TextBlock Text="Brian Lee" FontSize="13" FontWeight="Bold" Foreground="#444"/>
-                                                    <TextBlock Text="Sales: 20" FontSize="11" Foreground="#777"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Button>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Click="Agent_Click" Tag="{Binding Name}" Background="Transparent" BorderThickness="0" Padding="5" Margin="0,0,0,8" Cursor="Hand">
+                                                    <Button.RenderTransform>
+                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                    </Button.RenderTransform>
 
-                                        <!-- Agent 3 -->
-                                        <Button Click="Agent_Click" Tag="Carla Diaz" Background="Transparent" BorderThickness="0" Padding="5" Cursor="Hand">
-                                            <Button.RenderTransform>
-                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                            </Button.RenderTransform>
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="BorderThickness" Value="0"/>
-                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="#F3F4F6"/>
-                                                                        <Setter Property="RenderTransform">
-                                                                            <Setter.Value>
-                                                                                <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                                                            </Setter.Value>
-                                                                        </Setter>
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </Button.Style>
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <Grid Width="35" Height="35">
-                                                    <Ellipse Fill="#10B981"/>
-                                                    <TextBlock Text="C3" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Grid>
-                                                <StackPanel Margin="10,0,0,0">
-                                                    <TextBlock Text="Carla Diaz" FontSize="13" FontWeight="Bold" Foreground="#444"/>
-                                                    <TextBlock Text="Sales: 18" FontSize="11" Foreground="#777"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Button>
-                                    </StackPanel>
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Background" Value="Transparent"/>
+                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#F3F4F6"/>
+                                                                                <Setter Property="RenderTransform">
+                                                                                    <Setter.Value>
+                                                                                        <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <!-- Circle with Initials -->
+                                                        <Grid Width="35" Height="35">
+                                                            <Ellipse Fill="#3B82F6"/>
+                                                            <TextBlock Text="{Binding Initials}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Grid>
+
+                                                        <!-- Agent Info -->
+                                                        <StackPanel Margin="10,0,0,0">
+                                                            <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="Bold" Foreground="#444"/>
+                                                            <TextBlock Text="{Binding TotalSales, StringFormat=Sales: {0}}" FontSize="11" Foreground="#777"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
                                 </StackPanel>
                             </Border>
                         </StackPanel>

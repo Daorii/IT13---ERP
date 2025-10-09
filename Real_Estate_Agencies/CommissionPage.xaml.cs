@@ -40,6 +40,7 @@ namespace Real_Estate_Agencies
         }
 
 
+
         private void RefreshDataGrid()
         {
             CommissionsDataGrid.ItemsSource = null;

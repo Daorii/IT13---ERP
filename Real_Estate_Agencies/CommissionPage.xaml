@@ -114,37 +114,38 @@
 
             </Grid>
 
+            
 
             <!-- Header + List -->
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
 
-                <!-- Header -->
-                <Border Background="White" CornerRadius="8,8,0,0" BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0" Grid.Row="0">
-                    <Grid Background="{StaticResource Gray50}">
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Header -->
+                        <RowDefinition Height="*"/>
+                        <!-- Rows -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Header Row -->
+                    <Grid Grid.Row="0" Background="{StaticResource Gray50}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" MinWidth="100"/>
                             <ColumnDefinition Width="*" MinWidth="100"/>
-                            <ColumnDefinition Width="*" MinWidth="100"/>
+                            <ColumnDefinition Width="*" MinWidth="120"/>
                             <ColumnDefinition Width="*" MinWidth="120"/>
                             <ColumnDefinition Width="*" MinWidth="100"/>
-                            <ColumnDefinition Width="*" MinWidth="120"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Commission ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="1" Text="Sales ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="2" Text="Agent Name" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="3" Text="Commission Amount" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="4" Text="Release Date" Style="{StaticResource HeaderTextStyle}"/>
-                    </Grid>
-                </Border>
 
-                <!-- List -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Background="White">
-                    <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
-                        <ItemsControl x:Name="CommissionsDataGrid" ItemsSource="{Binding Commissions}">
+                        <TextBlock Grid.Column="0" Text="Commission ID" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Sales ID" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Agent ID" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="3" Text="Amount" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="4" Text="Release Date" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Rows -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Background="White">
+                        <ItemsControl x:Name="CommissionsDataGrid">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
@@ -152,30 +153,26 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" MinWidth="100"/>
                                                 <ColumnDefinition Width="*" MinWidth="100"/>
-                                                <ColumnDefinition Width="*" MinWidth="100"/>
+                                                <ColumnDefinition Width="*" MinWidth="120"/>
                                                 <ColumnDefinition Width="*" MinWidth="120"/>
                                                 <ColumnDefinition Width="*" MinWidth="100"/>
-                                                <ColumnDefinition Width="*" MinWidth="120"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0" Text="{Binding CommissionID}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
                                             <TextBlock Grid.Column="1" Text="{Binding SalesID}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding AgentName}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding AgentID}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
                                             <TextBlock Grid.Column="3" Text="{Binding CommissionAmount}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
                                             <TextBlock Grid.Column="4" Text="{Binding ReleaseDate}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
-
-                                            <!-- View button -->
-
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </Border>
-                </ScrollViewer>
-            </Grid>
+                    </ScrollViewer>
+                </Grid>
 
-            <!-- Pagination -->
+
+                <!-- Pagination -->
             <Grid Grid.Row="2" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

@@ -5,6 +5,10 @@ using System.Windows.Threading;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using Real_Estate_Agencies.Model;
+using System.Windows;
+using Real_Estate_Agencies.Data;
+
+
 
 namespace Real_Estate_Agencies
 {
@@ -51,13 +55,17 @@ namespace Real_Estate_Agencies
                 TopCategoryProgress = 75
             };
 
-            // Top Properties Sample
-            OnSellProperties = new List<PropertyModel>
+            try
             {
-                new PropertyModel { Id=1, Code="PROP-10001", Name="Condo A", PropertyType="Condo", Location="Makati", Price=120000, Category="Residential", Status="On Sale", ImagePath="C:\\Users\\maria\\Downloads\\iStock-1330454158-1-1.jpg" },
-                new PropertyModel { Id=2, Code="PROP-10002", Name="House B", PropertyType="House", Location="Taguig", Price=200000, Category="Residential", Status="Sold", ImagePath="C:\\Users\\maria\\Downloads\\frames-for-your-heart-2d4lAQAlbDA-unsplash.jpg" },
-                new PropertyModel { Id=3, Code="PROP-10003", Name="Lot C", PropertyType="Lot", Location="Quezon City", Price=95000, Category="Residential", Status="Rented", ImagePath="C:\\Users\\maria\\Downloads\\vacant-lot-presumably-mactan-island-cebu-philippines-residential-homes-visible-background-84593803.jpg" }
-            };
+                var repo = new DashboardRepository();
+                OnSellProperties = repo.GetTopSoldProperties(5);
+                TopAgents = repo.GetTopAgents(5); // dynamically load top agents
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading top properties: {ex.Message}");
+            }
+
 
             // Pie Chart
             PieSeries = new ISeries[]
@@ -109,6 +117,9 @@ namespace Real_Estate_Agencies
 
         // Top Properties
         public List<PropertyModel> OnSellProperties { get; set; }
+
+        public List<AgentPerformanceModel> TopAgents { get; set; }
+
 
         // Charts
         public ISeries[] PieSeries { get; set; }
