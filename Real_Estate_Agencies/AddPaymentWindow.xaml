@@ -34,10 +34,22 @@
 
                 <!-- Payment ID -->
 
+                <!-- Unit Price -->
+                <TextBlock Text="Unit Price" FontWeight="SemiBold" Foreground="#444"/>
+                <TextBox x:Name="TxtUnitPrice"
+                         Margin="0,5,0,12"
+                         Padding="8"
+                         IsReadOnly="True"
+                         Background="#FFF5F5F5"/>
+
 
                 <!-- Amount -->
                 <TextBlock Text="Amount" FontWeight="SemiBold" Foreground="#444"/>
-                <TextBox x:Name="TxtAmount" Margin="0,5,0,12" Padding="8"/>
+                <TextBox x:Name="TxtAmount"
+                         Margin="0,5,0,12"
+                         Padding="8"
+                         IsReadOnly="True"
+                         Background="#FFF5F5F5"/>
 
                 <!-- Payment Date -->
                 <TextBlock Text="Payment Date" FontWeight="SemiBold" Foreground="#444"/>

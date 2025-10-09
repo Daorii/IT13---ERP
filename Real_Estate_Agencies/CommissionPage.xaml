@@ -68,9 +68,15 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Search only (Rate button removed) -->
+            <!-- Search bar + Logs button -->
             <Grid Grid.Row="0" Margin="0,0,0,24">
-                <Border Background="White" CornerRadius="8" BorderBrush="{StaticResource Gray200}" BorderThickness="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Search Bar -->
+                <Border Grid.Column="0" Background="White" CornerRadius="8" BorderBrush="{StaticResource Gray200}" BorderThickness="1" Margin="0,0,12,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -81,7 +87,33 @@
                         <TextBlock Grid.Column="1" Text="Search commissions..." x:Name="PlaceholderText" Foreground="{StaticResource Gray400}" IsHitTestVisible="False" VerticalAlignment="Center" Margin="0,12"/>
                     </Grid>
                 </Border>
+
+                <!-- Logs Button -->
+                <Button Grid.Column="1"
+        Content="Logs"
+        Width="100"
+        Height="40"
+        Background="{StaticResource PrimaryBlue}"
+        Foreground="White"
+        FontWeight="SemiBold"
+        BorderThickness="0"
+        Cursor="Hand"
+        Click="LogsButton_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                    CornerRadius="8"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+
             </Grid>
+
 
             <!-- Header + List -->
             <Grid Grid.Row="1">
@@ -106,7 +138,6 @@
                         <TextBlock Grid.Column="2" Text="Agent Name" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="3" Text="Commission Amount" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="4" Text="Release Date" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="5" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
                     </Grid>
                 </Border>
 
@@ -134,11 +165,7 @@
                                             <TextBlock Grid.Column="4" Text="{Binding ReleaseDate}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
 
                                             <!-- View button -->
-                                            <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="View" Margin="2,0" Click="EditButton_Click" CommandParameter="{Binding}">
-                                                    <TextBlock Text="👁️" FontSize="12"/>
-                                                </Button>
-                                            </StackPanel>
+
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

@@ -21,15 +21,18 @@ namespace Real_Estate_Agencies.Data
                 {
                     conn.Open();
                     string sql = @"
-                SELECT 
-                    s.SaleID, s.ClientID, s.PropertyID, s.PropertyName, s.AgentID, s.SaleDate, s.PaymentMode,
-                    c.FirstName + ' ' + c.LastName AS ClientName,
-                    a.FirstName + ' ' + a.LastName AS AgentName,
-                    p.Type AS PropertyType
-                FROM Sales s
-                LEFT JOIN Clients c ON s.ClientID = c.ClientID
-                LEFT JOIN Agents a ON s.AgentID = a.AgentID
-                LEFT JOIN Properties p ON s.PropertyID = p.PropertyId";
+SELECT 
+    s.SaleID, s.ClientID, s.PropertyID, s.PropertyName, s.AgentID, s.SaleDate, s.PaymentMode,
+    ISNULL(c.FirstName + ' ' + c.LastName, 'Unknown') AS ClientName,
+    ISNULL(a.FirstName + ' ' + a.LastName, 'Unknown') AS AgentName,
+    ISNULL(p.Type, '') AS PropertyType
+FROM Sales s
+LEFT JOIN Clients c ON s.ClientID = c.ClientID
+LEFT JOIN Agents a ON s.AgentID = a.AgentID
+LEFT JOIN Properties p ON s.PropertyID = p.PropertyId
+ORDER BY s.SaleDate DESC;";
+
+
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -43,7 +46,7 @@ namespace Real_Estate_Agencies.Data
                                 PropertyId = reader.GetInt32(2),
                                 PropertyName = reader.GetString(3),
                                 AgentId = reader.GetInt32(4),
-                                SaleDate = reader.GetDateTime(5),
+                                SaleDate = reader.GetDateTime(5).Date,
                                 PaymentMode = reader.GetString(6),
                                 ClientName = reader.IsDBNull(7) ? "" : reader.GetString(7),
                                 AgentName = reader.IsDBNull(8) ? "" : reader.GetString(8),
@@ -59,6 +62,59 @@ namespace Real_Estate_Agencies.Data
             }
             return sales;
         }
+
+
+        public (decimal balance, string paymentType, string status) GetClientSaleInfo(int clientId)
+        {
+            decimal balance = 0;
+            string paymentType = "N/A";
+            string status = "On-going";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+
+                    string sql = @"
+                SELECT 
+                    ISNULL(pr.Price, 0) AS PropertyPrice,
+                    s.PaymentMode,
+                    ISNULL(SUM(p.Amount), 0) AS TotalPaid
+                FROM Sales s
+                INNER JOIN Properties pr ON s.PropertyID = pr.PropertyID
+                LEFT JOIN Payments p ON s.SaleID = p.SaleID
+                WHERE s.ClientID = @ClientID
+                GROUP BY pr.Price, s.PaymentMode";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ClientID", clientId);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                decimal propertyPrice = reader.GetDecimal(0);
+                                paymentType = reader.IsDBNull(1) ? "N/A" : reader.GetString(1);
+                                decimal totalPaid = reader.GetDecimal(2);
+
+                                balance = propertyPrice - totalPaid;
+                                status = balance <= 0 ? "Paid" : "On-going";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error fetching client sale info: {ex.Message}",
+                                "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return (balance, paymentType, status);
+        }
+
 
 
 

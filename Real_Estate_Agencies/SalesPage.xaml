@@ -141,6 +141,7 @@
                             <ComboBox x:Name="SortComboBox" Width="160" Height="32" Background="Transparent"
                                       SelectionChanged="SortComboBox_SelectionChanged">
                                 <ComboBoxItem Content="Date" IsSelected="True"/>
+
                                 <ComboBoxItem Content="Client"/>
                             </ComboBox>
                         </Border>
@@ -207,7 +208,8 @@
                                             <TextBlock Grid.Column="0" Text="{Binding ClientName}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="1" Text="{Binding PropertyType}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="2" Text="{Binding AgentName}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="3" Text="{Binding SaleDate}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding SaleDate, StringFormat={}{0:yyyy-MM-dd}}" Style="{StaticResource CellTextStyle}"/>
+
                                             <TextBlock Grid.Column="4" Text="{Binding PaymentMode}" Style="{StaticResource CellTextStyle}"/>
                                         </Grid>
                                     </Border>

@@ -43,39 +43,49 @@ namespace Real_Estate_Agencies
             var allAgents = agentRepo.GetAllAgents();
             var allProperties = propertyRepo.GetAll();
 
-            foreach (var sale in AllSales)
-            {
-                var client = allClients.FirstOrDefault(c => c.ClientId == sale.ClientId);
-                sale.ClientName = client != null ? $"{client.FirstName} {client.LastName}" : "Unknown";
-
-                var agent = allAgents.FirstOrDefault(a => a.AgentId == sale.AgentId);
-                sale.AgentName = agent != null ? $"{agent.FirstName} {agent.LastName}" : "Unknown";
-
-                var property = allProperties.FirstOrDefault(p => p.PropertyId == sale.PropertyId);
-                sale.PropertyType = property != null ? property.PropertyType : "Unknown";
-            }
+           
         }
 
 
         private void ApplyFilter()
         {
+            if (AllSales == null) return;
+
             DateTime? from = FromDatePicker?.SelectedDate;
             DateTime? to = ToDatePicker?.SelectedDate;
 
-            FilteredSales = AllSales?
-     .Where(s => (!from.HasValue || s.SaleDate >= from.Value) &&
-                 (!to.HasValue || s.SaleDate <= to.Value))
-     .ToList() ?? new List<Sale>();
+            // If both are null, skip date filtering
+            var query = AllSales.AsEnumerable();
+            if (from.HasValue)
+                query = query.Where(s => s.SaleDate >= from.Value);
+            if (to.HasValue)
+                query = query.Where(s => s.SaleDate <= to.Value);
 
-            if (SortComboBox?.SelectedIndex == 0)
-                FilteredSales = FilteredSales.OrderBy(s => s.SaleDate).ToList();
-            else if (SortComboBox?.SelectedIndex == 1)
-                FilteredSales = FilteredSales.OrderByDescending(s => s.SaleDate).ToList();
+            FilteredSales = query.ToList();
 
+            int sortIndex = SortComboBox?.SelectedIndex ?? 0;
+
+            if (sortIndex == 1) // Sort by client
+            {
+                FilteredSales = FilteredSales
+                    .OrderBy(s => string.IsNullOrWhiteSpace(s.ClientName) ? s.ClientId.ToString() : s.ClientName, StringComparer.CurrentCultureIgnoreCase)
+                    .ToList();
+            }
+            else // Sort by date (default)
+            {
+                // Sort newest first — if same date, latest SaleId first
+                FilteredSales = FilteredSales
+                    .OrderByDescending(s => s.SaleDate)
+                    .ThenByDescending(s => s.SaleId)
+                    .ToList();
+            }
 
             CurrentPage = 1;
             RefreshPage();
         }
+
+
+
 
         private void RefreshPage()
         {
@@ -132,6 +142,9 @@ namespace Real_Estate_Agencies
 
                 // Option A: Add just this new sale to the list
                 AllSales.Add(newSale);
+
+                // Always keep newest first
+                AllSales = AllSales.OrderByDescending(s => s.SaleDate).ToList();
 
                 // Re-apply mapping for names and property type for this new sale
                 var clientRepo = new ClientRepository();

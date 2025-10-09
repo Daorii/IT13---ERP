@@ -27,28 +27,10 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                // ✅ Just call the repo without parameters
                 var repo = new Repository.CommissionRepository();
 
                 var commissions = repo.GetAllCommissions();
 
-                // ✅ Save for View/Edit logic
-                allCommissionsModels = commissions
-                    .Select(c => new Commission
-                    {
-                        CommissionId = int.Parse(c.CommissionID.Substring(1)),
-                        SalesId = int.Parse(c.SalesID.Substring(1)),
-                        AgentId = int.Parse(c.AgentID.Substring(1)),
-                        CommissionAmount = decimal.Parse(
-                            c.CommissionAmount,
-                            System.Globalization.NumberStyles.Currency,
-                            new System.Globalization.CultureInfo("en-PH")
-                        ),
-                        ReleaseDate = DateTime.Parse(c.ReleaseDate)
-                    })
-                    .ToList();
-
-                // ✅ Bind to DataGrid
                 CommissionsDataGrid.ItemsSource = commissions;
             }
             catch (Exception ex)
@@ -56,8 +38,6 @@ namespace Real_Estate_Agencies
                 MessageBox.Show($"Database error (GetAllCommissions): {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
 
 
         private void RefreshDataGrid()
@@ -77,12 +57,6 @@ namespace Real_Estate_Agencies
             int commissionId = int.Parse(displayItem.CommissionID.Substring(1));
             commissionToEdit = allCommissionsModels.FirstOrDefault(c => c.CommissionId == commissionId);
 
-            if (allCommissionsModels == null || allCommissionsModels.Count == 0)
-            {
-                MessageBox.Show("No commissions available.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
             if (commissionToEdit != null)
             {
                 TxtCommissionId.Text = "C" + commissionToEdit.CommissionId.ToString("D3");
@@ -94,6 +68,12 @@ namespace Real_Estate_Agencies
                 EditCommissionOverlay.Visibility = Visibility.Visible;
             }
         }
+        private void LogsButton_Click(object sender, RoutedEventArgs e)
+        {
+            LogsPage logsPage = new LogsPage();
+            this.NavigationService?.Navigate(logsPage);
+        }
+
 
         private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {
@@ -114,7 +94,7 @@ namespace Real_Estate_Agencies
         }
     }
 
-   
+
 
     public class Commission
     {

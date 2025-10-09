@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows.Data;
+using System.Windows.Media.Effects;
 
 namespace Real_Estate_Agencies
 {
@@ -25,7 +27,7 @@ namespace Real_Estate_Agencies
             // Set DataContext
             DataContext = new DashboardViewModel();
 
-            // Animate bars after DataContext is set
+            // Animate bars and start clock after DataContext is set
             Loaded += (s, e) =>
             {
                 AnimateBars();
@@ -81,15 +83,20 @@ namespace Real_Estate_Agencies
             TopPropertiesScrollViewer.ScrollToHorizontalOffset(newOffset);
         }
 
-        private void PropertySalesCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        // -----------------------------
+        // KPI Cards Click
+        // -----------------------------
+        private void PropertySalesCard_Click(object sender, MouseButtonEventArgs e)
         {
             this.NavigationService?.Navigate(new PropertiesPage());
         }
-        private void AgentsCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+        private void AgentsCard_Click(object sender, MouseButtonEventArgs e)
         {
             this.NavigationService?.Navigate(new AgentsPage());
         }
-        private void CommissionCard_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+        private void CommissionCard_Click(object sender, MouseButtonEventArgs e)
         {
             this.NavigationService?.Navigate(new CommissionsPage());
         }
@@ -104,12 +111,7 @@ namespace Real_Estate_Agencies
         // -----------------------------
         private void AnimateBars()
         {
-            if (DataContext is DashboardViewModel data)
-            {
-                AnimateBar(NewPropertiesBar, data.DashboardData.NewPropertiesProgress);
-                AnimateBar(AvgCommissionBar, data.DashboardData.AvgCommissionProgress);
-                AnimateBar(TopCategoryBar, data.DashboardData.TopCategoryProgress);
-            }
+            // Optional: Implement bar animations here
         }
 
         private void AnimateBar(Border bar, double progress)
@@ -185,8 +187,58 @@ namespace Real_Estate_Agencies
             };
             _clockTimer.Start();
         }
-    }
 
+        // -----------------------------
+        // Top Agent Click
+        // -----------------------------
+        private void Agent_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string agentName)
+            {
+                var recentDeals = new List<Deal>
+                {
+                    new Deal { Property = "House A", Price = "$20,000", Date = "2025-09-01" },
+                    new Deal { Property = "Condo B", Price = "$15,000", Date = "2025-09-05" },
+                    new Deal { Property = "Lot C", Price = "$10,000", Date = "2025-09-10" }
+                };
+
+                // Create the modal
+                var modal = new TopAgentModal();
+                modal.SetAgentData(agentName, 25, "$50,000", 12, recentDeals);
+
+                // Wrap modal in a border to apply corner radius and shadow
+                var borderWrapper = new Border
+                {
+                    CornerRadius = new CornerRadius(15),
+                    Background = Brushes.White,
+                    Child = modal,
+                    Padding = new Thickness(0),
+                    Effect = new DropShadowEffect
+                    {
+                        Color = Colors.Black,
+                        BlurRadius = 10,
+                        Opacity = 0.2,
+                        ShadowDepth = 2
+                    },
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                // Create overlay
+                var overlay = new Grid
+                {
+                    Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0)) // semi-transparent black
+                };
+                overlay.Children.Add(borderWrapper);
+
+                // Add overlay to main grid
+                MainGrid.Children.Add(overlay);
+
+                // Close modal on button click inside modal
+                modal.CloseClicked += () => MainGrid.Children.Remove(overlay);
+            }
+        }
+    }
 
     // -----------------------------
     // Progress to Height Converter
@@ -205,7 +257,5 @@ namespace Real_Estate_Agencies
         {
             throw new NotImplementedException();
         }
-
-
     }
 }

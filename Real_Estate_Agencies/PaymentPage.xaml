@@ -99,7 +99,13 @@
 
                 <TextBlock Grid.Column="0" x:Name="SaleIdTextBlock" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
 
-                <Button Grid.Column="1" Content="Add Payment" Style="{StaticResource AddButtonStyle}" Click="AddPayment_Click" Margin="16,0,0,0"/>
+                <Button x:Name="AddPaymentButton"
+        Grid.Column="1"
+        Content="Add Payment"
+        Style="{StaticResource AddButtonStyle}"
+        Click="AddPayment_Click"
+        Margin="16,0,0,0"/>
+
             </Grid>
 
             <!-- Payment Table -->

@@ -1,7 +1,9 @@
 ﻿using Real_Estate_Agencies.Data;
 using Real_Estate_Agencies.Model;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +17,12 @@ namespace Real_Estate_Agencies
         public ObservableCollection<Agent> Agents { get; set; }
 
         private Agent SelectedAgent; // for editing
+
+        // Top of the class
+        private readonly Dictionary<int, decimal> _currentBalances = new Dictionary<int, decimal>();
+
+        // Top of AgentsPage.xaml.cs
+        private readonly Dictionary<int, decimal> _balanceResetOffset = new Dictionary<int, decimal>();
 
         public AgentsPage()
         {
@@ -148,30 +156,93 @@ namespace Real_Estate_Agencies
             EditAgentOverlay.Visibility = Visibility.Collapsed;
         }
         private void ViewAgentDetails_Click(object sender, RoutedEventArgs e)
-{
-    if ((sender as Button)?.CommandParameter is Agent agent)
-    {
-        // Populate the overlay details
-        DetailsFullName.Text = $"{agent.FirstName} {agent.LastName}";
-        DetailsContact.Text = agent.ContactInfo;
-        DetailsAgentId.Text = agent.AgentId.ToString();
-        DetailsAddress.Text = agent.Address; // Make sure your Agent model has Address
-        DetailsHireDate.Text = agent.HireDate;
-        DetailsUnitSales.Text = agent.NumberOfUnitSales.ToString(); // Add property in Agent class
-        DetailsCommissionBalance.Text = $"₱ {agent.CommissionBalance:N2}"; // Add property in Agent class
+        {
+            if ((sender as Button)?.CommandParameter is Agent agent)
+            {
+                DetailsFullName.Text = $"{agent.FirstName} {agent.LastName}";
+                DetailsContact.Text = agent.ContactInfo;
+                DetailsAgentId.Text = agent.AgentId.ToString();
+                DetailsHireDate.Text = agent.HireDate;
 
-        // Show image if exists
-        if (agent.ProfileBitmap != null)
-            DetailsProfileImage.Source = agent.ProfileBitmap;
+                try
+                {
+                    // Get total commissions + incentives from database
+                    decimal totalBalance = _repo.GetAgentBalanceThisMonth(agent.AgentId);
 
-        // Show overlay
-        AgentDetailsOverlay.Visibility = Visibility.Visible;
-    }
-}
+                    // Subtract any reset offset
+                    if (_balanceResetOffset.TryGetValue(agent.AgentId, out decimal offset))
+                    {
+                        totalBalance -= offset;
+                    }
 
-private void CloseAgentDetailsOverlay_Click(object sender, RoutedEventArgs e)
-{
-    AgentDetailsOverlay.Visibility = Visibility.Collapsed;
-}
+                    // Make sure it doesn't go below 0
+                    totalBalance = Math.Max(totalBalance, 0);
+
+                    DetailsUnitSales.Text = _repo.GetAgentSalesCountThisMonth(agent.AgentId).ToString();
+                    DetailsCommissionBalance.Text = totalBalance.ToString("C", new CultureInfo("en-PH"));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading agent stats: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    DetailsUnitSales.Text = "0";
+                    DetailsCommissionBalance.Text = (0m).ToString("C", new CultureInfo("en-PH"));
+                }
+
+
+                if (agent.ProfileBitmap != null)
+                    DetailsProfileImage.Source = agent.ProfileBitmap;
+
+                AgentDetailsOverlay.Visibility = Visibility.Visible;
+            }
+        }
+
+
+
+
+        private void CloseAgentDetailsOverlay_Click(object sender, RoutedEventArgs e)
+        {
+            AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+        }
+        private void ReleaseCommission_Click(object sender, RoutedEventArgs e)
+        {
+            if (!int.TryParse(DetailsAgentId.Text, out int agentId)) return;
+
+            try
+            {
+                // Get current total balance
+                decimal totalBalance = _repo.GetAgentBalanceThisMonth(agentId);
+
+                if (totalBalance <= 0)
+                {
+                    MessageBox.Show("No commission balance to release.", "Notice",
+                                    MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                // Log the release to database
+                var releaseRepo = new CommissionReleaseRepository();
+                releaseRepo.Add(agentId, totalBalance);
+
+                // Update UI to show zero
+                DetailsCommissionBalance.Text = "₱0.00";
+
+                MessageBox.Show("Commission released successfully!",
+                                "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error releasing commission: {ex.Message}",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+
+
+
+
+
     }
 }

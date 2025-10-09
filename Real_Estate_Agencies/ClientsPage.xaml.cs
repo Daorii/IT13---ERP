@@ -139,29 +139,31 @@ namespace Real_Estate_Agencies
         #endregion
 
         #region Profile Popup
-
         private void ClientRow_Click(object sender, MouseButtonEventArgs e)
         {
             if ((sender as Grid)?.DataContext is Client client)
             {
-                ProfileClientId.Text = client.ClientId.ToString();
                 ProfileFullName.Text = $"{client.FirstName} {client.LastName}";
                 ProfileContactInfo.Text = client.ContactInfo;
                 ProfileAddress.Text = client.Address;
-               
-                ProfileBalance.Text = client.Balance.ToString("C");
-                ProfilePaymentDate.Text = client.PaymentDate.ToShortDateString();
-                ProfileAmountPaid.Text = client.AmountPaid.ToString("C");
-                ProfilePaymentType.Text = client.PaymentType;
-                ProfileStatus.Text = client.Status;
 
-                ProfilePopupOverlay.Visibility = Visibility.Visible;
+                // 🔹 Get sales/payment info
+                var saleRepo = new SalesRepository();
+                var saleInfo = saleRepo.GetClientSaleInfo(client.ClientId);
+
+                // 🔹 Update profile fields dynamically
+                ProfileBalance.Text = saleInfo.balance.ToString("C");
+                ProfilePaymentType.Text = saleInfo.paymentType;
+                ProfileStatus.Text = saleInfo.status;
+
+                ClientDetailsOverlay.Visibility = Visibility.Visible;
             }
         }
 
+
         private void CloseProfilePopup_Click(object sender, RoutedEventArgs e)
         {
-            ProfilePopupOverlay.Visibility = Visibility.Collapsed;
+            ClientDetailsOverlay.Visibility = Visibility.Collapsed;
         }
 
         #endregion

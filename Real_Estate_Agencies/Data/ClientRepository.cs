@@ -19,7 +19,8 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = "SELECT ClientId, FirstName, LastName, ContactInfo, Address FROM Clients";
+                    // Only get active clients
+                    string sql = "SELECT ClientId, FirstName, LastName, ContactInfo, Address FROM Clients WHERE IsActive = 1";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -45,6 +46,7 @@ namespace Real_Estate_Agencies.Data
             }
             return clients;
         }
+
 
         public void AddClient(Client client)
         {
@@ -113,7 +115,7 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = "DELETE FROM Clients WHERE ClientId=@ClientId";
+                    string sql = "UPDATE Clients SET IsActive=0 WHERE ClientId=@ClientId";
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@ClientId", clientId);
@@ -127,5 +129,6 @@ namespace Real_Estate_Agencies.Data
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
     }
 }

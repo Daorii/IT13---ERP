@@ -87,11 +87,13 @@ namespace Real_Estate_Agencies.Repositories
                        Price=@Price,
                        Status=@Status,
                        Image=@Image
-                       WHERE PropertyId=@Id";
+                        WHERE PropertyId=@Id";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Id", property.Id);
+                    cmd.Parameters.AddWithValue("@Id", property.PropertyId);
+
+
                     cmd.Parameters.AddWithValue("@Name", property.Name);
                     cmd.Parameters.AddWithValue("@Location", property.Location);
                     cmd.Parameters.AddWithValue("@Type", property.PropertyType); // map PropertyType to Type

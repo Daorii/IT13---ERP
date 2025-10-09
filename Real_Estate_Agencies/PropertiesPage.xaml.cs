@@ -1,10 +1,13 @@
-﻿using Real_Estate_Agencies.Model;
+﻿using Microsoft.Data.SqlClient;
+using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.Repositories;
 using Real_Estate_Agencies.ViewModels;
 using Real_Estate_Agencies.Views;
-using Real_Estate_Agencies.Repositories;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+
 
 namespace Real_Estate_Agencies
 {
@@ -14,6 +17,22 @@ namespace Real_Estate_Agencies
         public PropertyModel SelectedProperty { get; set; }
 
         private readonly PropertyRepository _repository;
+
+        private bool SalesExistForProperty(int propertyId)
+        {
+            using (var conn = new SqlConnection("Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;"))
+            {
+                conn.Open();
+                string sql = "SELECT COUNT(*) FROM Sales WHERE PropertyID=@PropertyID";
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@PropertyID", propertyId);
+                    int count = (int)cmd.ExecuteScalar();
+                    return count > 0;
+                }
+            }
+        }
+        
 
         public PropertiesPage()
         {
@@ -62,6 +81,12 @@ namespace Real_Estate_Agencies
         {
             if ((sender as Button)?.CommandParameter is PropertyModel property)
             {
+                if (SalesExistForProperty(property.PropertyId))
+                {
+                    MessageBox.Show("Cannot delete this property because it has associated sales.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 var result = MessageBox.Show(
                     $"Delete {property.Name}?",
                     "Confirm Delete",
@@ -72,8 +97,15 @@ namespace Real_Estate_Agencies
                 {
                     try
                     {
-                        _repository.Delete(property.Id);
-                        ViewModel.Properties.Remove(property);
+                        _repository.Delete(property.PropertyId);
+
+                        // Remove by PropertyId instead of object instance
+                        var itemToRemove = ViewModel.Properties.FirstOrDefault(p => p.PropertyId == property.PropertyId);
+                        if (itemToRemove != null)
+                        {
+                            ViewModel.Properties.Remove(itemToRemove);
+                        }
+
                         MessageBox.Show("Property deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
@@ -90,6 +122,7 @@ namespace Real_Estate_Agencies
                     MessageBoxImage.Warning);
             }
         }
+
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
@@ -169,6 +202,7 @@ namespace Real_Estate_Agencies
 
                 if (SelectedProperty != null)
                 {
+                    // Update the SelectedProperty fields
                     SelectedProperty.Name = TxtPropertyName.Text.Trim();
                     SelectedProperty.Location = TxtAddress.Text.Trim();
                     SelectedProperty.PropertyType = CmbPropertyType.Text.Trim();
@@ -177,11 +211,14 @@ namespace Real_Estate_Agencies
 
                     _repository.Update(SelectedProperty);
 
-                    int index = ViewModel.Properties.IndexOf(SelectedProperty);
-                    if (index >= 0)
+                    // Find the property in the ObservableCollection by PropertyId
+                    var propertyInCollection = ViewModel.Properties
+                        .FirstOrDefault(p => p.PropertyId == SelectedProperty.PropertyId);
+
+                    if (propertyInCollection != null)
                     {
-                        ViewModel.Properties.RemoveAt(index);
-                        ViewModel.Properties.Insert(index, SelectedProperty);
+                        int index = ViewModel.Properties.IndexOf(propertyInCollection);
+                        ViewModel.Properties[index] = SelectedProperty; // Replace the item
                     }
 
                     MessageBox.Show("Property updated successfully!", "Success",
@@ -200,6 +237,7 @@ namespace Real_Estate_Agencies
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {
