@@ -14,7 +14,7 @@
 
     <Border CornerRadius="12">
         <Border.Background>
-            <ImageBrush ImageSource="C:\Users\My Py\Downloads\d9642ff7-5c4e-4b80-b135-faf0ad90b35a.jpg"
+            <ImageBrush ImageSource="C:\Users\maria\Downloads\download (5).jpg"
                         Stretch="None"/>
         </Border.Background>
 

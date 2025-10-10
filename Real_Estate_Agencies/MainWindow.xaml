@@ -128,12 +128,7 @@
 
                 <!-- System Section -->
                 <TextBlock Text="System" Style="{StaticResource SidebarSectionStyle}" x:Name="LblSystemSection"/>
-                <ToggleButton x:Name="BtnSettings" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Settings">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE713;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LblSettings" Text="Settings" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
-                    </StackPanel>
-                </ToggleButton>
+         
 
                 <!-- Spacer -->
                 <StackPanel Height="50"/>

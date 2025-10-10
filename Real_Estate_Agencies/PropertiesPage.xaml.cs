@@ -7,7 +7,8 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Real_Estate_Agencies
 {
@@ -17,6 +18,8 @@ namespace Real_Estate_Agencies
         public PropertyModel SelectedProperty { get; set; }
 
         private readonly PropertyRepository _repository;
+
+        private List<PropertyModel> allProperties; // Master list for search/filter
 
         private bool SalesExistForProperty(int propertyId)
         {
@@ -32,7 +35,6 @@ namespace Real_Estate_Agencies
                 }
             }
         }
-        
 
         public PropertiesPage()
         {
@@ -42,6 +44,14 @@ namespace Real_Estate_Agencies
             DataContext = ViewModel;
 
             LoadPropertiesFromDatabase();
+
+            // Initialize master list for search
+            allProperties = ViewModel.Properties.ToList();
+
+            // Attach search events
+            SearchTextBox.TextChanged += SearchTextBox_TextChanged;
+            SearchTextBox.GotFocus += SearchTextBox_GotFocus;
+            SearchTextBox.LostFocus += SearchTextBox_LostFocus;
         }
 
         private void LoadPropertiesFromDatabase()
@@ -49,7 +59,7 @@ namespace Real_Estate_Agencies
             try
             {
                 var propertiesFromDb = _repository.GetAll();
-                ViewModel.Properties = new System.Collections.ObjectModel.ObservableCollection<PropertyModel>(propertiesFromDb);
+                ViewModel.Properties = new ObservableCollection<PropertyModel>(propertiesFromDb);
             }
             catch (Exception ex)
             {
@@ -58,6 +68,44 @@ namespace Real_Estate_Agencies
             }
         }
 
+        // ===================== SEARCH FUNCTION =====================
+        private void ApplyFilter(string searchText)
+        {
+            searchText = searchText?.ToLower() ?? "";
+
+            var filtered = string.IsNullOrWhiteSpace(searchText)
+                ? allProperties
+                : allProperties.Where(p =>
+                    (p.Name != null && p.Name.ToLower().Contains(searchText)) ||
+                    (p.Location != null && p.Location.ToLower().Contains(searchText)) ||
+                    (p.PropertyType != null && p.PropertyType.ToLower().Contains(searchText)) ||
+                    (p.Category != null && p.Category.ToLower().Contains(searchText)) ||
+                    p.PropertyId.ToString().Contains(searchText)
+                ).ToList();
+
+            ViewModel.Properties.Clear();
+            foreach (var prop in filtered)
+                ViewModel.Properties.Add(prop);
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter(SearchTextBox.Text);
+            PlaceholderText.Visibility = string.IsNullOrWhiteSpace(SearchTextBox.Text) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            PlaceholderText.Visibility = Visibility.Collapsed;
+        }
+
+        private void SearchTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchTextBox.Text))
+                PlaceholderText.Visibility = Visibility.Visible;
+        }
+
+        // ===================== EXISTING FUNCTIONS =====================
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddPropertyWindow();
@@ -67,6 +115,7 @@ namespace Real_Estate_Agencies
                 {
                     _repository.Add(addWindow.NewProperty);
                     ViewModel.Properties.Add(addWindow.NewProperty);
+                    allProperties.Add(addWindow.NewProperty);
 
                     MessageBox.Show("Property added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -104,6 +153,7 @@ namespace Real_Estate_Agencies
                         if (itemToRemove != null)
                         {
                             ViewModel.Properties.Remove(itemToRemove);
+                            allProperties.Remove(itemToRemove);
                         }
 
                         MessageBox.Show("Property deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -122,7 +172,6 @@ namespace Real_Estate_Agencies
                     MessageBoxImage.Warning);
             }
         }
-
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
@@ -146,7 +195,7 @@ namespace Real_Estate_Agencies
             {
                 SelectedProperty = property;
 
-                TxtPropertyId.Text = property.Id.ToString();
+                TxtPropertyId.Text = property.PropertyId.ToString();
                 TxtPropertyName.Text = property.Name;
                 TxtAddress.Text = property.Location;
                 CmbPropertyType.Text = property.PropertyType;
@@ -202,7 +251,6 @@ namespace Real_Estate_Agencies
 
                 if (SelectedProperty != null)
                 {
-                    // Update the SelectedProperty fields
                     SelectedProperty.Name = TxtPropertyName.Text.Trim();
                     SelectedProperty.Location = TxtAddress.Text.Trim();
                     SelectedProperty.PropertyType = CmbPropertyType.Text.Trim();
@@ -211,14 +259,13 @@ namespace Real_Estate_Agencies
 
                     _repository.Update(SelectedProperty);
 
-                    // Find the property in the ObservableCollection by PropertyId
                     var propertyInCollection = ViewModel.Properties
                         .FirstOrDefault(p => p.PropertyId == SelectedProperty.PropertyId);
 
                     if (propertyInCollection != null)
                     {
                         int index = ViewModel.Properties.IndexOf(propertyInCollection);
-                        ViewModel.Properties[index] = SelectedProperty; // Replace the item
+                        ViewModel.Properties[index] = SelectedProperty;
                     }
 
                     MessageBox.Show("Property updated successfully!", "Success",
@@ -237,7 +284,6 @@ namespace Real_Estate_Agencies
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {

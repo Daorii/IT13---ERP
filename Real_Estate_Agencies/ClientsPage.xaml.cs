@@ -2,6 +2,7 @@
 using Real_Estate_Agencies.Model;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ namespace Real_Estate_Agencies
     {
         private readonly ClientRepository _repo;
         public ObservableCollection<Client> Clients { get; set; }
+        private ObservableCollection<Client> AllClients { get; set; } // keep original list
         public Client SelectedClient { get; set; }
 
         public ClientsPage()
@@ -19,10 +21,13 @@ namespace Real_Estate_Agencies
             InitializeComponent();
 
             _repo = new ClientRepository();
-            Clients = new ObservableCollection<Client>(_repo.GetAllClients());
+            AllClients = new ObservableCollection<Client>(_repo.GetAllClients());
+            Clients = new ObservableCollection<Client>(AllClients);
 
             ClientsDataGrid.ItemsSource = Clients;
             DataContext = this;
+
+            SearchTextBox.TextChanged += SearchTextBox_TextChanged; // attach search event
         }
 
         #region Add / Edit / Delete Client
@@ -33,6 +38,7 @@ namespace Real_Estate_Agencies
             if (addWindow.ShowDialog() == true && addWindow.NewClient != null)
             {
                 _repo.AddClient(addWindow.NewClient);   // save to DB
+                AllClients.Add(addWindow.NewClient);
                 Clients.Add(addWindow.NewClient);       // update UI
             }
         }
@@ -70,6 +76,7 @@ namespace Real_Estate_Agencies
                 if (result == MessageBoxResult.Yes)
                 {
                     _repo.DeleteClient(client.ClientId);   // delete from DB
+                    AllClients.Remove(client);
                     Clients.Remove(client);                // update UI
                 }
             }
@@ -112,7 +119,6 @@ namespace Real_Estate_Agencies
                     SelectedClient.ContactInfo = EditContactInfoTextBox.Text.Trim();
                     SelectedClient.Address = EditAddressTextBox.Text.Trim();
 
-
                     _repo.UpdateClient(SelectedClient);
 
                     MessageBox.Show("Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -134,6 +140,28 @@ namespace Real_Estate_Agencies
         private void CloseEditPopup_Click(object sender, RoutedEventArgs e)
         {
             EditPopupOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        #endregion
+
+        #region Search Function
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = SearchTextBox.Text.Trim().ToLower();
+
+            Clients.Clear();
+
+            var filtered = AllClients.Where(c =>
+                c.FirstName.ToLower().Contains(query) ||
+                c.LastName.ToLower().Contains(query) ||
+                c.ContactInfo.ToLower().Contains(query) ||
+                c.Address.ToLower().Contains(query));
+
+            foreach (var client in filtered)
+            {
+                Clients.Add(client);
+            }
         }
 
         #endregion
@@ -160,12 +188,10 @@ namespace Real_Estate_Agencies
             }
         }
 
-
         private void CloseProfilePopup_Click(object sender, RoutedEventArgs e)
         {
             ClientDetailsOverlay.Visibility = Visibility.Collapsed;
         }
-
         #endregion
     }
 }

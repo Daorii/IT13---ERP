@@ -22,6 +22,78 @@
         <SolidColorBrush x:Key="Gray800" Color="#1F2937"/>
         <SolidColorBrush x:Key="PastelBlue" Color="#A7C7E7"/>
         <SolidColorBrush x:Key="PastelYellow" Color="#FFF9B1"/>
+        <SolidColorBrush x:Key="GlassPastelYellow" Color="#FFF9B1" Opacity="0.6"/>
+        <SolidColorBrush x:Key="ButtonShadow" Color="#000000"/>
+
+        <DropShadowEffect x:Key="SoftButtonShadow"
+                      Color="#000000"
+                      BlurRadius="12"
+                      ShadowDepth="2"
+                      Opacity="0.25"/>
+
+        <!-- Rounded TextBox (Glassmorphism Style) -->
+        <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="#FFF9B1" Opacity="0.7"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#E1E8ED"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#5C677D"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" BlurRadius="6" Opacity="0.15"/>
+                            </Border.Effect>
+                            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#4F46E5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Shadowy Button Style (same radius as Add Client) -->
+        <Style x:Key="ShadowButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4F46E5"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect" Value="{StaticResource SoftButtonShadow}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3730A3"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
 
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -220,6 +292,7 @@
             </Grid>
 
             <!-- Clients Table -->
+            <!-- Clients Table -->
             <Grid Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -228,22 +301,21 @@
 
                 <!-- Table Header -->
                 <Border Background="White" CornerRadius="8,8,0,0" BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0" Grid.Row="0">
-                    <Grid Background="{StaticResource Gray50}">
+                    <Grid Background="{StaticResource Gray50}" HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.5*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="0.7*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Client ID" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="1" Text="First Name" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="3" Text="Contact Info" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="4" Text="Address" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="5" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="0" Text="Client ID" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="First Name" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="3" Text="Contact Info" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="4" Text="Address" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
+                        <TextBlock Grid.Column="5" Text="Action" Style="{StaticResource HeaderTextStyle}" TextAlignment="Center"/>
                     </Grid>
                 </Border>
 
@@ -251,18 +323,24 @@
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="White">
                     <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
                         <ItemsControl x:Name="ClientsDataGrid" ItemsSource="{Binding Clients}">
+                            <ItemsControl.ItemsPanel>
+                                <!-- Use a Grid for each row to align columns -->
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
-                                        <Grid MouseLeftButtonDown="ClientRow_Click">
+                                        <Grid MouseLeftButtonDown="ClientRow_Click" HorizontalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="0.5*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="1.5*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="0.7*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                                <ColumnDefinition Width="2*"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0" Text="{Binding ClientId}" Style="{StaticResource CellTextStyle}" TextAlignment="Center"/>
@@ -288,7 +366,7 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- Edit Client Overlay (Incentives Style) -->
+
             <Grid x:Name="EditPopupOverlay"
       Grid.RowSpan="4"
       Background="#80000000"
@@ -348,70 +426,31 @@
                         <!-- Form Content -->
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <StackPanel Orientation="Vertical">
-                                <TextBox x:Name="EditClientIdTextBox"
-                             Visibility="Collapsed"/>
+                                <TextBox x:Name="EditClientIdTextBox" Visibility="Collapsed"/>
 
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="First Name"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="#5C677D"/>
-                                    <TextBox x:Name="EditFirstNameTextBox"
-                                 Height="40"
-                                 Padding="10"
-                                 BorderBrush="#E1E8ED"
-                                 BorderThickness="1"
-                                 Background="White"
-                                 Foreground="#5C677D"
-                                 VerticalContentAlignment="Center"/>
+                                    <TextBlock Text="First Name" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBox x:Name="EditFirstNameTextBox" Style="{StaticResource RoundedTextBoxStyle}"/>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Last Name"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="#5C677D"/>
-                                    <TextBox x:Name="EditLastNameTextBox"
-                                 Height="40"
-                                 Padding="10"
-                                 BorderBrush="#E1E8ED"
-                                 BorderThickness="1"
-                                 Background="White"
-                                 Foreground="#5C677D"
-                                 VerticalContentAlignment="Center"/>
+                                    <TextBlock Text="Last Name" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBox x:Name="EditLastNameTextBox" Style="{StaticResource RoundedTextBoxStyle}"/>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Contact Info"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="#5C677D"/>
-                                    <TextBox x:Name="EditContactInfoTextBox"
-                                 Height="40"
-                                 Padding="10"
-                                 BorderBrush="#E1E8ED"
-                                 BorderThickness="1"
-                                 Background="White"
-                                 Foreground="#5C677D"
-                                 VerticalContentAlignment="Center"/>
+                                    <TextBlock Text="Contact Info" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBox x:Name="EditContactInfoTextBox" Style="{StaticResource RoundedTextBoxStyle}"/>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Address"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
-                                   Foreground="#5C677D"/>
+                                    <TextBlock Text="Address" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
                                     <TextBox x:Name="EditAddressTextBox"
+                                 Style="{StaticResource RoundedTextBoxStyle}"
                                  Height="70"
-                                 Padding="10"
-                                 BorderBrush="#E1E8ED"
-                                 BorderThickness="1"
-                                 Background="White"
-                                 Foreground="#5C677D"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"/>
                                 </StackPanel>
-
                             </StackPanel>
                         </ScrollViewer>
 
@@ -429,15 +468,16 @@
                         Foreground="#344054"
                         Cursor="Hand"
                         Margin="0,0,12,0"
-                        Click="CloseEditPopup_Click"/>
+                        Click="CloseEditPopup_Click">
+                                <Button.Effect>
+                                    <DropShadowEffect Color="#000000" BlurRadius="6" Opacity="0.2"/>
+                                </Button.Effect>
+                            </Button>
+
                             <Button Content="Save Changes"
                         Width="140"
                         Height="40"
-                        Background="#4F46E5"
-                        BorderThickness="0"
-                        Foreground="White"
-                        FontWeight="Bold"
-                        Cursor="Hand"
+                        Style="{StaticResource ShadowButtonStyle}"
                         Click="SaveClient_Click"/>
                         </StackPanel>
                     </Grid>
@@ -540,6 +580,29 @@
                         </Border>
                     </Grid>
                 </Border>
+            </Grid>
+
+<!-- Client Table Pagination -->
+            <!-- Client Table Pagination -->
+            <Grid Grid.Row="3" Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Info Text -->
+                <TextBlock Grid.Column="0" Text="Showing 1-10 of clients"
+               VerticalAlignment="Center" Foreground="{StaticResource Gray600}" 
+               FontSize="12" HorizontalAlignment="Left"/>
+
+                <!-- Page Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="❮" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                    <Button Content="1" Background="{StaticResource PrimaryBlue}" Foreground="White"
+                Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                    <Button Content="❯" Style="{StaticResource CircularIconButtonStyle}" Margin="2,0"/>
+                </StackPanel>
             </Grid>
 
 

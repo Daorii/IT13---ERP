@@ -154,7 +154,11 @@
                                             <TextBlock Grid.Column="1" Text="{Binding SaleId}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="2" Text="{Binding PaymentType}" Style="{StaticResource CellTextStyle}"/>
                                             <TextBlock Grid.Column="3" Text="{Binding Amount}" Style="{StaticResource CellTextStyle}"/>
-                                            <TextBlock Grid.Column="4" Text="{Binding PaymentDate}" Style="{StaticResource CellTextStyle}"/>
+                                            <TextBlock Grid.Column="4" 
+           Text="{Binding PaymentDate, StringFormat='{}{0:MMM dd, yyyy}'}"
+           Style="{StaticResource CellTextStyle}"/>
+
+
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -168,11 +172,8 @@
                 <Grid.ColumnDefinitions>
                     
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Left: Page info -->
                     <ColumnDefinition Width="*"/>
-                    <!-- Center: Pagination -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Right: Return button -->
                     
                 </Grid.ColumnDefinitions>
 

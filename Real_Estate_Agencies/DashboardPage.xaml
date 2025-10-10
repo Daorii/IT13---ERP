@@ -14,8 +14,8 @@
         <converter:StaggerDelayConverter x:Key="DelayConverter"/>
         <converter:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
         <converter:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
-        
-        
+
+
 
         <!-- KPI Card Style -->
         <Style x:Key="KpiCardStyle" TargetType="Border">
@@ -93,7 +93,7 @@
 
                     <!-- Welcome Card -->
                     <Border CornerRadius="25" Padding="0" BorderBrush="#E0E0E0" BorderThickness="1"
-            HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="280">
+            HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="280" Margin="-19,15,0,0">
                         <Border.Effect>
                             <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2" ShadowDepth="3"/>
                         </Border.Effect>
@@ -441,23 +441,138 @@
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Bar Chart -->
-                        <Grid Grid.Column="0" Margin="0,0,20,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Top Agent Performance" FontSize="18" FontWeight="Bold" Foreground="#333" Margin="0,0,0,10"/>
-                            <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Height="400" Width="Auto">
-                                <lvc:CartesianChart Series="{Binding AgentPerformanceSeries}"
-                                                XAxes="{Binding AgentPerformanceXAxes}"
-                                                YAxes="{Binding AgentPerformanceYAxes}"
-                                                LegendPosition="Bottom"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                Padding="8"/>
-                            </Border>
+                        <!-- Main Grid: 2 Columns (Left: Top Agents, Right: Recent Sales) -->
+                        <Grid Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="0*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- LEFT: Top Agents -->
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <!-- Title outside the frame -->
+                                <TextBlock Text="🏆 Top Agents"
+               FontSize="18"
+               FontWeight="Bold"
+               Foreground="#2D3748"
+               Margin="0,0,0,10"/>
+
+                                <!-- Frame -->
+                                <Border Background="White"
+            CornerRadius="20"
+            Padding="25"
+            BorderBrush="#E5E7EB"
+            BorderThickness="1"
+            Height="422"
+            Effect="{DynamicResource DropShadowEffect}">
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <StackPanel>
+
+                                            <!-- Small header phrase inside frame -->
+                                            <TextBlock Text="Our Top Performing Agents ✨"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="#4B5563"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,15"/>
+
+                                            <ItemsControl ItemsSource="{Binding TopAgents}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Vertical" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Click="Agent_Click"
+                                    Tag="{Binding Name}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Padding="0"
+                                    Margin="0,0,0,12"
+                                    Cursor="Hand">
+                                                            <Button.RenderTransform>
+                                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                            </Button.RenderTransform>
+
+                                                            <Button.Style>
+                                                                <Style TargetType="Button">
+                                                                    <Setter Property="Background" Value="Transparent"/>
+                                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border Background="{TemplateBinding Background}" CornerRadius="12">
+                                                                                    <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                                                                </Border>
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                                                                        <Setter Property="RenderTransform">
+                                                                                            <Setter.Value>
+                                                                                                <ScaleTransform ScaleX="1.03" ScaleY="1.03"/>
+                                                                                            </Setter.Value>
+                                                                                        </Setter>
+                                                                                    </Trigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Button.Style>
+
+                                                            <!-- Agent Card -->
+                                                            <Border Background="#F9FAFB"
+                                        CornerRadius="12"
+                                        Padding="12"
+                                        BorderBrush="#E5E7EB"
+                                        BorderThickness="1">
+                                                                <DockPanel VerticalAlignment="Center">
+                                                                    <!-- Circle with Initials -->
+                                                                    <Grid Width="42" Height="42" DockPanel.Dock="Left">
+                                                                        <Ellipse Fill="#3B82F6"/>
+                                                                        <TextBlock Text="{Binding Initials}"
+                                                       Foreground="White"
+                                                       FontWeight="Bold"
+                                                       FontSize="14"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                                                    </Grid>
+
+                                                                    <!-- Agent Info -->
+                                                                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Name}"
+                                                       FontSize="13.5"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#1F2937"/>
+                                                                        <TextBlock Text="{Binding TotalSales, StringFormat=Sales: {0}}"
+                                                       FontSize="11.5"
+                                                       Foreground="#6B7280"/>
+                                                                    </StackPanel>
+
+
+                                                                </DockPanel>
+                                                            </Border>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+
+
+
+
                         </Grid>
+
+
+
 
                         <!-- DataGrid -->
                         <StackPanel Grid.Column="1">
@@ -483,7 +598,7 @@
 
 
                 <!-- ENHANCED ANALYTICS SECTION -->
-                <StackPanel Margin="0,40,0,20">
+                <StackPanel Margin="0,0,0,20">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*"/>
@@ -492,82 +607,11 @@
                             <!-- Right: KPI Cards -->
                         </Grid.ColumnDefinitions>
 
-                        <!-- Top Agents Panel (Left) -->
-                        <StackPanel Grid.Column="0" Margin="0,10,20,0">
-                            <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#DDD" BorderThickness="1">
-                                <StackPanel>
-                                    <!-- Panel Header -->
-                                    <TextBlock Text="🏆 Top Agents" FontSize="16" FontWeight="Bold" Foreground="#333" Margin="0,0,0,5"/>
-                                    <TextBlock Text="Top-performing agents this month based on sales:" FontSize="11" Foreground="#777" Margin="0,0,0,15"/>
-
-                                    <!-- Top Agent Items -->
-                                    <ItemsControl ItemsSource="{Binding TopAgents}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Vertical" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button Click="Agent_Click" Tag="{Binding Name}" Background="Transparent" BorderThickness="0" Padding="5" Margin="0,0,0,8" Cursor="Hand">
-                                                    <Button.RenderTransform>
-                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                    </Button.RenderTransform>
-
-                                                    <Button.Style>
-                                                        <Style TargetType="Button">
-                                                            <Setter Property="Background" Value="Transparent"/>
-                                                            <Setter Property="BorderThickness" Value="0"/>
-                                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                                            <Setter Property="Template">
-                                                                <Setter.Value>
-                                                                    <ControlTemplate TargetType="Button">
-                                                                        <Border Background="{TemplateBinding Background}" CornerRadius="10">
-                                                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                                                        </Border>
-                                                                        <ControlTemplate.Triggers>
-                                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Background" Value="#F3F4F6"/>
-                                                                                <Setter Property="RenderTransform">
-                                                                                    <Setter.Value>
-                                                                                        <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
-                                                                                    </Setter.Value>
-                                                                                </Setter>
-                                                                            </Trigger>
-                                                                        </ControlTemplate.Triggers>
-                                                                    </ControlTemplate>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Style>
-                                                    </Button.Style>
-
-                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                        <!-- Circle with Initials -->
-                                                        <Grid Width="35" Height="35">
-                                                            <Ellipse Fill="#3B82F6"/>
-                                                            <TextBlock Text="{Binding Initials}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Grid>
-
-                                                        <!-- Agent Info -->
-                                                        <StackPanel Margin="10,0,0,0">
-                                                            <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="Bold" Foreground="#444"/>
-                                                            <TextBlock Text="{Binding TotalSales, StringFormat=Sales: {0}}" FontSize="11" Foreground="#777"/>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Button>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
 
 
 
                         <!-- KPI Cards (Right) -->
-                        <Grid Grid.Column="1" Margin="0,10,0,0">
+                        <Grid Grid.Column="0" Margin="0,05,0,0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>

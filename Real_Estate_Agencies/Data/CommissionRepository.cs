@@ -11,9 +11,9 @@ namespace Real_Estate_Agencies.Repository
         private readonly string _connectionString =
             "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
-        public List<CommissionDisplayItem> GetAllCommissions()
+        public List<Commission> GetAllCommissions()
         {
-            var commissions = new List<CommissionDisplayItem>();
+            var commissions = new List<Commission>();
 
             try
             {
@@ -25,7 +25,6 @@ namespace Real_Estate_Agencies.Repository
                             p.PaymentID,
                             s.SaleID,
                             a.AgentID,
-                            (a.FirstName + ' ' + a.LastName) AS AgentName,
                             c.CommissionAmount,
                             c.ReleaseDate
                         FROM Commissions c
@@ -41,14 +40,13 @@ namespace Real_Estate_Agencies.Repository
                     {
                         while (reader.Read())
                         {
-                            commissions.Add(new CommissionDisplayItem
+                            commissions.Add(new Commission
                             {
-                                CommissionID = "C" + Convert.ToInt32(reader["CommissionID"]).ToString("D3"),
-                                SalesID = "S" + Convert.ToInt32(reader["SaleID"]).ToString("D3"),
-                                AgentID = "A" + Convert.ToInt32(reader["AgentID"]).ToString("D3"),
-                                AgentName = reader["AgentName"].ToString(),
-                                CommissionAmount = ((decimal)reader["CommissionAmount"]).ToString("C", new System.Globalization.CultureInfo("en-PH")),
-                                ReleaseDate = Convert.ToDateTime(reader["ReleaseDate"]).ToString("yyyy-MM-dd")
+                                CommissionId = Convert.ToInt32(reader["CommissionID"]),
+                                SalesId = Convert.ToInt32(reader["SaleID"]),
+                                AgentId = Convert.ToInt32(reader["AgentID"]),
+                                CommissionAmount = (decimal)reader["CommissionAmount"],
+                                ReleaseDate = Convert.ToDateTime(reader["ReleaseDate"])
                             });
                         }
                     }

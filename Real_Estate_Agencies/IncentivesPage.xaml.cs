@@ -19,7 +19,12 @@ namespace Real_Estate_Agencies
             InitializeComponent();
             repo = new IncentivesRepository();
             LoadIncentives();
+
+            // Add event for search
             SearchTextBox.TextChanged += SearchTextBox_TextChanged;
+
+            // Initial placeholder visibility
+            TogglePlaceholder();
         }
 
         private void LoadIncentives()
@@ -47,7 +52,6 @@ namespace Real_Estate_Agencies
             }
         }
 
-
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -63,7 +67,6 @@ namespace Real_Estate_Agencies
                 EditIncentiveOverlay.Visibility = Visibility.Visible;
             }
         }
-
 
         private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {
@@ -116,9 +119,6 @@ namespace Real_Estate_Agencies
             EditIncentiveOverlay.Visibility = Visibility.Collapsed;
         }
 
-
-
-
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -146,10 +146,18 @@ namespace Real_Estate_Agencies
             }
         }
 
-
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            TogglePlaceholder();           // Hide/show placeholder
             ApplyFilter(SearchTextBox.Text);
+        }
+
+        private void TogglePlaceholder()
+        {
+            // Hide placeholder when user types, show if empty
+            PlaceholderText.Visibility = string.IsNullOrEmpty(SearchTextBox.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void ApplyFilter(string searchText)
@@ -170,7 +178,6 @@ namespace Real_Estate_Agencies
             RefreshGrid();
         }
 
-
         private IncentiveDisplayItem ConvertToDisplayItem(Incentive incentive)
         {
             return new IncentiveDisplayItem
@@ -183,15 +190,13 @@ namespace Real_Estate_Agencies
                 ReleaseDate = incentive.ReleaseDate.ToString("yyyy-MM-dd")
             };
         }
-
-
     }
 
     public class IncentiveDisplayItem
     {
         public string IncentiveId { get; set; }
         public string AgentId { get; set; }
-        public string AgentName { get; set; }             // ✅ for displa
+        public string AgentName { get; set; }             // ✅ for display
         public string IncentiveType { get; set; }
         public string Amount { get; set; }
         public string ReleaseDate { get; set; }

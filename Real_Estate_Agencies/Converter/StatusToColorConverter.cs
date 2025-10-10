@@ -13,11 +13,12 @@ namespace Real_Estate_Agencies.Converter
 
             return status switch
             {
-                "On Sale" => new SolidColorBrush(Color.FromRgb(34, 197, 94)), // Green
+                "Available" => new SolidColorBrush(Color.FromRgb(34, 197, 94)), // Green
                 "Sold" => new SolidColorBrush(Color.FromRgb(239, 68, 68)),      // Red
                 "Pending" => new SolidColorBrush(Color.FromRgb(250, 204, 21)),  // Yellow
-                _ => new SolidColorBrush(Color.FromRgb(107, 114, 128))          // Gray for unknown
+                _ => new SolidColorBrush(Color.FromRgb(107, 114, 128))          // Gray
             };
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

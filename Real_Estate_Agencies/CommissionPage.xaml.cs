@@ -5,17 +5,14 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Real_Estate_Agencies.Models;
-using System.Configuration;
-
-
+using Real_Estate_Agencies.Repository;
 
 namespace Real_Estate_Agencies
 {
     public partial class CommissionsPage : Page
     {
-        private List<Commission> allCommissionsModels;
+        private List<Commission> allCommissionsModels; // Raw model
         private Commission commissionToEdit;
-        //private static int nextCommissionId = 0;
 
         public CommissionsPage()
         {
@@ -27,11 +24,9 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                var repo = new Repository.CommissionRepository();
-
-                var commissions = repo.GetAllCommissions();
-
-                CommissionsDataGrid.ItemsSource = commissions;
+                var repo = new CommissionRepository();
+                allCommissionsModels = repo.GetAllCommissions() ?? new List<Commission>();
+                RefreshDataGrid();
             }
             catch (Exception ex)
             {
@@ -39,14 +34,28 @@ namespace Real_Estate_Agencies
             }
         }
 
-
-
-        private void RefreshDataGrid()
+        private void RefreshDataGrid(List<Commission> commissions = null)
         {
-            CommissionsDataGrid.ItemsSource = null;
-            CommissionsDataGrid.ItemsSource = allCommissionsModels.Select(c => ConvertToDisplayItem(c)).ToList();
+            var displayItems = (commissions ?? allCommissionsModels)
+                .Select(c => ConvertToDisplayItem(c))
+                .ToList();
+
+            CommissionsDataGrid.ItemsSource = displayItems;
         }
 
+        private CommissionDisplayItem ConvertToDisplayItem(Commission commission)
+        {
+            return new CommissionDisplayItem
+            {
+                CommissionID = "C" + commission.CommissionId.ToString("D3"),
+                SalesID = "S" + commission.SalesId.ToString("D3"),
+                AgentID = "A" + commission.AgentId.ToString("D3"),
+                CommissionAmount = commission.CommissionAmount.ToString("C", new CultureInfo("en-PH")),
+                ReleaseDate = commission.ReleaseDate.ToString("yyyy-MM-dd")
+            };
+        }
+
+        // --- EDIT OVERLAY ---
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -69,12 +78,6 @@ namespace Real_Estate_Agencies
                 EditCommissionOverlay.Visibility = Visibility.Visible;
             }
         }
-        private void LogsButton_Click(object sender, RoutedEventArgs e)
-        {
-            LogsPage logsPage = new LogsPage();
-            this.NavigationService?.Navigate(logsPage);
-        }
-
 
         private void CloseEditOverlay_Click(object sender, RoutedEventArgs e)
         {
@@ -82,21 +85,33 @@ namespace Real_Estate_Agencies
             commissionToEdit = null;
         }
 
-        private CommissionDisplayItem ConvertToDisplayItem(Commission commission)
+        private void LogsButton_Click(object sender, RoutedEventArgs e)
         {
-            return new CommissionDisplayItem
-            {
-                CommissionID = "C" + commission.CommissionId.ToString("D3"),
-                SalesID = "S" + commission.SalesId.ToString("D3"),
-                AgentID = "A" + commission.AgentId.ToString("D3"),
-                CommissionAmount = commission.CommissionAmount.ToString("C", new CultureInfo("en-PH")),
-                ReleaseDate = commission.ReleaseDate.ToString("yyyy-MM-dd")
-            };
+            LogsPage logsPage = new LogsPage();
+            this.NavigationService?.Navigate(logsPage);
+        }
+
+        // --- SEARCH BAR ---
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = SearchTextBox.Text.Trim().ToLower();
+
+            var filtered = allCommissionsModels
+                .Where(c =>
+                    ("C" + c.CommissionId.ToString("D3")).ToLower().Contains(query) ||
+                    ("S" + c.SalesId.ToString("D3")).ToLower().Contains(query) ||
+                    ("A" + c.AgentId.ToString("D3")).ToLower().Contains(query) ||
+                    c.CommissionAmount.ToString("F2").Contains(query) ||
+                    c.ReleaseDate.ToString("yyyy-MM-dd").Contains(query))
+                .ToList();
+
+            RefreshDataGrid(filtered);
+
+            PlaceholderText.Visibility = string.IsNullOrEmpty(SearchTextBox.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 
-
-
+    // --- RAW MODEL ---
     public class Commission
     {
         public int CommissionId { get; set; }
@@ -104,5 +119,16 @@ namespace Real_Estate_Agencies
         public int AgentId { get; set; }
         public decimal CommissionAmount { get; set; }
         public DateTime ReleaseDate { get; set; }
+    }
+
+    // --- DISPLAY MODEL ---
+    public class CommissionDisplayItem
+    {
+        public string CommissionID { get; set; }
+        public string SalesID { get; set; }
+        public string AgentID { get; set; }
+        public string CommissionAmount { get; set; }
+        public string ReleaseDate { get; set; }
+
     }
 }

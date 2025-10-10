@@ -173,24 +173,16 @@
         CornerRadius="8,8,0,0" 
         BorderBrush="{StaticResource Gray200}" BorderThickness="1,1,1,0"
         Grid.Row="0">
-                    <Grid>
+                    <Grid Background="{StaticResource Gray50}" HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="60"/>
-                            <!-- Property ID -->
-                            <ColumnDefinition Width="*"/>
-                            <!-- Name -->
-                            <ColumnDefinition Width="*"/>
-                            <!-- Location -->
-                            <ColumnDefinition Width="*"/>
-                            <!-- Type -->
-                            <ColumnDefinition Width="*"/>
-                            <!-- Category -->
-                            <ColumnDefinition Width="*"/>
-                            <!-- Price -->
-                            <ColumnDefinition Width="0.7*"/>
-                            <!-- Status -->
-                            <ColumnDefinition Width="0.8*"/>
-                            <!-- Action -->
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1.5*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Property" Style="{StaticResource HeaderTextStyle}"/>
@@ -202,6 +194,7 @@
                         <TextBlock Grid.Column="6" Text="Status" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="7" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
                     </Grid>
+
                 </Border>
 
 
@@ -211,76 +204,50 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
-                                        <Grid VerticalAlignment="Center">
+                                        <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="60"/>
-                                                <!-- Property ID -->
-                                                <ColumnDefinition Width="*"/>
-                                                <!-- Name -->
-                                                <ColumnDefinition Width="*"/>
-                                                <!-- Location -->
-                                                <ColumnDefinition Width="*"/>
-                                                <!-- Type -->
-                                                <ColumnDefinition Width="*"/>
-                                                <!-- Category -->
-                                                <ColumnDefinition Width="*"/>
-                                                <!-- Price -->
-                                                <ColumnDefinition Width="0.7*"/>
-                                                <!-- Status -->
-                                                <ColumnDefinition Width="Auto"/>
-                                                <!-- Actions -->
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="1.5*"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <!-- Property ID -->
-                                            <Border Grid.Column="0" Width="50" Height="40" 
-                                                BorderBrush="Gray" BorderThickness="1" CornerRadius="4"
-                                                VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                Margin="4">
-                                                        <Image Source="{Binding Image, Converter={StaticResource ByteArrayToImageConverter}}"
-                                                   Stretch="UniformToFill"
-                                                   VerticalAlignment="Center"
-                                                   HorizontalAlignment="Center"/>       
+                                            <!-- Example: Property Image -->
+                                            <Border Grid.Column="0" Width="50" Height="40" CornerRadius="4" BorderBrush="Gray" BorderThickness="1" Margin="4">
+                                                <Image Source="{Binding Image, Converter={StaticResource ByteArrayToImageConverter}}" Stretch="UniformToFill"/>
                                             </Border>
-
-
 
                                             <!-- Name -->
-                                            <TextBlock Grid.Column="1" Text="{Binding Name}" 
-                                       Style="{StaticResource CellTextStyle}" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" Style="{StaticResource CellTextStyle}"/>
                                             <!-- Location -->
-                                            <TextBlock Grid.Column="2" Text="{Binding Location}" 
-                                       Style="{StaticResource CellTextStyle}" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                            <!-- Property Type -->
-                                            <TextBlock Grid.Column="3" Text="{Binding PropertyType}" 
-                                       Style="{StaticResource CellTextStyle}" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
+                                            <TextBlock Grid.Column="2" Text="{Binding Location}" Style="{StaticResource CellTextStyle}"/>
+                                            <!-- Type -->
+                                            <TextBlock Grid.Column="3" Text="{Binding PropertyType}" Style="{StaticResource CellTextStyle}"/>
                                             <!-- Category -->
-                                            <TextBlock Grid.Column="4" Text="{Binding Category}" 
-                                       Style="{StaticResource CellTextStyle}" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
+                                            <TextBlock Grid.Column="4" Text="{Binding Category}" Style="{StaticResource CellTextStyle}"/>
                                             <!-- Price -->
-                                            <TextBlock Grid.Column="5" Text="{Binding Price, StringFormat='₱{0:N2}'}" 
-                                       Style="{StaticResource CellTextStyle}" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                                            <!-- Status Badge -->
+                                            <TextBlock Grid.Column="5" Text="{Binding Price, StringFormat='₱{0:N2}'}" Style="{StaticResource CellTextStyle}"/>
+                                            <!-- Status -->
                                             <Border Grid.Column="6" 
-                                    Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
-                                    CornerRadius="12" Padding="6,2" 
-                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+        Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}"
+        CornerRadius="12" Padding="6,2" 
+        HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding Status}" 
-                                           Foreground="White" FontWeight="SemiBold" FontSize="12" 
-                                           TextAlignment="Center" VerticalAlignment="Center"/>
+               Foreground="White" 
+               FontWeight="SemiBold" 
+               FontSize="12" 
+               TextAlignment="Center" 
+               VerticalAlignment="Center"/>
                                             </Border>
 
+
+
                                             <!-- Actions -->
-                                            <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="View" Click="View_Click" CommandParameter="{Binding}">
                                                     <TextBlock Text="👁️" FontSize="12"/>
                                                 </Button>
@@ -291,8 +258,8 @@
                                                     <TextBlock Text="🗑️" FontSize="12"/>
                                                 </Button>
                                             </StackPanel>
-
                                         </Grid>
+
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
