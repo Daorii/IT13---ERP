@@ -11,38 +11,34 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media.Animation;
 
 namespace Real_Estate_Agencies
 {
     public partial class AgentsPage : Page
     {
         private readonly AgentRepository _repo;
+        private List<Agent> allAgents;
+        public ObservableCollection<Agent> Agents { get; set; }
 
-        private List<Agent> allAgents; // Master list of agents
-        public ObservableCollection<Agent> Agents { get; set; } // Bound to UI
+        private Agent SelectedAgent;
+        private readonly Dictionary<int, decimal> _currentBalances = new();
+        private readonly Dictionary<int, decimal> _balanceResetOffset = new();
 
-        private Agent SelectedAgent; // for editing
-
-        private readonly Dictionary<int, decimal> _currentBalances = new Dictionary<int, decimal>();
-        private readonly Dictionary<int, decimal> _balanceResetOffset = new Dictionary<int, decimal>();
-
-        private ICollectionView AgentsView; // For fast filtering
-        private CancellationTokenSource _cts; // For debounce typing
+        private ICollectionView AgentsView;
+        private CancellationTokenSource _cts;
 
         public AgentsPage()
         {
             InitializeComponent();
-
             _repo = new AgentRepository();
             LoadAgents();
 
             DataContext = this;
 
-            // Setup CollectionView for fast filtering
             AgentsView = CollectionViewSource.GetDefaultView(Agents);
             AgentsView.Filter = FilterAgents;
 
-            // Attach search event
             SearchTextBox.TextChanged += SearchTextBox_TextChanged;
         }
 
@@ -52,7 +48,7 @@ namespace Real_Estate_Agencies
             Agents = new ObservableCollection<Agent>(allAgents);
         }
 
-        // Filter logic used by CollectionView
+        // 🔎 Filter logic
         private bool FilterAgents(object obj)
         {
             if (obj is Agent agent)
@@ -61,16 +57,15 @@ namespace Real_Estate_Agencies
                 if (string.IsNullOrWhiteSpace(searchText)) return true;
 
                 return agent.FirstName.ToLower().Contains(searchText)
-                       || agent.LastName.ToLower().Contains(searchText)
-                       || agent.AgentId.ToString().Contains(searchText);
+                    || agent.LastName.ToLower().Contains(searchText)
+                    || agent.AgentId.ToString().Contains(searchText);
             }
             return false;
         }
 
-        // Debounced search for smoother typing
+        // ⌨ Debounced search
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // Cancel previous debounce
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             var token = _cts.Token;
@@ -81,8 +76,10 @@ namespace Real_Estate_Agencies
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        AgentsView.Refresh(); // Only refresh the view, no clearing/adding
-                        PlaceholderText.Visibility = string.IsNullOrWhiteSpace(SearchTextBox.Text) ? Visibility.Visible : Visibility.Collapsed;
+                        AgentsView.Refresh();
+                        PlaceholderText.Visibility = string.IsNullOrWhiteSpace(SearchTextBox.Text)
+                            ? Visibility.Visible
+                            : Visibility.Collapsed;
                     });
                 }
             });
@@ -99,8 +96,7 @@ namespace Real_Estate_Agencies
                 PlaceholderText.Visibility = Visibility.Visible;
         }
 
-        // ---- Existing CRUD and agent detail methods stay the same ----
-
+        // ➕ Add Agent
         private void AddAgent_Click(object sender, RoutedEventArgs e)
         {
             AddAgentWindow addAgentWindow = new AddAgentWindow();
@@ -117,24 +113,61 @@ namespace Real_Estate_Agencies
             }
         }
 
+        // ✏ Edit Agent (smooth animation)
         private void EditAgent_Click(object sender, RoutedEventArgs e)
         {
+            // 🚫 Prevent bubbling to parent (stops ViewAgentDetails_Click from firing)
+            e.Handled = true;
+
             if ((sender as Button)?.CommandParameter is Agent agent)
             {
-                SelectedAgent = agent;
-                TxtAgentId.Text = agent.AgentId.ToString();
-                TxtFirstName.Text = agent.FirstName;
-                TxtLastName.Text = agent.LastName;
-                TxtContact.Text = agent.ContactInfo;
-                if (DateTime.TryParse(agent.HireDate, out DateTime hireDate))
-                    DpHireDate.SelectedDate = hireDate;
+                // Hide View Details if visible
+                if (AgentDetailsOverlay.Visibility == Visibility.Visible)
+                {
+                    if (AgentDetailsOverlay.Resources["HideOverlayStoryboard"] is Storyboard hideStoryboard)
+                    {
+                        hideStoryboard.Completed += (s, _) =>
+                        {
+                            AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+                            ShowEditAgentPopup(agent);
+                        };
+                        hideStoryboard.Begin();
+                    }
+                    else
+                    {
+                        AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+                        ShowEditAgentPopup(agent);
+                    }
+                }
                 else
-                    DpHireDate.SelectedDate = DateTime.Today;
-
-                EditAgentOverlay.Visibility = Visibility.Visible;
+                {
+                    ShowEditAgentPopup(agent);
+                }
             }
         }
 
+        private void ShowEditAgentPopup(Agent agent)
+        {
+            SelectedAgent = agent;
+            TxtAgentId.Text = agent.AgentId.ToString();
+            TxtFirstName.Text = agent.FirstName;
+            TxtLastName.Text = agent.LastName;
+            TxtContact.Text = agent.ContactInfo;
+
+            if (DateTime.TryParse(agent.HireDate, out DateTime hireDate))
+                DpHireDate.SelectedDate = hireDate;
+            else
+                DpHireDate.SelectedDate = DateTime.Today;
+
+            // Show overlay
+            EditAgentOverlay.Visibility = Visibility.Visible;
+
+            // Play modern fade + zoom animation
+            if (EditAgentOverlay.Resources["ShowEditOverlayStoryboard"] is Storyboard showStoryboard)
+                showStoryboard.Begin();
+        }
+
+        // 💾 Save Agent
         private void SaveAgent_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedAgent != null)
@@ -142,18 +175,22 @@ namespace Real_Estate_Agencies
                 SelectedAgent.FirstName = TxtFirstName.Text.Trim();
                 SelectedAgent.LastName = TxtLastName.Text.Trim();
                 SelectedAgent.ContactInfo = TxtContact.Text.Trim();
+
                 if (DpHireDate.SelectedDate.HasValue)
                     SelectedAgent.HireDate = DpHireDate.SelectedDate.Value.ToString("yyyy-MM-dd");
 
                 _repo.UpdateAgent(SelectedAgent);
-
                 AgentsView.Refresh();
             }
-            EditAgentOverlay.Visibility = Visibility.Collapsed;
+
+            CloseEditAgentOverlayWithAnimation();
         }
 
+        // 🗑 Delete Agent
         private void DeleteAgent_Click(object sender, RoutedEventArgs e)
         {
+            e.Handled = true;
+
             if ((sender as Button)?.CommandParameter is Agent agent)
             {
                 var result = MessageBox.Show(
@@ -168,20 +205,23 @@ namespace Real_Estate_Agencies
                         allAgents.Remove(agent);
                         Agents.Remove(agent);
                         AgentsView.Refresh();
-                        MessageBox.Show("Agent deleted successfully.", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Agent deleted successfully.", "Deleted",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error deleting agent: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show($"Error deleting agent: {ex.Message}", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
         }
 
-        // ---- Agent detail overlay methods stay the same ----
-
+        // 👁 View Agent Details
         private void ViewAgentDetails_Click(object sender, RoutedEventArgs e)
         {
+            EditAgentOverlay.Visibility = Visibility.Collapsed;
+
             if ((sender as Button)?.CommandParameter is Agent agent)
             {
                 DetailsFullName.Text = $"{agent.FirstName} {agent.LastName}";
@@ -194,14 +234,15 @@ namespace Real_Estate_Agencies
                     decimal totalBalance = _repo.GetAgentBalanceThisMonth(agent.AgentId);
                     if (_balanceResetOffset.TryGetValue(agent.AgentId, out decimal offset))
                         totalBalance -= offset;
-                    totalBalance = Math.Max(totalBalance, 0);
 
+                    totalBalance = Math.Max(totalBalance, 0);
                     DetailsUnitSales.Text = _repo.GetAgentSalesCountThisMonth(agent.AgentId).ToString();
                     DetailsCommissionBalance.Text = totalBalance.ToString("C", new CultureInfo("en-PH"));
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error loading agent stats: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error loading agent stats: {ex.Message}", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     DetailsUnitSales.Text = "0";
                     DetailsCommissionBalance.Text = (0m).ToString("C", new CultureInfo("en-PH"));
                 }
@@ -210,14 +251,29 @@ namespace Real_Estate_Agencies
                     DetailsProfileImage.Source = agent.ProfileBitmap;
 
                 AgentDetailsOverlay.Visibility = Visibility.Visible;
+
+                if (AgentDetailsOverlay.Resources["ShowOverlayStoryboard"] is Storyboard showStoryboard)
+                    showStoryboard.Begin();
             }
         }
 
         private void CloseAgentDetailsOverlay_Click(object sender, RoutedEventArgs e)
         {
-            AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+            if (AgentDetailsOverlay.Resources["HideOverlayStoryboard"] is Storyboard hideStoryboard)
+            {
+                hideStoryboard.Completed += (s, _) =>
+                {
+                    AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+                };
+                hideStoryboard.Begin();
+            }
+            else
+            {
+                AgentDetailsOverlay.Visibility = Visibility.Collapsed;
+            }
         }
 
+        // 💰 Release Commission
         private void ReleaseCommission_Click(object sender, RoutedEventArgs e)
         {
             if (!int.TryParse(DetailsAgentId.Text, out int agentId)) return;
@@ -228,7 +284,7 @@ namespace Real_Estate_Agencies
                 if (totalBalance <= 0)
                 {
                     MessageBox.Show("No commission balance to release.", "Notice",
-                                    MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -236,20 +292,38 @@ namespace Real_Estate_Agencies
                 releaseRepo.Add(agentId, totalBalance);
 
                 DetailsCommissionBalance.Text = "₱0.00";
-                MessageBox.Show("Commission released successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Commission released successfully!", "Success",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
 
                 AgentDetailsOverlay.Visibility = Visibility.Collapsed;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error releasing commission: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error releasing commission: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        // Close edit agent overlay
+
+        // ❌ Close Edit Agent Overlay (with animation)
         private void CloseEditAgentOverlay_Click(object sender, RoutedEventArgs e)
         {
-            EditAgentOverlay.Visibility = Visibility.Collapsed;
+            CloseEditAgentOverlayWithAnimation();
         }
 
+        private void CloseEditAgentOverlayWithAnimation()
+        {
+            if (EditAgentOverlay.Resources["HideEditOverlayStoryboard"] is Storyboard hideStoryboard)
+            {
+                hideStoryboard.Completed += (s, _) =>
+                {
+                    EditAgentOverlay.Visibility = Visibility.Collapsed;
+                };
+                hideStoryboard.Begin();
+            }
+            else
+            {
+                EditAgentOverlay.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

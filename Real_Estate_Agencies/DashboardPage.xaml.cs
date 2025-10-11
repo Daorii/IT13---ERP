@@ -13,52 +13,36 @@ using System.Windows.Media.Effects;
 using Real_Estate_Agencies.Data;
 using Real_Estate_Agencies.Model;
 
-
-
-
 namespace Real_Estate_Agencies
 {
     public partial class DashboardPage : Page
     {
         private DispatcherTimer _scrollTimer;
-        private double _scrollSpeed = 1; // pixels per tick
-        private bool _scrollingRight = true; // direction
+        private double _scrollSpeed = 1;
+        private bool _scrollingRight = true;
         private DispatcherTimer _clockTimer;
 
         public DashboardPage()
         {
             InitializeComponent();
-
             LoadTopSoldProperties();
-
-            // Set DataContext
             DataContext = new DashboardViewModel();
 
-            // Animate bars and start clock after DataContext is set
             Loaded += (s, e) =>
             {
                 AnimateBars();
-                GenerateHourMarks();   // Add hour marks to clock
-                StartAnalogClock();    // Start live clock
+                GenerateHourMarks();
+                StartAnalogClock();
             };
         }
 
-
-
-
-        // -----------------------------
-        // Horizontal scroll for properties
-        // -----------------------------
-
+        // Load top sold properties
         private void LoadTopSoldProperties()
         {
             var repo = new DashboardRepository();
             var topProperties = repo.GetTopSoldProperties(5);
-
             TopPropertiesItemsControl.ItemsSource = topProperties;
         }
-
-
 
         private void PropertyScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -71,10 +55,7 @@ namespace Real_Estate_Agencies
 
         private void TopPropertiesScrollViewer_Loaded(object sender, RoutedEventArgs e)
         {
-            _scrollTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(20) // 50 FPS
-            };
+            _scrollTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(20) };
             _scrollTimer.Tick += ScrollTimer_Tick;
             _scrollTimer.Start();
 
@@ -104,40 +85,36 @@ namespace Real_Estate_Agencies
             TopPropertiesScrollViewer.ScrollToHorizontalOffset(newOffset);
         }
 
-        // -----------------------------
-        // KPI Cards Click
-        // -----------------------------
+        // KPI Card Clicks
         private void PropertySalesCard_Click(object sender, MouseButtonEventArgs e)
         {
-            this.NavigationService?.Navigate(new PropertiesPage());
+            NavigationService?.Navigate(new PropertiesPage());
         }
 
         private void AgentsCard_Click(object sender, MouseButtonEventArgs e)
         {
-            this.NavigationService?.Navigate(new AgentsPage());
+            NavigationService?.Navigate(new AgentsPage());
         }
 
         private void CommissionCard_Click(object sender, MouseButtonEventArgs e)
         {
-            this.NavigationService?.Navigate(new CommissionsPage());
+            NavigationService?.Navigate(new CommissionsPage());
         }
 
         private void PropertiesCard_Click(object sender, MouseButtonEventArgs e)
         {
-            NavigationService.Navigate(new PropertiesPage());
+            NavigationService?.Navigate(new PropertiesPage());
         }
 
-        // -----------------------------
-        // Animate Vertical Bars
-        // -----------------------------
+        // Animate KPI Bars
         private void AnimateBars()
         {
-            // Optional: Implement bar animations here
+            // Optional: implement bar animations
         }
 
         private void AnimateBar(Border bar, double progress)
         {
-            double maxHeight = 80; // match container height
+            double maxHeight = 80;
             double targetHeight = progress * maxHeight;
 
             var animation = new DoubleAnimation
@@ -151,19 +128,17 @@ namespace Real_Estate_Agencies
             bar.BeginAnimation(HeightProperty, animation);
         }
 
-        // -----------------------------
-        // Analog Clock Logic
-        // -----------------------------
+        // Analog Clock
         private void GenerateHourMarks()
         {
             double centerX = AnalogClock.Width / 2;
             double centerY = AnalogClock.Height / 2;
-            double radius = 60; // slightly smaller than canvas
+            double radius = 60;
             int totalMarks = 12;
 
             for (int i = 0; i < totalMarks; i++)
             {
-                double angle = i * 30 * Math.PI / 180; // degrees to radians
+                double angle = i * 30 * Math.PI / 180;
                 double x1 = centerX + radius * Math.Sin(angle);
                 double y1 = centerY - radius * Math.Cos(angle);
                 double x2 = centerX + (radius - 8) * Math.Sin(angle);
@@ -187,31 +162,22 @@ namespace Real_Estate_Agencies
 
         private void StartAnalogClock()
         {
-            _clockTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
+            _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _clockTimer.Tick += (s, e) =>
             {
                 DateTime now = DateTime.Now;
-                double secAngle = now.Second * 6;   // 360/60
+                double secAngle = now.Second * 6;
                 double minAngle = now.Minute * 6 + secAngle / 60;
                 double hourAngle = (now.Hour % 12) * 30 + minAngle / 12;
 
-                RotateTransform secRot = new RotateTransform(secAngle, 70, 70);
-                RotateTransform minRot = new RotateTransform(minAngle, 70, 70);
-                RotateTransform hourRot = new RotateTransform(hourAngle, 70, 70);
-
-                SecondHand.RenderTransform = secRot;
-                MinuteHand.RenderTransform = minRot;
-                HourHand.RenderTransform = hourRot;
+                SecondHand.RenderTransform = new RotateTransform(secAngle, 70, 70);
+                MinuteHand.RenderTransform = new RotateTransform(minAngle, 70, 70);
+                HourHand.RenderTransform = new RotateTransform(hourAngle, 70, 70);
             };
             _clockTimer.Start();
         }
 
-        // -----------------------------
-        // Top Agent Click
-        // -----------------------------
+        // Top Agent Modal
         private void Agent_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is string agentName)
@@ -223,11 +189,9 @@ namespace Real_Estate_Agencies
                     new Deal { Property = "Lot C", Price = "$10,000", Date = "2025-09-10" }
                 };
 
-                // Create the modal
                 var modal = new TopAgentModal();
                 modal.SetAgentData(agentName, 25, "$50,000", 12, recentDeals);
 
-                // Wrap modal in a border to apply corner radius and shadow
                 var borderWrapper = new Border
                 {
                     CornerRadius = new CornerRadius(15),
@@ -245,25 +209,19 @@ namespace Real_Estate_Agencies
                     VerticalAlignment = VerticalAlignment.Center
                 };
 
-                // Create overlay
                 var overlay = new Grid
                 {
-                    Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0)) // semi-transparent black
+                    Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0))
                 };
                 overlay.Children.Add(borderWrapper);
-
-                // Add overlay to main grid
                 MainGrid.Children.Add(overlay);
 
-                // Close modal on button click inside modal
                 modal.CloseClicked += () => MainGrid.Children.Remove(overlay);
             }
         }
     }
 
-    // -----------------------------
-    // Progress to Height Converter
-    // -----------------------------
+    // Converter for KPI bar height
     public class ProgressToHeightConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

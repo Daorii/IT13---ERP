@@ -12,6 +12,8 @@ namespace Real_Estate_Agencies
         public Agent NewAgent { get; private set; }
         public string ImagePath { get; private set; } // Store uploaded image path
         private bool isEditMode = false;
+            public string AddButtonText => isEditMode ? "Save" : "Add";
+
 
         public AddAgentWindow()
         {

@@ -1,7 +1,7 @@
 ﻿using Real_Estate_Agencies.Model;
 using System;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace Real_Estate_Agencies
 {
@@ -12,6 +12,20 @@ namespace Real_Estate_Agencies
         public AddClientWindow()
         {
             InitializeComponent();
+        }
+
+        private void AddClientWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Fade + Scale animation
+            var fadeAnim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300));
+            MainCard.BeginAnimation(OpacityProperty, fadeAnim);
+
+            var scaleAnim = new DoubleAnimation(0.8, 1, TimeSpan.FromMilliseconds(300))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+            MainCard.RenderTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnim);
+            MainCard.RenderTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnim);
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -27,7 +41,6 @@ namespace Real_Estate_Agencies
                     LastName = TxtLastName.Text.Trim(),
                     ContactInfo = TxtContactInfo.Text.Trim(),
                     Address = TxtAddress.Text.Trim(),
-                   
                 };
 
                 DialogResult = true;
@@ -45,11 +58,6 @@ namespace Real_Estate_Agencies
             Close();
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
         private bool ValidateInput()
         {
             if (string.IsNullOrWhiteSpace(TxtFirstName.Text))
@@ -57,27 +65,21 @@ namespace Real_Estate_Agencies
                 MessageBox.Show("Please enter First Name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
             if (string.IsNullOrWhiteSpace(TxtLastName.Text))
             {
                 MessageBox.Show("Please enter Last Name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
             if (string.IsNullOrWhiteSpace(TxtContactInfo.Text))
             {
                 MessageBox.Show("Please enter Contact Info.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
             if (string.IsNullOrWhiteSpace(TxtAddress.Text))
             {
                 MessageBox.Show("Please enter Address.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-
-          
-
             return true;
         }
     }

@@ -20,10 +20,7 @@ namespace Real_Estate_Agencies
             repo = new IncentivesRepository();
             LoadIncentives();
 
-            // Add event for search
             SearchTextBox.TextChanged += SearchTextBox_TextChanged;
-
-            // Initial placeholder visibility
             TogglePlaceholder();
         }
 
@@ -59,7 +56,7 @@ namespace Real_Estate_Agencies
             if (incentive != null)
             {
                 TxtIncentiveId.Text = incentive.IncentiveId;
-                TxtAgentName.Text = incentive.AgentName; // ✅ agent name field
+                TxtAgentName.Text = incentive.AgentName;
                 CmbIncentiveType.Text = incentive.IncentiveType;
                 TxtAmount.Text = incentive.Amount.Replace("₱", "").Replace(",", "");
                 TxtReleaseDate.Text = incentive.ReleaseDate;
@@ -88,14 +85,12 @@ namespace Real_Estate_Agencies
                 string incentiveType = CmbIncentiveType.Text;
                 decimal amount = decimal.Parse(TxtAmount.Text);
                 DateTime releaseDate = DateTime.Parse(TxtReleaseDate.Text);
-
-                // ✅ Convert AgentId (string) → int
                 int agentId = int.Parse(existing.AgentId);
 
                 var updatedIncentive = new Incentive
                 {
                     IncentiveId = incentiveId,
-                    AgentId = agentId, // ✅ fixed
+                    AgentId = agentId,
                     IncentiveType = incentiveType,
                     Amount = amount,
                     ReleaseDate = releaseDate
@@ -103,7 +98,6 @@ namespace Real_Estate_Agencies
 
                 repo.UpdateIncentive(updatedIncentive);
 
-                // Update UI
                 existing.IncentiveType = incentiveType;
                 existing.Amount = "₱" + amount.ToString("N0");
                 existing.ReleaseDate = releaseDate.ToString("yyyy-MM-dd");
@@ -131,13 +125,8 @@ namespace Real_Estate_Agencies
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // Convert "I001" back to integer ID
                     int incentiveId = int.Parse(incentive.IncentiveId.Replace("I", ""));
-
-                    // Remove from DB
                     repo.DeleteIncentive(incentiveId);
-
-                    // Remove from local list & refresh
                     allIncentives.Remove(incentive);
                     ApplyFilter(SearchTextBox.Text);
 
@@ -148,13 +137,12 @@ namespace Real_Estate_Agencies
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TogglePlaceholder();           // Hide/show placeholder
+            TogglePlaceholder();
             ApplyFilter(SearchTextBox.Text);
         }
 
         private void TogglePlaceholder()
         {
-            // Hide placeholder when user types, show if empty
             PlaceholderText.Visibility = string.IsNullOrEmpty(SearchTextBox.Text)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -183,7 +171,7 @@ namespace Real_Estate_Agencies
             return new IncentiveDisplayItem
             {
                 IncentiveId = "I" + incentive.IncentiveId.ToString("D3"),
-                AgentId = incentive.AgentId.ToString(), // ✅ fixed: convert int → string
+                AgentId = incentive.AgentId.ToString(),
                 AgentName = incentive.AgentName,
                 IncentiveType = incentive.IncentiveType,
                 Amount = "₱" + incentive.Amount.ToString("N0"),
@@ -196,7 +184,7 @@ namespace Real_Estate_Agencies
     {
         public string IncentiveId { get; set; }
         public string AgentId { get; set; }
-        public string AgentName { get; set; }             // ✅ for display
+        public string AgentName { get; set; }
         public string IncentiveType { get; set; }
         public string Amount { get; set; }
         public string ReleaseDate { get; set; }

@@ -32,10 +32,7 @@ namespace Real_Estate_Agencies
                 new ColumnSeries<int> { Values = new int[] { 5, 8, 10, 7, 12, 6, 9, 15, 11, 8, 10, 14 } }
             };
 
-            LineChart.Series = new ISeries[]
-            {
-                new LineSeries<int> { Values = new int[] { 50, 55, 60, 58, 70, 65, 80, 75, 85, 90, 95, 100 } }
-            };
+         
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

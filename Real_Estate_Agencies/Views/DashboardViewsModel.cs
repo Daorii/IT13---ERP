@@ -1,14 +1,14 @@
-﻿using System;
+﻿using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Model;
+using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Threading;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
-using Real_Estate_Agencies.Model;
 using System.Windows;
-using Real_Estate_Agencies.Data;
-
-
+using System.Windows.Threading;
 
 namespace Real_Estate_Agencies
 {
@@ -29,7 +29,6 @@ namespace Real_Estate_Agencies
             CurrentDate = DateTime.Now.ToString("MMMM dd, yyyy");
             CurrentTime = DateTime.Now.ToString("hh:mm:ss tt");
 
-            // Start timer for ticking seconds
             _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _timer.Tick += (s, e) =>
             {
@@ -37,8 +36,6 @@ namespace Real_Estate_Agencies
                 CurrentTime = DateTime.Now.ToString("hh:mm:ss tt");
             };
             _timer.Start();
-
-
 
             // KPI Sample Data
             DashboardData = new DashboardKpi
@@ -55,60 +52,119 @@ namespace Real_Estate_Agencies
                 TopCategoryProgress = 75
             };
 
+            Dictionary<string, int> statusCounts = new Dictionary<string, int>();
+
             try
             {
                 var repo = new DashboardRepository();
                 OnSellProperties = repo.GetTopSoldProperties(5);
-                TopAgents = repo.GetTopAgents(5); // dynamically load top agents
+                TopAgents = repo.GetTopAgents(5);
+                statusCounts = repo.GetPropertyStatusCounts();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading top properties: {ex.Message}");
             }
 
-
             // Pie Chart
             PieSeries = new ISeries[]
             {
-                new PieSeries<double> { Values = new double[] { 50 }, Name="Available" },
-                new PieSeries<double> { Values = new double[] { 30 }, Name="Sold" },
-                new PieSeries<double> { Values = new double[] { 20 }, Name="Rented" }
+                new PieSeries<int>
+                {
+                    Values = new int[] { statusCounts["Available"] },
+                    Name = "Available",
+                    Fill = new SolidColorPaint(SKColors.Green),
+                    DataLabelsPaint = new SolidColorPaint(SKColors.White)
+                },
+                new PieSeries<int>
+                {
+                    Values = new int[] { statusCounts["Sold"] },
+                    Name = "Sold",
+                    Fill = new SolidColorPaint(SKColors.Red),
+                    DataLabelsPaint = new SolidColorPaint(SKColors.White)
+                },
+                new PieSeries<int>
+                {
+                    Values = new int[] { statusCounts["Pending"] },
+                    Name = "Pending",
+                    Fill = new SolidColorPaint(SKColors.Yellow),
+                    DataLabelsPaint = new SolidColorPaint(SKColors.Black)
+                }
             };
 
             // Sales Over Time
-            SalesOverTimeSeries = new ISeries[]
+            try
             {
-                new LineSeries<double> { Values = new double[] { 5,7,3,8,10,12,15,14,18,20,22,25 }, Name="Sales" }
-            };
-            SalesXAxes = new Axis[] { new Axis { Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" } } };
-            SalesYAxes = new Axis[] { new Axis { Name = "Sales Count" } };
+                var repo = new DashboardRepository();
+                var monthlySales = repo.GetMonthlySalesCounts(DateTime.Now.Year);
+
+                double[] salesValues = new double[12];
+                for (int i = 1; i <= 12; i++)
+                    salesValues[i - 1] = monthlySales.ContainsKey(i) ? monthlySales[i] : 0;
+
+                SalesOverTimeSeries = new ISeries[]
+                {
+                    new LineSeries<double>
+                    {
+                        Values = salesValues,
+                        Name = "Sales",
+                        Fill = null,
+                        Stroke = new SolidColorPaint(SKColors.Blue) { StrokeThickness = 2 },
+                        GeometryFill = new SolidColorPaint(SKColors.Blue),
+                        GeometryStroke = new SolidColorPaint(SKColors.White)
+                    }
+                };
+
+                SalesXAxes = new Axis[]
+                {
+                    new Axis { Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" } }
+                };
+
+                SalesYAxes = new Axis[]
+                {
+                    new Axis { Name = "Sales Count", MinLimit = 0 }
+                };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading sales over time: {ex.Message}");
+            }
 
             // Agent Performance
             AgentPerformanceSeries = new ISeries[]
             {
-                new ColumnSeries<double> { Values = new double[] { 50000 }, Name="Agent A" },
-                new ColumnSeries<double> { Values = new double[] { 40000 }, Name="Agent B" },
-                new ColumnSeries<double> { Values = new double[] { 30000 }, Name="Agent C" },
-                new ColumnSeries<double> { Values = new double[] { 25000 }, Name="Agent D" }
+               new ColumnSeries<double> { Values = new[] { 50000d }, Name = "Agent A" },
+               new ColumnSeries<double> { Values = new[] { 40000d }, Name = "Agent B" },
+               new ColumnSeries<double> { Values = new[] { 30000d }, Name = "Agent C" },
+               new ColumnSeries<double> { Values = new[] { 25000d }, Name = "Agent D" }
             };
-            AgentPerformanceXAxes = new Axis[] { new Axis { Labels = new[] { "Agent A", "Agent B", "Agent C", "Agent D" } } };
-            AgentPerformanceYAxes = new Axis[] { new Axis { Name = "Sales ($)", MinLimit = 0 } };
+
+
+            AgentPerformanceXAxes = new Axis[]
+            {
+                new Axis { Labels = new[] { "Agent A", "Agent B", "Agent C", "Agent D" } }
+            };
+
+            AgentPerformanceYAxes = new Axis[]
+            {
+                new Axis { Name = "Sales ($)", MinLimit = 0 }
+            };
 
             // Recent Sales Table
             RecentSales = new List<SaleRecord>
             {
-                new SaleRecord { Property="Condo A", Agent="Agent A", Client="John Doe", Amount="$120,000", Date="2025-01-12" },
-                new SaleRecord { Property="House B", Agent="Agent B", Client="Jane Smith", Amount="$200,000", Date="2025-02-08" },
-                new SaleRecord { Property="Lot C", Agent="Agent C", Client="Mark Lee", Amount="$95,000", Date="2025-03-18" }
+                new SaleRecord { Property = "Condo A", Agent = "Agent A", Client = "John Doe", Amount = "$120,000", Date = "2025-01-12" },
+                new SaleRecord { Property = "House B", Agent = "Agent B", Client = "Jane Smith", Amount = "$200,000", Date = "2025-02-08" },
+                new SaleRecord { Property = "Lot C", Agent = "Agent C", Client = "Mark Lee", Amount = "$95,000", Date = "2025-03-18" }
             };
 
             // Tasks / To-Do Panel
             Tasks = new List<TaskItem>
             {
-                new TaskItem { Description="Follow-up with Client: John Doe", IsCompleted=false },
-                new TaskItem { Description="Approve new listing: Condo A", IsCompleted=false },
-                new TaskItem { Description="Update property status: House B", IsCompleted=false },
-                new TaskItem { Description="Follow-up with Client: Jane Smith", IsCompleted=false }
+                new TaskItem { Description = "Follow-up with Client: John Doe", IsCompleted = false },
+                new TaskItem { Description = "Approve new listing: Condo A", IsCompleted = false },
+                new TaskItem { Description = "Update property status: House B", IsCompleted = false },
+                new TaskItem { Description = "Follow-up with Client: Jane Smith", IsCompleted = false }
             };
         }
 
@@ -117,9 +173,7 @@ namespace Real_Estate_Agencies
 
         // Top Properties
         public List<PropertyModel> OnSellProperties { get; set; }
-
         public List<AgentPerformanceModel> TopAgents { get; set; }
-
 
         // Charts
         public ISeries[] PieSeries { get; set; }
@@ -134,27 +188,48 @@ namespace Real_Estate_Agencies
         public List<SaleRecord> RecentSales { get; set; }
 
         // Header
-        public string CurrentDate { get => _currentDate; set { _currentDate = value; OnPropertyChanged(nameof(CurrentDate)); } }
-        public string CurrentTime { get => _currentTime; set { _currentTime = value; OnPropertyChanged(nameof(CurrentTime)); } }
+        public string CurrentDate
+        {
+            get => _currentDate;
+            set { _currentDate = value; OnPropertyChanged(nameof(CurrentDate)); }
+        }
+
+        public string CurrentTime
+        {
+            get => _currentTime;
+            set { _currentTime = value; OnPropertyChanged(nameof(CurrentTime)); }
+        }
 
         // Tasks / To-Do Panel
         public List<TaskItem> Tasks { get; set; }
 
         // Quick Filters / Search
         public List<string> PropertyTypes { get; set; }
-        public string SelectedPropertyType { get => _selectedPropertyType; set { _selectedPropertyType = value; OnPropertyChanged(nameof(SelectedPropertyType)); } }
+        public string SelectedPropertyType
+        {
+            get => _selectedPropertyType;
+            set { _selectedPropertyType = value; OnPropertyChanged(nameof(SelectedPropertyType)); }
+        }
 
         public List<string> StatusOptions { get; set; }
-        public string SelectedStatus { get => _selectedStatus; set { _selectedStatus = value; OnPropertyChanged(nameof(SelectedStatus)); } }
+        public string SelectedStatus
+        {
+            get => _selectedStatus;
+            set { _selectedStatus = value; OnPropertyChanged(nameof(SelectedStatus)); }
+        }
 
         public List<string> DateRanges { get; set; }
-        public string SelectedDateRange { get => _selectedDateRange; set { _selectedDateRange = value; OnPropertyChanged(nameof(SelectedDateRange)); } }
+        public string SelectedDateRange
+        {
+            get => _selectedDateRange;
+            set { _selectedDateRange = value; OnPropertyChanged(nameof(SelectedDateRange)); }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    // KPI class
     public class DashboardKpi
     {
         public int SalesCount { get; set; }
@@ -169,6 +244,18 @@ namespace Real_Estate_Agencies
         public double TopCategoryProgress { get; set; }
     }
 
-    public class SaleRecord { public string Property { get; set; } public string Agent { get; set; } public string Client { get; set; } public string Amount { get; set; } public string Date { get; set; } }
-    public class TaskItem { public string Description { get; set; } public bool IsCompleted { get; set; } }
+    public class SaleRecord
+    {
+        public string Property { get; set; }
+        public string Agent { get; set; }
+        public string Client { get; set; }
+        public string Amount { get; set; }
+        public string Date { get; set; }
+    }
+
+    public class TaskItem
+    {
+        public string Description { get; set; }
+        public bool IsCompleted { get; set; }
+    }
 }

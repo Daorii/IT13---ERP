@@ -21,7 +21,7 @@ namespace Real_Estate_Agencies.Data
                 using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
-                    string sql = $@"
+                    string sql = @"
                         SELECT TOP (@TopCount)
                             p.PropertyID,
                             p.Name,
@@ -52,7 +52,6 @@ namespace Real_Estate_Agencies.Data
                                     PropertyType = reader.GetString(3),
                                     Category = reader.GetString(4),
                                     Price = (double)reader.GetDecimal(5),
-
                                     Status = reader.GetString(6),
                                     ImagePath = reader.IsDBNull(7)
                                         ? null
@@ -65,8 +64,7 @@ namespace Real_Estate_Agencies.Data
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Database error (GetTopSoldProperties): {ex.Message}",
-                                "DB Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Database error (GetTopSoldProperties): {ex.Message}", "DB Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return list;
@@ -82,15 +80,15 @@ namespace Real_Estate_Agencies.Data
                 {
                     conn.Open();
 
-                    string sql = $@"
-SELECT TOP (@TopCount) 
-    a.AgentID,
-    a.FirstName + ' ' + a.LastName AS FullName,
-    COUNT(s.SaleID) AS TotalSales
-FROM Agents a
-LEFT JOIN Sales s ON a.AgentID = s.AgentID
-GROUP BY a.AgentID, a.FirstName, a.LastName
-ORDER BY TotalSales DESC";
+                    string sql = @"
+                        SELECT TOP (@TopCount)
+                            a.AgentID,
+                            a.FirstName + ' ' + a.LastName AS FullName,
+                            COUNT(s.SaleID) AS TotalSales
+                        FROM Agents a
+                        LEFT JOIN Sales s ON a.AgentID = s.AgentID
+                        GROUP BY a.AgentID, a.FirstName, a.LastName
+                        ORDER BY TotalSales DESC";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
@@ -120,8 +118,92 @@ ORDER BY TotalSales DESC";
             return list;
         }
 
+        public Dictionary<string, int> GetPropertyStatusCounts()
+        {
+            var result = new Dictionary<string, int>
+            {
+                { "Available", 0 },
+                { "Sold", 0 },
+                { "Pending", 0 }
+            };
 
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
 
+                    string sql = @"
+                        SELECT Status, COUNT(*) AS Count
+                        FROM Properties
+                        GROUP BY Status";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string status = reader.GetString(0);
+                                int count = reader.GetInt32(1);
+
+                                if (result.ContainsKey(status))
+                                    result[status] = count;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database error (GetPropertyStatusCounts): {ex.Message}", "DB Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return result;
+        }
+
+        public Dictionary<int, int> GetMonthlySalesCounts(int year)
+        {
+            var result = new Dictionary<int, int>();
+
+            for (int i = 1; i <= 12; i++)
+                result[i] = 0;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+
+                    string sql = @"
+                        SELECT MONTH(SaleDate) AS Month, COUNT(*) AS SalesCount
+                        FROM Sales
+                        WHERE YEAR(SaleDate) = @Year
+                        GROUP BY MONTH(SaleDate)";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Year", year);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int month = reader.GetInt32(0);
+                                int count = reader.GetInt32(1);
+                                result[month] = count;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database error (GetMonthlySalesCounts): {ex.Message}", "DB Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return result;
+        }
 
         private string ConvertImageToBase64(byte[] imageBytes)
         {

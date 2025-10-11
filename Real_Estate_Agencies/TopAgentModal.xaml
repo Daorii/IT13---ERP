@@ -29,8 +29,6 @@
                 <TextBlock Text="Monthly Sales" FontWeight="Bold" Margin="0,10,0,5"/>
                 <lvc:CartesianChart x:Name="BarChart" Height="150"/>
 
-                <TextBlock Text="Sales Trend" FontWeight="Bold" Margin="0,10,0,5"/>
-                <lvc:CartesianChart x:Name="LineChart" Height="150"/>
 
                 <!-- Recent Deals Table -->
                 <TextBlock Text="Recent Deals" FontWeight="Bold" Margin="0,10,0,5"/>

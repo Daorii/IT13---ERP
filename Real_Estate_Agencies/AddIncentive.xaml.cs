@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Media.Animation;
 
 namespace Real_Estate_Agencies
 {
@@ -32,8 +32,36 @@ namespace Real_Estate_Agencies
             // Load agents from DB
             var agentRepo = new AgentRepository();
             allAgents = agentRepo.GetAllAgents();
+
+            // Start hidden for animation
+            MainCard.Opacity = 0;
+            MainCard.RenderTransform = new System.Windows.Media.ScaleTransform(0.8, 0.8);
+
+            Loaded += AddIncentiveWindow_Loaded; // Attach loaded event
         }
 
+        // ----------------------------
+        // OPENING TRANSITION
+        // ----------------------------
+        private void AddIncentiveWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Fade animation
+            var fadeAnim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300));
+            MainCard.BeginAnimation(OpacityProperty, fadeAnim);
+
+            // Scale animation
+            var scaleAnim = new DoubleAnimation(0.8, 1, TimeSpan.FromMilliseconds(300))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            var scaleTransform = MainCard.RenderTransform as System.Windows.Media.ScaleTransform;
+            if (scaleTransform != null)
+            {
+                scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnim);
+                scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnim);
+            }
+        }
 
         // ----------------------------
         // AGENT SEARCH WITH PAGINATION
@@ -133,7 +161,6 @@ namespace Real_Estate_Agencies
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private bool ValidateInput()
         {

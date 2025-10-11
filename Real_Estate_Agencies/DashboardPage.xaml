@@ -170,7 +170,7 @@
 
 
 
-                    <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,0,0">
+                    <Grid Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,0,0" >
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -582,10 +582,9 @@
                                       CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column" Height="400"
                                       RowBackground="White" AlternatingRowBackground="#F9F9F9" GridLinesVisibility="Horizontal" BorderThickness="0">
                                     <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Client" Binding="{Binding Client}" Width="*"/>
                                         <DataGridTextColumn Header="Property" Binding="{Binding Property}" Width="*"/>
                                         <DataGridTextColumn Header="Agent" Binding="{Binding Agent}" Width="*"/>
-                                        <DataGridTextColumn Header="Client" Binding="{Binding Client}" Width="*"/>
-                                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" Width="*"/>
                                         <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="*"/>
                                     </DataGrid.Columns>
                                 </DataGrid>
