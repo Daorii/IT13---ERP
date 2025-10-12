@@ -6,14 +6,18 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace Real_Estate_Agencies
 {
     public partial class ClientsPage : Page
     {
         private readonly ClientRepository _repo;
+        private readonly SalesRepository _salesRepo;
+
         public ObservableCollection<Client> Clients { get; set; }
-        private ObservableCollection<Client> AllClients { get; set; } // keep original list
+        private ObservableCollection<Client> AllClients { get; set; }
+
         public Client SelectedClient { get; set; }
 
         public ClientsPage()
@@ -21,68 +25,51 @@ namespace Real_Estate_Agencies
             InitializeComponent();
 
             _repo = new ClientRepository();
+            _salesRepo = new SalesRepository();
+
             AllClients = new ObservableCollection<Client>(_repo.GetAllClients());
             Clients = new ObservableCollection<Client>(AllClients);
 
             ClientsDataGrid.ItemsSource = Clients;
             DataContext = this;
 
-            SearchTextBox.TextChanged += SearchTextBox_TextChanged; // attach search event
+            SearchTextBox.TextChanged += SearchTextBox_TextChanged;
         }
 
-        #region Add / Edit / Delete Client
-
+        #region ➕ Add Client
         private void AddClient_Click(object sender, RoutedEventArgs e)
         {
-            AddClientWindow addWindow = new AddClientWindow();
+            var addWindow = new AddClientWindow();
             if (addWindow.ShowDialog() == true && addWindow.NewClient != null)
             {
-                _repo.AddClient(addWindow.NewClient);   // save to DB
+                _repo.AddClient(addWindow.NewClient);
                 AllClients.Add(addWindow.NewClient);
-                Clients.Add(addWindow.NewClient);       // update UI
+                Clients.Add(addWindow.NewClient);
             }
         }
+        #endregion
 
+        #region ✏️ Edit Client
         private void EditClient_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.CommandParameter is Client client)
             {
                 SelectedClient = client;
 
-                // Populate form fields
+                // Fill in form fields
                 EditClientIdTextBox.Text = client.ClientId.ToString();
                 EditFirstNameTextBox.Text = client.FirstName;
                 EditLastNameTextBox.Text = client.LastName;
                 EditContactInfoTextBox.Text = client.ContactInfo;
                 EditAddressTextBox.Text = client.Address;
+
+                // Show overlay and animate the white panel
                 EditPopupOverlay.Visibility = Visibility.Visible;
+                AnimatePopupOpen();
             }
             else
             {
-                MessageBox.Show("No client selected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void DeleteClient_Click(object sender, RoutedEventArgs e)
-        {
-            if ((sender as Button)?.CommandParameter is Client client)
-            {
-                var result = MessageBox.Show(
-                    $"Delete client {client.FirstName} {client.LastName}?",
-                    "Confirm Delete",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    _repo.DeleteClient(client.ClientId);   // delete from DB
-                    AllClients.Remove(client);
-                    Clients.Remove(client);                // update UI
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select a client to delete.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please select a client to edit.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -90,27 +77,9 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                // Validation
-                if (string.IsNullOrWhiteSpace(EditFirstNameTextBox.Text))
-                {
-                    MessageBox.Show("First name is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditFirstNameTextBox.Focus();
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(EditLastNameTextBox.Text))
-                {
-                    MessageBox.Show("Last name is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditLastNameTextBox.Focus();
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(EditContactInfoTextBox.Text))
-                {
-                    MessageBox.Show("Contact info is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    EditContactInfoTextBox.Focus();
-                    return;
-                }
+                if (!ValidateField(EditFirstNameTextBox, "First name")) return;
+                if (!ValidateField(EditLastNameTextBox, "Last name")) return;
+                if (!ValidateField(EditContactInfoTextBox, "Contact info")) return;
 
                 if (SelectedClient != null)
                 {
@@ -120,11 +89,10 @@ namespace Real_Estate_Agencies
                     SelectedClient.Address = EditAddressTextBox.Text.Trim();
 
                     _repo.UpdateClient(SelectedClient);
-
-                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
                     ClientsDataGrid.Items.Refresh();
-                    EditPopupOverlay.Visibility = Visibility.Collapsed;
+
+                    MessageBox.Show("✅ Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    CloseEditPopup();
                 }
                 else
                 {
@@ -133,23 +101,67 @@ namespace Real_Estate_Agencies
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving client: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"⚠️ Error saving client: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void CloseEditPopup_Click(object sender, RoutedEventArgs e)
+        private void CloseEditPopup_Click(object sender, RoutedEventArgs e) => CloseEditPopup();
+
+        private void CloseEditPopup()
         {
-            EditPopupOverlay.Visibility = Visibility.Collapsed;
+            AnimatePopupClose();
         }
 
+        private void ClearEditFields()
+        {
+            EditClientIdTextBox.Text = "";
+            EditFirstNameTextBox.Text = "";
+            EditLastNameTextBox.Text = "";
+            EditContactInfoTextBox.Text = "";
+            EditAddressTextBox.Text = "";
+        }
+
+        private bool ValidateField(TextBox textBox, string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                MessageBox.Show($"{fieldName} is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                textBox.Focus();
+                return false;
+            }
+            return true;
+        }
         #endregion
 
-        #region Search Function
+        #region 🗑️ Delete Client
+        private void DeleteClient_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.CommandParameter is Client client)
+            {
+                var result = MessageBox.Show(
+                    $"Are you sure you want to delete client {client.FirstName} {client.LastName}?",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
 
+                if (result == MessageBoxResult.Yes)
+                {
+                    _repo.DeleteClient(client.ClientId);
+                    AllClients.Remove(client);
+                    Clients.Remove(client);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a client to delete.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        #endregion
+
+        #region 🔍 Search
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string query = SearchTextBox.Text.Trim().ToLower();
-
             Clients.Clear();
 
             var filtered = AllClients.Where(c =>
@@ -159,27 +171,23 @@ namespace Real_Estate_Agencies
                 c.Address.ToLower().Contains(query));
 
             foreach (var client in filtered)
-            {
                 Clients.Add(client);
-            }
         }
-
         #endregion
 
-        #region Profile Popup
+        #region 👤 Client Profile Popup
         private void ClientRow_Click(object sender, MouseButtonEventArgs e)
         {
             if ((sender as Grid)?.DataContext is Client client)
             {
+                SelectedClient = client;
+
                 ProfileFullName.Text = $"{client.FirstName} {client.LastName}";
                 ProfileContactInfo.Text = client.ContactInfo;
                 ProfileAddress.Text = client.Address;
 
-                // 🔹 Get sales/payment info
-                var saleRepo = new SalesRepository();
-                var saleInfo = saleRepo.GetClientSaleInfo(client.ClientId);
+                var saleInfo = _salesRepo.GetClientSaleInfo(client.ClientId);
 
-                // 🔹 Update profile fields dynamically
                 ProfileBalance.Text = saleInfo.balance.ToString("C");
                 ProfilePaymentType.Text = saleInfo.paymentType;
                 ProfileStatus.Text = saleInfo.status;
@@ -191,6 +199,44 @@ namespace Real_Estate_Agencies
         private void CloseProfilePopup_Click(object sender, RoutedEventArgs e)
         {
             ClientDetailsOverlay.Visibility = Visibility.Collapsed;
+        }
+        #endregion
+
+        #region ✨ Popup Animations
+        private void AnimatePopupOpen()
+        {
+            if (EditClientPanel == null) return;
+
+            var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
+            var scaleUp = new DoubleAnimation(0.9, 1, TimeSpan.FromMilliseconds(200))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            EditClientPanel.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+            EditClientPanel.RenderTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleUp);
+            EditClientPanel.RenderTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleUp);
+        }
+
+        private void AnimatePopupClose()
+        {
+            if (EditClientPanel == null) return;
+
+            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150));
+            var scaleDown = new DoubleAnimation(1, 0.9, TimeSpan.FromMilliseconds(150))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+            };
+
+            fadeOut.Completed += (s, e) =>
+            {
+                EditPopupOverlay.Visibility = Visibility.Collapsed;
+                ClearEditFields();
+            };
+
+            EditClientPanel.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+            EditClientPanel.RenderTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleDown);
+            EditClientPanel.RenderTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleDown);
         }
         #endregion
     }
