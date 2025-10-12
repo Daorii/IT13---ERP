@@ -124,20 +124,28 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="80"/>
+                            <!-- Agent -->
                             <ColumnDefinition Width="*"/>
+                            <!-- First Name -->
                             <ColumnDefinition Width="*"/>
+                            <!-- Last Name -->
+                            <ColumnDefinition Width="120"/>
+                            <!-- Hire Date -->
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <!-- Contact Info -->
+                            <ColumnDefinition Width="100"/>
+                            <!-- Action -->
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Agent" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="1" Text="First Name" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="3" Text="Hire Date" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="4" Text="Contact Info" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="5" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
+
+                        <TextBlock Grid.Column="0" Text="Agent" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="First Name" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Last Name" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="3" Text="Hire Date" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="4" Text="Contact Info" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="5" Text="Action" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
+
                 <!-- Agent List -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <Border CornerRadius="0,0,8,8" BorderBrush="{StaticResource Gray200}" BorderThickness="1,0,1,1">
@@ -146,26 +154,31 @@
                                 <DataTemplate>
                                     <!-- Make the whole row clickable -->
                                     <Button Background="Transparent" BorderThickness="0"
-                CommandParameter="{Binding}"
-                Click="ViewAgentDetails_Click"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
-                Cursor="Hand">
-
+                            CommandParameter="{Binding}"
+                            Click="ViewAgentDetails_Click"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Cursor="Hand">
                                         <Border Background="White" BorderBrush="{StaticResource Gray100}" BorderThickness="0,0,0,1">
                                             <Grid VerticalAlignment="Center">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="80"/>
+                                                    <!-- Agent -->
                                                     <ColumnDefinition Width="*"/>
+                                                    <!-- First Name -->
                                                     <ColumnDefinition Width="*"/>
+                                                    <!-- Last Name -->
+                                                    <ColumnDefinition Width="120"/>
+                                                    <!-- Hire Date -->
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
+                                                    <!-- Contact Info -->
+                                                    <ColumnDefinition Width="100"/>
+                                                    <!-- Action -->
                                                 </Grid.ColumnDefinitions>
 
                                                 <!-- Agent Image -->
                                                 <Border Grid.Column="0" Width="50" Height="50" BorderBrush="Gray" BorderThickness="1"
-                            CornerRadius="25" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4">
+                                        CornerRadius="25" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4">
                                                     <Image Source="{Binding ProfileBitmap}" Stretch="UniformToFill" Width="50" Height="50">
                                                         <Image.Clip>
                                                             <EllipseGeometry Center="25,25" RadiusX="25" RadiusY="25"/>
@@ -174,19 +187,23 @@
                                                 </Border>
 
                                                 <!-- Agent Info -->
-                                                <TextBlock Grid.Column="1" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="3" Text="{Binding HireDate}" Style="{StaticResource CellTextStyle}" HorizontalAlignment="Center"/>
-                                                <TextBlock Grid.Column="4" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}" HorizontalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding FirstName}" Style="{StaticResource CellTextStyle}" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding LastName}" Style="{StaticResource CellTextStyle}" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding HireDate}" Style="{StaticResource CellTextStyle}" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding ContactInfo}" Style="{StaticResource CellTextStyle}" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                                                 <!-- Actions -->
-                                                <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                     <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Edit" Margin="2,0"
-                                Click="EditAgent_Click" CommandParameter="{Binding}">
+                                            Click="EditAgent_Click" CommandParameter="{Binding}">
                                                         <TextBlock Text="✏️" FontSize="12"/>
                                                     </Button>
                                                     <Button Style="{StaticResource CircularIconButtonStyle}" ToolTip="Delete" Margin="2,0"
-                                Click="DeleteAgent_Click" CommandParameter="{Binding}">
+                                            Click="DeleteAgent_Click" CommandParameter="{Binding}">
                                                         <TextBlock Text="🗑️" FontSize="12"/>
                                                     </Button>
                                                 </StackPanel>
@@ -195,10 +212,10 @@
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-
                         </ItemsControl>
                     </Border>
                 </ScrollViewer>
+
             </Grid>
             <!-- Pagination -->
             <Grid Grid.Row="2" Margin="0,16,0,0">
@@ -520,19 +537,21 @@
                                Margin="0,0,0,18"/>
 
                                 <Rectangle Fill="#CBD5E1" Height="1" Width="160" Margin="0,4,0,20"/>
+                                
+
+                                <!-- Hire Date -->
+                                <!-- Agent ID -->
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,6" HorizontalAlignment="Left">
+                                    <TextBlock Text="🆔" FontSize="16" Margin="0,0,8,0"/>
+                                    <TextBlock Text="Agent ID:" FontWeight="SemiBold" Foreground="#374151" Width="80"/>
+                                    <TextBlock x:Name="DetailsAgentId" Foreground="#111827"/>
+                                </StackPanel>
 
                                 <!-- Hire Date -->
                                 <StackPanel Orientation="Horizontal" Margin="0,4,0,6" HorizontalAlignment="Center">
                                     <TextBlock Text="📅" FontSize="16" Margin="0,0,8,0"/>
                                     <TextBlock Text="Hire Date:" FontWeight="SemiBold" Foreground="#374151" Width="80"/>
                                     <TextBlock x:Name="DetailsHireDate" Foreground="#111827"/>
-                                </StackPanel>
-
-                                <!-- Agent ID -->
-                                <StackPanel Orientation="Horizontal" Margin="0,4,0,6" HorizontalAlignment="Left">
-                                    <TextBlock Text="🆔" FontSize="16" Margin="0,0,8,0"/>
-                                    <TextBlock Text="Agent ID:" FontWeight="SemiBold" Foreground="#374151" Width="80"/>
-                                    <TextBlock x:Name="DetailsAgentId" Foreground="#111827"/>
                                 </StackPanel>
                             </StackPanel>
                         </Border>

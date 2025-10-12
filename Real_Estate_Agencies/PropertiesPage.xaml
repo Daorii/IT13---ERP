@@ -188,8 +188,9 @@
                         <TextBlock Grid.Column="0" Text="Property" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="1" Text="Name" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="2" Text="Location" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="3" Text="Type" Style="{StaticResource HeaderTextStyle}"/>
-                        <TextBlock Grid.Column="4" Text="Category" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Grid.Column="3" Text="Category" Style="{StaticResource HeaderTextStyle}"/>
+
+                        <TextBlock Grid.Column="4" Text="Type" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="5" Text="Price" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="6" Text="Status" Style="{StaticResource HeaderTextStyle}"/>
                         <TextBlock Grid.Column="7" Text="Action" Style="{StaticResource HeaderTextStyle}"/>
@@ -437,9 +438,9 @@
                         <!-- Form Content -->
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <StackPanel Orientation="Vertical">
-                                <!-- Keep all your existing field names and bindings intact -->
                                 <TextBox x:Name="TxtPropertyId" Visibility="Collapsed"/>
 
+                                <!-- Property Name -->
                                 <StackPanel Margin="0,0,0,12">
                                     <TextBlock Text="Property Name" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
                                     <TextBox x:Name="TxtPropertyName" Height="40" Padding="10"
@@ -448,14 +449,27 @@
                                  VerticalContentAlignment="Center"/>
                                 </StackPanel>
 
+                                <!-- Property Category (Read-only) -->
                                 <StackPanel Margin="0,0,0,12">
-                                    <TextBlock Text="Property Type" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
-                                    <ComboBox x:Name="CmbPropertyType" Height="40" Padding="8,4"
-                                  BorderBrush="#E1E8ED" BorderThickness="1"
-                                  Background="White" Foreground="#2C3E50"
-                                  VerticalContentAlignment="Center"/>
+                                    <TextBlock Text="Property Category" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBox x:Name="TxtCategory" Height="40" Padding="10"
+                                 BorderBrush="#E1E8ED" BorderThickness="1"
+                                 Background="#F5F6FA" Foreground="#5C677D"
+                                 VerticalContentAlignment="Center"
+                                 IsReadOnly="True"/>
                                 </StackPanel>
 
+                                <!-- Property Type (Read-only) -->
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Property Type" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
+                                    <TextBox x:Name="TxtPropertyType" Height="40" Padding="10"
+                                 BorderBrush="#E1E8ED" BorderThickness="1"
+                                 Background="#F5F6FA" Foreground="#5C677D"
+                                 VerticalContentAlignment="Center"
+                                 IsReadOnly="True"/>
+                                </StackPanel>
+
+                                <!-- Address -->
                                 <StackPanel Margin="0,0,0,12">
                                     <TextBlock Text="Address" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
                                     <TextBox x:Name="TxtAddress" Height="40" Padding="10"
@@ -464,6 +478,7 @@
                                  VerticalContentAlignment="Center"/>
                                 </StackPanel>
 
+                                <!-- Price -->
                                 <StackPanel Margin="0,0,0,12">
                                     <TextBlock Text="Price" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
                                     <TextBox x:Name="TxtPrice" Height="40" Padding="10"
@@ -472,6 +487,7 @@
                                  VerticalContentAlignment="Center"/>
                                 </StackPanel>
 
+                                <!-- Status -->
                                 <StackPanel Margin="0,0,0,12">
                                     <TextBlock Text="Status" FontSize="13" FontWeight="SemiBold" Foreground="#5C677D"/>
                                     <ComboBox x:Name="CmbStatus" Height="40" Padding="8,4"
@@ -500,6 +516,7 @@
                     </Grid>
                 </Border>
             </Grid>
+
 
 
         </Grid>
