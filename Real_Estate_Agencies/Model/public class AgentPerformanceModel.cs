@@ -2,7 +2,9 @@
 {
     public int AgentId { get; set; }
     public string Name { get; set; }
-    public int TotalSales { get; set; }
+    public double TotalSales { get; set; }
+    public double Commission { get; set; }
+
     public double TotalRevenue { get; set; }
 
     // Display initials in circle

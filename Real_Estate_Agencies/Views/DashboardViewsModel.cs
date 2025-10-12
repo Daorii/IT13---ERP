@@ -38,19 +38,31 @@ namespace Real_Estate_Agencies
             _timer.Start();
 
             // KPI Sample Data
-            DashboardData = new DashboardKpi
+            try
             {
-                SalesCount = 10,
-                AgentCount = 4,
-                Commission = 15000,
-                PropertiesListed = 20,
-                NewProperties = 8,
-                NewPropertiesProgress = 50,
-                AvgCommission = 12000,
-                AvgCommissionProgress = 25,
-                TopCategorySales = 15,
-                TopCategoryProgress = 75
-            };
+                var repo = new DashboardRepository();
+
+                DashboardData = new DashboardKpi
+                {
+                    SalesCount = repo.GetAvailablePropertiesCount(),
+                    AgentCount = repo.GetAgentsCount(),
+                    Commission = (double)repo.GetMonthlyCommissionTotal(),
+                    PropertiesListed = repo.GetTotalPropertiesCount()
+                };
+
+                SecondaryData = new SecondaryKpi
+                {
+                    TotalTransactions = repo.GetMonthlySalesCount(),
+                    ActiveAgents = repo.GetActiveAgentsCount(),
+                    PendingCommissions = repo.GetPendingCommissionsTotal()
+                };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading KPI data: {ex.Message}", "KPI Error");
+            }
+
+
 
             Dictionary<string, int> statusCounts = new Dictionary<string, int>();
 
@@ -151,12 +163,16 @@ namespace Real_Estate_Agencies
             };
 
             // Recent Sales Table
-            RecentSales = new List<SaleRecord>
+            try
             {
-                new SaleRecord { Property = "Condo A", Agent = "Agent A", Client = "John Doe", Amount = "$120,000", Date = "2025-01-12" },
-                new SaleRecord { Property = "House B", Agent = "Agent B", Client = "Jane Smith", Amount = "$200,000", Date = "2025-02-08" },
-                new SaleRecord { Property = "Lot C", Agent = "Agent C", Client = "Mark Lee", Amount = "$95,000", Date = "2025-03-18" }
-            };
+                var repo = new DashboardRepository();
+                RecentSales = repo.GetRecentSales(5);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading recent sales: {ex.Message}");
+            }
+
 
             // Tasks / To-Do Panel
             Tasks = new List<TaskItem>
@@ -170,6 +186,9 @@ namespace Real_Estate_Agencies
 
         // KPI
         public DashboardKpi DashboardData { get; set; }
+
+        public SecondaryKpi SecondaryData { get; set; }
+
 
         // Top Properties
         public List<PropertyModel> OnSellProperties { get; set; }
@@ -243,6 +262,14 @@ namespace Real_Estate_Agencies
         public int TopCategorySales { get; set; }
         public double TopCategoryProgress { get; set; }
     }
+
+    public class SecondaryKpi
+    {
+        public int TotalTransactions { get; set; }
+        public int ActiveAgents { get; set; }
+        public decimal PendingCommissions { get; set; }
+    }
+
 
     public class SaleRecord
     {

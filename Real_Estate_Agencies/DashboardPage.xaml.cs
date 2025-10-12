@@ -180,46 +180,62 @@ namespace Real_Estate_Agencies
         // Top Agent Modal
         private void Agent_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is string agentName)
+            var button = sender as Button;
+            var agent = button?.DataContext as AgentPerformanceModel;
+
+            if (agent == null)
             {
-                var recentDeals = new List<Deal>
-                {
-                    new Deal { Property = "House A", Price = "$20,000", Date = "2025-09-01" },
-                    new Deal { Property = "Condo B", Price = "$15,000", Date = "2025-09-05" },
-                    new Deal { Property = "Lot C", Price = "$10,000", Date = "2025-09-10" }
-                };
-
-                var modal = new TopAgentModal();
-                modal.SetAgentData(agentName, 25, "$50,000", 12, recentDeals);
-
-                var borderWrapper = new Border
-                {
-                    CornerRadius = new CornerRadius(15),
-                    Background = Brushes.White,
-                    Child = modal,
-                    Padding = new Thickness(0),
-                    Effect = new DropShadowEffect
-                    {
-                        Color = Colors.Black,
-                        BlurRadius = 10,
-                        Opacity = 0.2,
-                        ShadowDepth = 2
-                    },
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                var overlay = new Grid
-                {
-                    Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0))
-                };
-                overlay.Children.Add(borderWrapper);
-                MainGrid.Children.Add(overlay);
-
-                modal.CloseClicked += () => MainGrid.Children.Remove(overlay);
+                MessageBox.Show("Unable to load agent data.");
+                return;
             }
+
+            var repo = new DashboardRepository();
+
+            // Get accurate stats from DB
+            var stats = repo.GetAgentStats(agent.AgentId);
+
+            // Get recent deals (list of Deal objects)
+            var recentDeals = repo.GetAgentRecentDeals(agent.AgentId, 5);
+
+            // Get monthly sales for this agent (for chart)
+            var monthlyDict = repo.GetAgentMonthlySales(agent.AgentId, DateTime.Now.Year);
+            int[] monthlyValues = new int[12];
+            for (int i = 1; i <= 12; i++) monthlyValues[i - 1] = monthlyDict.ContainsKey(i) ? monthlyDict[i] : 0;
+
+            // Create modal and pass correct data (note we now pass current commission formatted)
+            var modal = new TopAgentModal();
+            modal.SetAgentData(
+                agent.Name,
+                stats.TotalSales,
+                stats.ReleasedCommission.ToString("C"),
+                stats.CurrentCommission.ToString("C"),
+                stats.DealsThisMonth,
+                recentDeals,
+                monthlyValues
+            );
+
+
+            // And display the modal
+            var borderWrapper = new Border
+            {
+                CornerRadius = new CornerRadius(15),
+                Background = Brushes.White,
+                Child = modal,
+                Padding = new Thickness(0),
+                Effect = new DropShadowEffect { Color = Colors.Black, BlurRadius = 10, Opacity = 0.2, ShadowDepth = 2 },
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var overlay = new Grid { Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0)) };
+            overlay.Children.Add(borderWrapper);
+            MainGrid.Children.Add(overlay);
+            modal.CloseClicked += () => MainGrid.Children.Remove(overlay);
         }
+
+
     }
+
 
     // Converter for KPI bar height
     public class ProgressToHeightConverter : IValueConverter
@@ -231,6 +247,10 @@ namespace Real_Estate_Agencies
             double maxHeight = 80;
             return progress * maxHeight;
         }
+
+
+
+
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

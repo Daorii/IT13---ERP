@@ -4,6 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using Real_Estate_Agencies.Data;
+using Microsoft.Data.SqlClient;
+
+
 
 namespace Real_Estate_Agencies.Data
 {
@@ -204,6 +208,359 @@ namespace Real_Estate_Agencies.Data
 
             return result;
         }
+
+
+        // --- Get Agent Overview Stats ---
+        // --- Get Agent Overview Stats ---
+        public AgentStatsModel GetAgentStats(int agentId)
+        {
+            var stats = new AgentStatsModel();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+
+                    // 1️⃣ Total sales (lifetime)
+                    string sqlSales = @"
+                SELECT COUNT(*) AS TotalSales
+                FROM Sales
+                WHERE AgentID = @AgentID";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlSales, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AgentID", agentId);
+                        stats.TotalSales = Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
+                    }
+
+                    // 2️⃣ Released Commission (all-time)
+                    string sqlReleased = @"
+                SELECT ISNULL(SUM(AmountReleased), 0)
+                FROM CommissionReleases
+                WHERE AgentID = @AgentID";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlReleased, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AgentID", agentId);
+                        stats.ReleasedCommission = Convert.ToDouble(cmd.ExecuteScalar() ?? 0);
+                    }
+
+                    // 3️⃣ Sales this month
+                    string sqlDealsMonth = @"
+                SELECT COUNT(*)
+                FROM Sales
+                WHERE AgentID = @AgentID
+                  AND MONTH(SaleDate) = MONTH(GETDATE())
+                  AND YEAR(SaleDate) = YEAR(GETDATE())";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlDealsMonth, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@AgentID", agentId);
+                        stats.DealsThisMonth = Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
+                    }
+                }
+
+                // 4️⃣ Get current commission using AgentRepository (same as profile)
+                var agentRepo = new AgentRepository();
+                stats.CurrentCommission = Convert.ToDouble(agentRepo.GetAgentBalanceThisMonth(agentId));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database error (GetAgentStats): {ex.Message}",
+                    "DB Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return stats;
+        }
+
+
+
+
+
+
+
+
+        // --- Get Agent Monthly Sales Data (for chart) ---
+        public Dictionary<int, int> GetAgentMonthlySales(int agentId, int year)
+        {
+            var result = new Dictionary<int, int>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT MONTH(SaleDate) AS Month, COUNT(*) AS SalesCount
+            FROM Sales
+            WHERE AgentID = @AgentID AND YEAR(SaleDate) = @Year
+            GROUP BY MONTH(SaleDate)
+            ORDER BY Month";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@AgentID", agentId);
+                    cmd.Parameters.AddWithValue("@Year", year);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int month = reader.GetInt32(0);
+                            int count = reader.GetInt32(1);
+                            result[month] = count;
+                        }
+                    }
+                }
+            }
+
+            // Ensure all 12 months exist
+            for (int i = 1; i <= 12; i++)
+                if (!result.ContainsKey(i))
+                    result[i] = 0;
+
+            return result;
+        }
+
+
+        // --- Get Recent Deals for an Agent ---
+        public List<Deal> GetAgentRecentDeals(int agentId, int count = 5)
+        {
+            var deals = new List<Deal>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT TOP (@Count)
+                p.Name AS PropertyName,
+                p.Price,
+                s.SaleDate
+            FROM Sales s
+            INNER JOIN Properties p ON s.PropertyID = p.PropertyID
+            WHERE s.AgentID = @AgentID
+            ORDER BY s.SaleDate DESC";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@AgentID", agentId);
+                    cmd.Parameters.AddWithValue("@Count", count);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            deals.Add(new Deal
+                            {
+                                Property = reader.GetString(0),
+                                Price = $"{reader.GetDecimal(1):C}",
+                                Date = reader.GetDateTime(2).ToString("yyyy-MM-dd")
+                            });
+                        }
+                    }
+                }
+            }
+
+            return deals;
+        }
+
+
+        public List<SaleRecord> GetRecentSales(int limit = 5)
+        {
+            var recentSales = new List<SaleRecord>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+                    string sql = @"
+                SELECT TOP (@Limit)
+                    ISNULL(p.Name, s.PropertyName) AS Property,
+                    ISNULL(a.FirstName + ' ' + a.LastName, 'Unknown') AS Agent,
+                    ISNULL(c.FirstName + ' ' + c.LastName, 'Unknown') AS Client,
+                    s.SaleDate
+                FROM Sales s
+                LEFT JOIN Agents a ON s.AgentID = a.AgentID
+                LEFT JOIN Clients c ON s.ClientID = c.ClientID
+                LEFT JOIN Properties p ON s.PropertyID = p.PropertyID
+                ORDER BY s.SaleDate DESC;";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Limit", limit);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                recentSales.Add(new SaleRecord
+                                {
+                                    Property = reader.IsDBNull(0) ? "" : reader.GetString(0),
+                                    Agent = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                                    Client = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                                    Date = reader.IsDBNull(3)
+                                        ? ""
+                                        : reader.GetDateTime(3).ToString("yyyy-MM-dd")
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database error (GetRecentSales): {ex.Message}", "DB Error");
+            }
+
+            return recentSales;
+        }
+
+
+
+        // 🏠 1. Get count of available properties
+        public int GetAvailablePropertiesCount()
+        {
+            int count = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT COUNT(*) FROM Properties WHERE Status = 'Available'";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    count = (int)cmd.ExecuteScalar();
+                }
+            }
+            return count;
+        }
+
+        // 👨‍💼 2. Get count of agents
+        public int GetAgentsCount()
+        {
+            int count = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT COUNT(*) FROM Agents";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    count = (int)cmd.ExecuteScalar();
+                }
+            }
+            return count;
+        }
+
+        // 💰 3. Get total commission released this month
+        public decimal GetMonthlyCommissionTotal()
+        {
+            decimal total = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT ISNULL(SUM(CommissionAmount), 0)
+            FROM Commissions
+            WHERE MONTH(ReleaseDate) = MONTH(GETDATE())
+              AND YEAR(ReleaseDate) = YEAR(GETDATE())";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    object result = cmd.ExecuteScalar();
+                    if (result != DBNull.Value)
+                        total = Convert.ToDecimal(result);
+                }
+            }
+            return total;
+        }
+
+
+        // 🏡 4. Get total number of properties (for Properties Listed card)
+        public int GetTotalPropertiesCount()
+        {
+            int count = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT COUNT(*) FROM Properties";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    count = (int)cmd.ExecuteScalar();
+                }
+            }
+            return count;
+        }
+
+
+
+        // 🧮 Get total sales transactions for the current month
+        public int GetMonthlySalesCount()
+        {
+            int count = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT COUNT(*) 
+            FROM Sales
+            WHERE MONTH(SaleDate) = MONTH(GETDATE())
+              AND YEAR(SaleDate) = YEAR(GETDATE())";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    count = (int)cmd.ExecuteScalar();
+                }
+            }
+            return count;
+        }
+
+        // 👨‍💼 Get total active agents
+        public int GetActiveAgentsCount()
+        {
+            int count = 0;
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+
+                // ✅ No "Status" column in Agents table, so just count all agents
+                string sql = "SELECT COUNT(*) FROM Agents";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    count = (int)cmd.ExecuteScalar();
+                }
+            }
+            return count;
+        }
+
+
+        // 💸 Get total pending commissions (not yet released)
+        // using Real_Estate_Agencies.Data; // ensure correct using
+        public decimal GetPendingCommissionsTotal()
+        {
+            decimal total = 0m;
+            try
+            {
+                var agentRepo = new AgentRepository();
+                var agents = agentRepo.GetAllAgents(); // returns list of agents with AgentId
+
+                foreach (var a in agents)
+                {
+                    // GetAgentBalanceThisMonth already returns Math.Max(balance,0)
+                    total += agentRepo.GetAgentBalanceThisMonth(a.AgentId);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error calculating pending commissions: {ex.Message}", "DB Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return total;
+        }
+
+
+
+
+
+
+
 
         private string ConvertImageToBase64(byte[] imageBytes)
         {
