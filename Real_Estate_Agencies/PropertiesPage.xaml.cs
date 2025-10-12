@@ -197,8 +197,12 @@ namespace Real_Estate_Agencies
 
                 TxtPropertyId.Text = property.PropertyId.ToString();
                 TxtPropertyName.Text = property.Name;
+
+                // Fill Category and Type as read-only
+                TxtCategory.Text = property.Category;      // New read-only field
+                TxtPropertyType.Text = property.PropertyType; // New read-only field
+
                 TxtAddress.Text = property.Location;
-                CmbPropertyType.Text = property.PropertyType;
                 TxtPrice.Text = property.Price.ToString();
                 CmbStatus.Text = property.Status;
 
@@ -212,6 +216,7 @@ namespace Real_Estate_Agencies
                     MessageBoxImage.Error);
             }
         }
+
 
         private void UpdateProperty_Click(object sender, RoutedEventArgs e)
         {
@@ -253,7 +258,7 @@ namespace Real_Estate_Agencies
                 {
                     SelectedProperty.Name = TxtPropertyName.Text.Trim();
                     SelectedProperty.Location = TxtAddress.Text.Trim();
-                    SelectedProperty.PropertyType = CmbPropertyType.Text.Trim();
+                    // Preserve Category and PropertyType from original property
                     SelectedProperty.Price = (double)price;
                     SelectedProperty.Status = CmbStatus.Text.Trim();
 
@@ -272,6 +277,7 @@ namespace Real_Estate_Agencies
                         MessageBoxButton.OK, MessageBoxImage.Information);
                     EditPropertyOverlay.Visibility = Visibility.Collapsed;
                 }
+
                 else
                 {
                     MessageBox.Show("No property selected for editing.", "Error",

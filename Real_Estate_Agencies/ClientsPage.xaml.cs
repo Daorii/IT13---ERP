@@ -162,8 +162,11 @@ namespace Real_Estate_Agencies
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string query = SearchTextBox.Text.Trim().ToLower();
-            Clients.Clear();
 
+            // Hide placeholder while typing
+            PlaceholderText.Visibility = string.IsNullOrWhiteSpace(query) ? Visibility.Visible : Visibility.Collapsed;
+
+            Clients.Clear();
             var filtered = AllClients.Where(c =>
                 c.FirstName.ToLower().Contains(query) ||
                 c.LastName.ToLower().Contains(query) ||
