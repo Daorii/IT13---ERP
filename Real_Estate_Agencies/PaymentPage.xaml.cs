@@ -65,7 +65,7 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                string connStr = "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
+                string connStr = "Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True";
 
                 using (var conn = new Microsoft.Data.SqlClient.SqlConnection(connStr))
                 {

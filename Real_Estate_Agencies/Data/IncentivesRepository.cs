@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
@@ -8,8 +8,6 @@ namespace Real_Estate_Agencies.Data
 {
     public class IncentivesRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<Incentive> GetAllIncentives()
         {
@@ -17,9 +15,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
     SELECT i.IncentiveID, i.AgentID, a.FirstName + ' ' + a.LastName AS AgentName,
            i.IncentiveType, i.Amount, i.ReleaseDate
@@ -58,9 +55,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"INSERT INTO Incentives (AgentID, IncentiveType, Amount, ReleaseDate)
                                    VALUES (@AgentID, @IncentiveType, @Amount, @ReleaseDate);
                                    SELECT CAST(scope_identity() AS int);";
@@ -86,9 +82,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"UPDATE Incentives 
                            SET AgentID = @AgentID, 
                                IncentiveType = @IncentiveType, 
@@ -118,9 +113,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = "DELETE FROM Incentives WHERE IncentiveID = @IncentiveID";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))

@@ -1,15 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Models;
 using System.Windows;
+using Real_Estate_Agencies.Data;
 
 namespace Real_Estate_Agencies.Repository
 {
     public class CommissionRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<Commission> GetAllCommissions()
         {
@@ -17,7 +16,7 @@ namespace Real_Estate_Agencies.Repository
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
                     string query = @"
                         SELECT 
@@ -32,8 +31,6 @@ namespace Real_Estate_Agencies.Repository
                         JOIN Sales s ON p.SaleID = s.SaleID
                         JOIN Agents a ON s.AgentID = a.AgentID
                         ORDER BY c.ReleaseDate DESC";
-
-                    conn.Open();
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     using (SqlDataReader reader = cmd.ExecuteReader())

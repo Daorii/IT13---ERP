@@ -1,14 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
+using Real_Estate_Agencies.Data;
 
 namespace Real_Estate_Agencies.Repositories
 {
     public class PropertyRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<PropertyModel> GetAll()
         {
@@ -16,13 +15,12 @@ namespace Real_Estate_Agencies.Repositories
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
                     string sql = "SELECT PropertyId, Name, Location, Type, Category, Price, Status, Image FROM Properties";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {
-                        conn.Open();
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -54,7 +52,7 @@ namespace Real_Estate_Agencies.Repositories
 
         public void Add(PropertyModel property)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
                 string sql = @"INSERT INTO Properties (Name, Location, Type, Category, Price, Status, Image)
                        VALUES (@Name, @Location, @Type, @Category, @Price, @Status, @Image)";
@@ -68,7 +66,6 @@ namespace Real_Estate_Agencies.Repositories
                     cmd.Parameters.AddWithValue("@Status", property.Status ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Image", (object)property.Image ?? DBNull.Value);
 
-                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -77,7 +74,7 @@ namespace Real_Estate_Agencies.Repositories
 
         public void Update(PropertyModel property)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
                 string sql = @"UPDATE Properties SET
                        Name=@Name, 
@@ -102,7 +99,6 @@ namespace Real_Estate_Agencies.Repositories
                     cmd.Parameters.AddWithValue("@Status", property.Status ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Image", (object)property.Image ?? DBNull.Value);
 
-                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -111,13 +107,12 @@ namespace Real_Estate_Agencies.Repositories
 
         public void Delete(int id)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
                 string sql = "DELETE FROM Properties WHERE PropertyId=@Id";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
-                    conn.Open();
                     cmd.ExecuteNonQuery();
                 }
             }

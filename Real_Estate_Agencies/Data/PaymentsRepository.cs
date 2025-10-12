@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
@@ -8,8 +8,6 @@ namespace Real_Estate_Agencies.Data
 {
     public class PaymentsRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<Payment> GetPaymentsBySaleId(int saleId)
         {
@@ -17,9 +15,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = "SELECT PaymentID, SaleID, PaymentType, Amount, PaymentDate FROM Payments WHERE SaleID = @SaleID";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -55,9 +52,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"INSERT INTO Payments (SaleID, PaymentType, Amount, PaymentDate)
                                    VALUES (@SaleID, @PaymentType, @Amount, @PaymentDate);
                                    SELECT CAST(scope_identity() AS int);";

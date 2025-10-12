@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Real_Estate_Agencies.Model;
 using System;
@@ -9,17 +9,14 @@ namespace Real_Estate_Agencies.Data
 {
     public class SalesRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<Sale> GetAllSales()
         {
             var sales = new List<Sale>();
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
 SELECT 
     s.SaleID, s.ClientID, s.PropertyID, s.PropertyName, s.AgentID, s.SaleDate, s.PaymentMode,
@@ -72,9 +69,8 @@ ORDER BY s.SaleDate DESC;";
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     string sql = @"
                 SELECT 
@@ -122,9 +118,8 @@ ORDER BY s.SaleDate DESC;";
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
                 INSERT INTO Sales (ClientID, PropertyID, AgentID, SaleDate, PaymentMode, PropertyName)
                 VALUES (@ClientID, @PropertyID, @AgentID, @SaleDate, @PaymentMode, @PropertyName);

@@ -23,7 +23,7 @@ namespace Real_Estate_Agencies
 
         private bool SalesExistForProperty(int propertyId)
         {
-            using (var conn = new SqlConnection("Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;"))
+            using (var conn = new SqlConnection("Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True"))
             {
                 conn.Open();
                 string sql = "SELECT COUNT(*) FROM Sales WHERE PropertyID=@PropertyID";

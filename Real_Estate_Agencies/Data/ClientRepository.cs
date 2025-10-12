@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Windows;
@@ -8,17 +8,14 @@ namespace Real_Estate_Agencies.Data
 {
     public class ClientRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public List<Client> GetAllClients()
         {
             var clients = new List<Client>();
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     // Only get active clients
                     string sql = "SELECT ClientId, FirstName, LastName, ContactInfo, Address FROM Clients WHERE IsActive = 1";
 
@@ -52,9 +49,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"INSERT INTO Clients (FirstName, LastName, ContactInfo, Address)
                VALUES (@FirstName, @LastName, @ContactInfo, @Address);
                SELECT CAST(SCOPE_IDENTITY() AS int);";
@@ -81,9 +77,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"UPDATE Clients
                SET FirstName=@FirstName, LastName=@LastName,
                    ContactInfo=@ContactInfo, Address=@Address
@@ -112,9 +107,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = "UPDATE Clients SET IsActive=0 WHERE ClientId=@ClientId";
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
                     {

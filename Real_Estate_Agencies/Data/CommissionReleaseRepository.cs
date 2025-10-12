@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
 using System;
 using System.Collections.Generic;
@@ -8,16 +8,13 @@ namespace Real_Estate_Agencies.Data
 {
     public class CommissionReleaseRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public void Add(int agentId, decimal amount)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
                 INSERT INTO CommissionReleases (AgentID, ReleaseDate, AmountReleased)
                 VALUES (@AgentID, GETDATE(), @AmountReleased)";
@@ -44,9 +41,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
                 SELECT 
                     cr.ReleaseID,

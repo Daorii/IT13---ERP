@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
@@ -8,8 +8,6 @@ namespace Real_Estate_Agencies.Data
 {
     public class AgentRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
 
         // ✅ Fetch all agents
         public List<Agent> GetAllAgents()
@@ -18,9 +16,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = "SELECT AgentID, FirstName, LastName, HireDate, ContactInfo, ProfileImage FROM Agents";
 
 
@@ -64,9 +61,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"INSERT INTO Agents (FirstName, LastName, HireDate, ContactInfo, ProfileImage)
                                    VALUES (@FirstName, @LastName, @HireDate, @ContactInfo, @ProfileImage);
                                    SELECT CAST(scope_identity() AS int);";
@@ -98,9 +94,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"UPDATE Agents
                                    SET FirstName=@FirstName, LastName=@LastName, HireDate=@HireDate,
                                        ContactInfo=@ContactInfo, ProfileImage=@ProfileImage
@@ -134,9 +129,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = "DELETE FROM Agents WHERE AgentID = @AgentId";
 
                     using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -162,9 +156,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     // --- Commissions ---
                     string sqlCommissions = @"
@@ -231,9 +224,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
                         SELECT COUNT(*) 
                         FROM Sales 
@@ -261,9 +253,8 @@ namespace Real_Estate_Agencies.Data
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     // Log the release if you have a table for it
                     string sql = @"

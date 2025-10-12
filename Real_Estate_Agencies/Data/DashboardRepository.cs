@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
 using System;
 using System.Collections.Generic;
@@ -7,24 +7,18 @@ using System.Windows;
 using Real_Estate_Agencies.Data;
 using Microsoft.Data.SqlClient;
 
-
-
 namespace Real_Estate_Agencies.Data
 {
     public class DashboardRepository
     {
-        private readonly string _connectionString =
-            "Server=localhost\\SQLEXPRESS;Database=RealEstate;Trusted_Connection=True;TrustServerCertificate=True;";
-
         public List<PropertyModel> GetTopSoldProperties(int topCount)
         {
             var list = new List<PropertyModel>();
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
                         SELECT TOP (@TopCount)
                             p.PropertyID,
@@ -80,9 +74,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     string sql = @"
                         SELECT TOP (@TopCount)
@@ -133,9 +126,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     string sql = @"
                         SELECT Status, COUNT(*) AS Count
@@ -175,9 +167,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     string sql = @"
                         SELECT MONTH(SaleDate) AS Month, COUNT(*) AS SalesCount
@@ -218,9 +209,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     // 1️⃣ Total sales (lifetime)
                     string sqlSales = @"
@@ -286,9 +276,8 @@ namespace Real_Estate_Agencies.Data
         {
             var result = new Dictionary<int, int>();
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = @"
             SELECT MONTH(SaleDate) AS Month, COUNT(*) AS SalesCount
             FROM Sales
@@ -327,9 +316,8 @@ namespace Real_Estate_Agencies.Data
         {
             var deals = new List<Deal>();
 
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = @"
             SELECT TOP (@Count)
                 p.Name AS PropertyName,
@@ -370,9 +358,8 @@ namespace Real_Estate_Agencies.Data
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
                     string sql = @"
                 SELECT TOP (@Limit)
                     ISNULL(p.Name, s.PropertyName) AS Property,
@@ -421,9 +408,8 @@ namespace Real_Estate_Agencies.Data
         public int GetAvailablePropertiesCount()
         {
             int count = 0;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = "SELECT COUNT(*) FROM Properties WHERE Status = 'Available'";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -437,9 +423,8 @@ namespace Real_Estate_Agencies.Data
         public int GetAgentsCount()
         {
             int count = 0;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = "SELECT COUNT(*) FROM Agents";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -453,9 +438,8 @@ namespace Real_Estate_Agencies.Data
         public decimal GetMonthlyCommissionTotal()
         {
             decimal total = 0;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = @"
             SELECT ISNULL(SUM(CommissionAmount), 0)
             FROM Commissions
@@ -477,9 +461,8 @@ namespace Real_Estate_Agencies.Data
         public int GetTotalPropertiesCount()
         {
             int count = 0;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = "SELECT COUNT(*) FROM Properties";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -495,9 +478,8 @@ namespace Real_Estate_Agencies.Data
         public int GetMonthlySalesCount()
         {
             int count = 0;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = @"
             SELECT COUNT(*) 
             FROM Sales
@@ -515,9 +497,8 @@ namespace Real_Estate_Agencies.Data
         public int GetActiveAgentsCount()
         {
             int count = 0;
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
 
                 // ✅ No "Status" column in Agents table, so just count all agents
                 string sql = "SELECT COUNT(*) FROM Agents";

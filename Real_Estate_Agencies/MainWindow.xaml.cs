@@ -1,4 +1,4 @@
-﻿using Real_Estate_Agencies.View;
+using Real_Estate_Agencies.View;
 using System;
 using System.Configuration;
 using System.Windows;
@@ -14,22 +14,22 @@ namespace Real_Estate_Agencies
     {
         private ToggleButton ActiveButton = null;
 
-        private SalesPage salesPageInstance;
-
-        private void NavigateToSales()
-        {
-            if (salesPageInstance == null)
-                salesPageInstance = new SalesPage();
-
-            MainFrame.Content = salesPageInstance;
-        }
-
+        // Cache page instances to avoid recreating them
+        private DashboardPage _dashboardPage;
+        private ClientsPage _clientsPage;
+        private PropertiesPage _propertiesPage;
+        private AgentsPage _agentsPage;
+        private SalesPage _salesPage;
+        private CommissionsPage _commissionsPage;
+        private IncentivesPage _incentivesPage;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            MainFrame.Content = new DashboardPage();
+            // Initialize dashboard page only
+            _dashboardPage = new DashboardPage();
+            MainFrame.Content = _dashboardPage;
             BtnDashboard.IsChecked = true;
             ActiveButton = BtnDashboard;
 
@@ -39,8 +39,6 @@ namespace Real_Estate_Agencies
             Sidebar.MouseEnter += Sidebar_MouseEnter;
             Sidebar.MouseLeave += Sidebar_MouseLeave;
         }
-
-
 
         private void Sidebar_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -62,11 +60,6 @@ namespace Real_Estate_Agencies
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut } };
             Sidebar.BeginAnimation(WidthProperty, anim);
         }
-
-
-      
-
-
 
         private void HideAllLabels()
         {
@@ -134,16 +127,51 @@ namespace Real_Estate_Agencies
                 return;
             }
 
-            if (clicked == BtnDashboard) AnimateFrameContent(new DashboardPage());
-            else if (clicked == BtnClients) AnimateFrameContent(new ClientsPage());
-            else if (clicked == BtnProperties) AnimateFrameContent(new PropertiesPage());
-            else if (clicked == BtnAgents) AnimateFrameContent(new AgentsPage());
-            else if (clicked == BtnSales) MainFrame.Content = new SalesPage();
-            else if (clicked == BtnCommissions) AnimateFrameContent(new CommissionsPage());
-            else if (clicked == BtnIncentives) AnimateFrameContent(new IncentivesPage());
+            // Database Settings button
+            if (clicked == BtnDatabaseSettings)
+            {
+                var settingsWindow = new DatabaseSettingsWindow();
+                settingsWindow.ShowDialog();
+                return;
+            }
+
+            // Use cached instances - create only if null
+            if (clicked == BtnDashboard)
+            {
+                if (_dashboardPage == null) _dashboardPage = new DashboardPage();
+                AnimateFrameContent(_dashboardPage);
+            }
+            else if (clicked == BtnClients)
+            {
+                if (_clientsPage == null) _clientsPage = new ClientsPage();
+                AnimateFrameContent(_clientsPage);
+            }
+            else if (clicked == BtnProperties)
+            {
+                if (_propertiesPage == null) _propertiesPage = new PropertiesPage();
+                AnimateFrameContent(_propertiesPage);
+            }
+            else if (clicked == BtnAgents)
+            {
+                if (_agentsPage == null) _agentsPage = new AgentsPage();
+                AnimateFrameContent(_agentsPage);
+            }
+            else if (clicked == BtnSales)
+            {
+                if (_salesPage == null) _salesPage = new SalesPage();
+                AnimateFrameContent(_salesPage);
+            }
+            else if (clicked == BtnCommissions)
+            {
+                if (_commissionsPage == null) _commissionsPage = new CommissionsPage();
+                AnimateFrameContent(_commissionsPage);
+            }
+            else if (clicked == BtnIncentives)
+            {
+                if (_incentivesPage == null) _incentivesPage = new IncentivesPage();
+                AnimateFrameContent(_incentivesPage);
+            }
         }
-
-
 
         private void AnimateFrameContent(UIElement newContent)
         {

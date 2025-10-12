@@ -1,0 +1,156 @@
+<Window x:Class="Real_Estate_Agencies.DatabaseSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Database Connection Settings" 
+        Height="400" 
+        Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F5F5F5">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="#2196F3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1976D2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#757575"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#616161"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#388E3C"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Database Connection Manager" 
+                       FontSize="24" 
+                       FontWeight="Bold"
+                       Foreground="#333"/>
+            <TextBlock Text="Manage online and local database connections" 
+                       FontSize="14" 
+                       Foreground="#666"
+                       Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <!-- Content -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="8" 
+                Padding="20"
+                BorderBrush="#DDD"
+                BorderThickness="1">
+            <StackPanel>
+                <!-- Current Status -->
+                <TextBlock Text="Current Connection Status" 
+                           FontSize="16" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+                
+                <Border Background="#E3F2FD" 
+                        Padding="15" 
+                        CornerRadius="4"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock x:Name="StatusTextBlock" 
+                                   Text="Active: Online Database 🌐" 
+                                   FontSize="14"
+                                   FontWeight="Medium"
+                                   Foreground="#1976D2"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Connection Test Results -->
+                <TextBlock Text="Connection Test Results" 
+                           FontSize="16" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+                
+                <Border Background="#F5F5F5" 
+                        Padding="15" 
+                        CornerRadius="4"
+                        Margin="0,0,0,20">
+                    <TextBlock x:Name="TestResultsTextBlock" 
+                               Text="Click 'Test Connections' to check database availability" 
+                               FontSize="13"
+                               TextWrapping="Wrap"
+                               Foreground="#555"/>
+                </Border>
+
+                <!-- Action Buttons -->
+                <TextBlock Text="Actions" 
+                           FontSize="16" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+                
+                <UniformGrid Columns="2" Rows="2">
+                    <Button Content="🔍 Test Connections" 
+                            Click="TestConnections_Click"
+                            Style="{StaticResource SuccessButton}"/>
+                    
+                    <Button Content="🌐 Use Online Database" 
+                            Click="UseOnline_Click"/>
+                    
+                    <Button Content="💾 Use Local Database" 
+                            Click="UseLocal_Click"/>
+                    
+                    <Button Content="🔄 Refresh Status" 
+                            Click="RefreshStatus_Click"
+                            Style="{StaticResource SecondaryButton}"/>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0">
+            <Button Content="Close" 
+                    Click="Close_Click"
+                    Style="{StaticResource SecondaryButton}"
+                    Width="100"/>
+        </StackPanel>
+    </Grid>
+</Window>
