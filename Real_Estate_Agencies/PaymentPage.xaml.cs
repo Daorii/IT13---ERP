@@ -1,4 +1,4 @@
-﻿using Real_Estate_Agencies.Data;
+using Real_Estate_Agencies.Data;
 using Real_Estate_Agencies.Model;
 using System;
 using System.Collections.ObjectModel;
@@ -65,11 +65,8 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                string connStr = "Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True";
-
-                using (var conn = new Microsoft.Data.SqlClient.SqlConnection(connStr))
+                using (var conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     string sql = @"
                 SELECT 

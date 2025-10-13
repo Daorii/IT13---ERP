@@ -10,10 +10,11 @@ namespace Real_Estate_Agencies.Data
         private static readonly string _onlineConnectionString =
             "Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True";
 
-         private static readonly string _localConnectionString =
-            "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=RealEstateDB;Integrated Security=True;Connect Timeout=5";
-
+        private static readonly string _localConnectionString =
+            "Data Source=NITRO\\SQLEXPRESS;Initial Catalog=RealEstate;Integrated Security=True;Encrypt=False;Trust Server Certificate=True";
+         
         private static bool _isOnlineAvailable = true;
+        private static bool _enableLocalFallback = false; // Set to false to disable local database fallback
         private static DateTime _lastCheckTime = DateTime.MinValue;
         private static readonly TimeSpan _recheckInterval = TimeSpan.FromMinutes(5); // Recheck online DB every 5 minutes
 
@@ -55,8 +56,8 @@ namespace Real_Estate_Agencies.Data
             }
             catch (SqlException ex)
             {
-                // If online connection failed, try local
-                if (connectionString == _onlineConnectionString)
+                // If online connection failed, try local (only if enabled)
+                if (connectionString == _onlineConnectionString && _enableLocalFallback)
                 {
                     _isOnlineAvailable = false;
                     _lastCheckTime = DateTime.Now;
@@ -75,6 +76,12 @@ namespace Real_Estate_Agencies.Data
                         connection.Dispose();
                         throw new Exception($"Both online and local databases are unavailable.\nOnline Error: {ex.Message}\nLocal Error: {localEx.Message}");
                     }
+                }
+                else if (connectionString == _onlineConnectionString && !_enableLocalFallback)
+                {
+                    // Local fallback is disabled, just throw the online error
+                    connection.Dispose();
+                    throw new Exception($"Online database connection failed: {ex.Message}\n\nNote: Local database fallback is currently disabled.");
                 }
                 else
                 {

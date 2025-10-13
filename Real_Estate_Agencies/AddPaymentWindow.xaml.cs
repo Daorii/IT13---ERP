@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Windows;
 using Real_Estate_Agencies.Model;
 using Microsoft.Data.SqlClient;
+using Real_Estate_Agencies.Data;
 namespace Real_Estate_Agencies
 {
     public partial class AddPaymentWindow : Window
@@ -24,11 +25,8 @@ namespace Real_Estate_Agencies
         {
             try
             {
-                string connStr = "Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True";
-
-                using (SqlConnection conn = new SqlConnection(connStr))
+                using (SqlConnection conn = DatabaseConnectionManager.GetConnection())
                 {
-                    conn.Open();
 
                     string sql = @"
                         SELECT p.Price, s.PaymentMode

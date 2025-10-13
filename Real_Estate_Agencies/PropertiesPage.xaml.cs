@@ -1,8 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Real_Estate_Agencies.Model;
 using Real_Estate_Agencies.Repositories;
 using Real_Estate_Agencies.ViewModels;
 using Real_Estate_Agencies.Views;
+using Real_Estate_Agencies.Data;
 using System;
 using System.Linq;
 using System.Windows;
@@ -23,9 +24,8 @@ namespace Real_Estate_Agencies
 
         private bool SalesExistForProperty(int propertyId)
         {
-            using (var conn = new SqlConnection("Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True"))
+            using (var conn = DatabaseConnectionManager.GetConnection())
             {
-                conn.Open();
                 string sql = "SELECT COUNT(*) FROM Sales WHERE PropertyID=@PropertyID";
                 using (var cmd = new SqlCommand(sql, conn))
                 {
