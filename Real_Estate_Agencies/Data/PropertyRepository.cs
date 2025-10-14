@@ -60,12 +60,19 @@ namespace Real_Estate_Agencies.Repositories
                        VALUES (@Name, @Location, @Type, @Category, @Price, @Status, @Image)";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Name", property.Name);
-                    cmd.Parameters.AddWithValue("@Location", property.Location);
-                    cmd.Parameters.AddWithValue("@Type", property.PropertyType); // map PropertyType to Type column
-                    cmd.Parameters.AddWithValue("@Category", property.Category);
+                    cmd.Parameters.AddWithValue("@Name", property.Name ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Location", property.Location ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Type", property.PropertyType ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Category", property.Category ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Price", property.Price);
-                    cmd.Parameters.AddWithValue("@Status", property.Status ?? (object)DBNull.Value);
+
+                    string validStatus = property.Status?.Trim();
+                    if (validStatus != "Available" && validStatus != "Pending" && validStatus != "Sold")
+                    {
+                        validStatus = "Available"; // fallback default
+                    }
+                    cmd.Parameters.AddWithValue("@Status", validStatus);
+
                     cmd.Parameters.AddWithValue("@Image", (object)property.Image ?? DBNull.Value);
 
                     conn.Open();

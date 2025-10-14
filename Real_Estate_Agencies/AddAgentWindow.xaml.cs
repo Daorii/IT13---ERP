@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Real_Estate_Agencies.Model;
+using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation; // add at the top
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
-using Real_Estate_Agencies.Model;
 
 namespace Real_Estate_Agencies
 {
@@ -19,8 +21,41 @@ namespace Real_Estate_Agencies
         {
             InitializeComponent();
             NewAgent = new Agent();
+
+            Loaded += AddAgentWindow_Loaded; // subscribe to loaded event
         }
 
+        private void AddAgentWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Fade-in animation
+            var fadeAnim = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(300)
+            };
+
+            // Scale animation
+            var scaleXAnim = new DoubleAnimation
+            {
+                From = 0.8,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+            var scaleYAnim = new DoubleAnimation
+            {
+                From = 0.8,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            // Apply animations
+            MainCard.BeginAnimation(OpacityProperty, fadeAnim);
+            MainCard.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnim);
+            MainCard.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleYAnim);
+        }
         // New constructor for Edit mode
         public AddAgentWindow(Agent agentToEdit) : this()
         {

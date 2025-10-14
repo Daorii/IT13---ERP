@@ -134,12 +134,13 @@
                 <StackPanel Height="50"/>
 
                 <!-- Logout Button -->
-                <ToggleButton x:Name="BtnLogout" Style="{StaticResource SidebarButtonStyle}" Checked="Sidebar_Checked" ToolTip="Logout">
+                <ToggleButton x:Name="BtnLogout" Style="{StaticResource SidebarButtonStyle}" ToolTip="Logout" Checked="BtnLogout_Checked">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE8AC;" FontFamily="Segoe Fluent Icons" FontSize="14" VerticalAlignment="Center"/>
                         <TextBlock x:Name="LblLogout" Text="Logout" FontFamily="Segoe UI" FontSize="14" VerticalAlignment="Center" Margin="-40,0,0,0" Opacity="0"/>
                     </StackPanel>
                 </ToggleButton>
+
 
             </StackPanel>
         </Border>

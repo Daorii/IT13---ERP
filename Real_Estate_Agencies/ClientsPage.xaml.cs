@@ -162,8 +162,9 @@ namespace Real_Estate_Agencies
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string query = SearchTextBox.Text.Trim().ToLower();
-            Clients.Clear();
 
+            // Clear and filter the client collection
+            Clients.Clear();
             var filtered = AllClients.Where(c =>
                 c.FirstName.ToLower().Contains(query) ||
                 c.LastName.ToLower().Contains(query) ||
@@ -172,7 +173,16 @@ namespace Real_Estate_Agencies
 
             foreach (var client in filtered)
                 Clients.Add(client);
+
+            // Show/hide placeholder text
+            PlaceholderText.Visibility = string.IsNullOrEmpty(SearchTextBox.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
+
+
+
+
         #endregion
 
         #region 👤 Client Profile Popup

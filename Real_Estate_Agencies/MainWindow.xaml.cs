@@ -64,7 +64,7 @@ namespace Real_Estate_Agencies
         }
 
 
-      
+
 
 
 
@@ -161,5 +161,16 @@ namespace Real_Estate_Agencies
             else
                 MainFrame.Content = newContent;
         }
+
+        private void BtnLogout_Checked(object sender, RoutedEventArgs e)
+        {
+            // Open LoginView
+            LoginView login = new LoginView();
+            login.Show();
+
+            // Close MainWindow
+            this.Close();
+        }
+
     }
 }

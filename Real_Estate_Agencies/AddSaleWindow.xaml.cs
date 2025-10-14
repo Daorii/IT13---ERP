@@ -7,6 +7,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media.Animation;
+
 using System.Windows.Input;
 
 
@@ -139,7 +141,47 @@ namespace Real_Estate_Agencies
         }
 
 
+        private void AddSaleWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var sb = new Storyboard();
 
+            // Fade-in
+            var opacityAnim = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(300)
+            };
+            Storyboard.SetTarget(opacityAnim, MainCard);
+            Storyboard.SetTargetProperty(opacityAnim, new PropertyPath(Border.OpacityProperty));
+            sb.Children.Add(opacityAnim);
+
+            // Scale X
+            var scaleXAnim = new DoubleAnimation
+            {
+                From = 0.8,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+            Storyboard.SetTarget(scaleXAnim, MainCard);
+            Storyboard.SetTargetProperty(scaleXAnim, new PropertyPath("RenderTransform.ScaleX"));
+            sb.Children.Add(scaleXAnim);
+
+            // Scale Y
+            var scaleYAnim = new DoubleAnimation
+            {
+                From = 0.8,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(300),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+            Storyboard.SetTarget(scaleYAnim, MainCard);
+            Storyboard.SetTargetProperty(scaleYAnim, new PropertyPath("RenderTransform.ScaleY"));
+            sb.Children.Add(scaleYAnim);
+
+            sb.Begin();
+        }
 
 
 
@@ -233,15 +275,6 @@ namespace Real_Estate_Agencies
             DialogResult = true;
             Close();
         }
-
-
-
-
-
-
-
-
-
 
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

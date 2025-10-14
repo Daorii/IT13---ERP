@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace Real_Estate_Agencies.Views
 {
@@ -50,6 +53,45 @@ namespace Real_Estate_Agencies.Views
             FilteredPropertyTypes = new List<string>();
 
             DataContext = this;
+            this.Loaded += AddPropertyWindow_Loaded;
+
+
+        }
+
+        private void AddPropertyWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Fade-in animation
+            DoubleAnimation fadeIn = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(250)
+            };
+
+            MainCard.BeginAnimation(Border.OpacityProperty, fadeIn);
+
+            // Scale animation
+            if (MainCard.RenderTransform is ScaleTransform scale)
+            {
+                DoubleAnimation scaleX = new DoubleAnimation
+                {
+                    From = 0.8,
+                    To = 1,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                };
+
+                DoubleAnimation scaleY = new DoubleAnimation
+                {
+                    From = 0.8,
+                    To = 1,
+                    Duration = TimeSpan.FromMilliseconds(250),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                };
+
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleX);
+                scale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
+            }
         }
 
         private void UpdateFilteredTypes()

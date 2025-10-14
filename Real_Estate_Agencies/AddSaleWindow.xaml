@@ -7,24 +7,76 @@
         Background="Transparent"
         AllowsTransparency="True"
         WindowStyle="None"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Loaded="AddSaleWindow_Loaded">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <!-- Rounded TextBox Style -->
+        <Style TargetType="TextBox" x:Key="RoundedTextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FFE9F7FF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border CornerRadius="8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Rounded Button Style -->
+        <Style TargetType="Button" x:Key="RoundedButton">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" CornerRadius="8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid Background="Transparent">
-
-        <Border Background="#FFE9F7FF"
+        <Border x:Name="MainCard"
+                Background="#FFE9F7FF"
                 CornerRadius="16"
                 Padding="30"
                 BorderBrush="#FFCCE7F5"
-                BorderThickness="1">
+                BorderThickness="1"
+                RenderTransformOrigin="0.5,0.5"
+                Opacity="0">
+            <Border.RenderTransform>
+                <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+            </Border.RenderTransform>
             <Border.Effect>
-                <DropShadowEffect Color="LightBlue"
-                                  BlurRadius="25"
-                                  ShadowDepth="0"
-                                  Opacity="0.35"/>
+                <DropShadowEffect Color="LightBlue" BlurRadius="25" ShadowDepth="0" Opacity="0.35"/>
             </Border.Effect>
 
             <StackPanel>
@@ -35,121 +87,55 @@
                            Margin="0,0,0,24"
                            HorizontalAlignment="Center"/>
 
-                <!-- CLIENT SEARCH -->
+                <!-- CLIENT -->
                 <TextBlock Text="Client" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                 <Grid Margin="0,5,0,12">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Search Box with placeholder -->
-                    <Grid Grid.Row="0">
-                        <TextBox x:Name="ClientSearchBox"
-                                 Padding="8"
-                                 Background="White"
-                                 BorderBrush="#FFBFD6E5"
-                                 BorderThickness="1"
-                                 Height="32"
-                                 TextChanged="ClientSearchBox_TextChanged"/>
-                        <TextBlock Text="Search clients..."
-                                   Foreground="Gray"
-                                   Margin="12,0,0,0"
-                                   VerticalAlignment="Center"
-                                   IsHitTestVisible="False"
-                                   Visibility="{Binding Text.IsEmpty, ElementName=ClientSearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    </Grid>
-
+                    <TextBox x:Name="ClientSearchBox" Style="{StaticResource RoundedTextBox}" TextChanged="ClientSearchBox_TextChanged"/>
+                    <TextBlock Text="Search clients..."
+                               Foreground="Gray"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"
+                               Visibility="{Binding Text.IsEmpty, ElementName=ClientSearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <ListBox x:Name="ClientSuggestionsList"
-                             Grid.Row="1"
-                             Margin="0,2,0,0"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5"
-                             BorderThickness="1"
-                             MaxHeight="120"
-                             Visibility="Collapsed"
-                             MouseDoubleClick="ClientSuggestionsList_MouseDoubleClick"/>
+                             Background="White" BorderBrush="#FFBFD6E5" BorderThickness="1"
+                             MaxHeight="120" Visibility="Collapsed"
+                             MouseDoubleClick="ClientSuggestionsList_MouseDoubleClick"
+                             Margin="0,36,0,0"/>
                 </Grid>
 
                 <!-- PROPERTY -->
                 <TextBlock Text="Property Name" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                 <Grid Margin="0,5,0,12">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Search Box with placeholder -->
-                    <Grid Grid.Row="0">
-                        <TextBox x:Name="PropertySearchBox"
-                 Padding="8"
-                 Background="White"
-                 BorderBrush="#FFBFD6E5"
-                 BorderThickness="1"
-                 Height="32"
-                 IsEnabled="False"
-                 TextChanged="PropertySearchBox_TextChanged"/>
-                        <TextBlock Text="Search properties..."
-                   Foreground="Gray"
-                   Margin="12,0,0,0"
-                   VerticalAlignment="Center"
-                   IsHitTestVisible="False"
-                   Visibility="{Binding Text.IsEmpty, ElementName=PropertySearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    </Grid>
-
+                    <TextBox x:Name="PropertySearchBox" Style="{StaticResource RoundedTextBox}" IsEnabled="False" TextChanged="PropertySearchBox_TextChanged"/>
+                    <TextBlock Text="Search properties..."
+                               Foreground="Gray"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"
+                               Visibility="{Binding Text.IsEmpty, ElementName=PropertySearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <ListBox x:Name="PropertySuggestionsList"
-             Grid.Row="1"
-             Margin="0,2,0,0"
-             Background="White"
-             BorderBrush="#FFBFD6E5"
-             BorderThickness="1"
-             MaxHeight="120"
-             Visibility="Collapsed"
-             MouseDoubleClick="PropertySuggestionsList_MouseDoubleClick"/>
+                             Background="White" BorderBrush="#FFBFD6E5" BorderThickness="1"
+                             MaxHeight="120" Visibility="Collapsed"
+                             MouseDoubleClick="PropertySuggestionsList_MouseDoubleClick"
+                             Margin="0,36,0,0"/>
                 </Grid>
 
-
-
-
-
-
-                <!-- AGENT SEARCH -->
+                <!-- AGENT -->
                 <TextBlock Text="Agent" FontWeight="SemiBold" Foreground="#FF4A5568"/>
                 <Grid Margin="0,5,0,12">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Agent search box with placeholder -->
-                    <Grid Grid.Row="0">
-                        <TextBox x:Name="AgentSearchBox"
-                                 Padding="8"
-                                 Background="White"
-                                 BorderBrush="#FFBFD6E5"
-                                 BorderThickness="1"
-                                 Height="32"
-                                 TextChanged="AgentSearchBox_TextChanged"/>
-                        <TextBlock Text="Search agents..."
-                                   Foreground="Gray"
-                                   Margin="12,0,0,0"
-                                   VerticalAlignment="Center"
-                                   IsHitTestVisible="False"
-                                   Visibility="{Binding Text.IsEmpty, ElementName=AgentSearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    </Grid>
-
+                    <TextBox x:Name="AgentSearchBox" Style="{StaticResource RoundedTextBox}" TextChanged="AgentSearchBox_TextChanged"/>
+                    <TextBlock Text="Search agents..."
+                               Foreground="Gray"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"
+                               Visibility="{Binding Text.IsEmpty, ElementName=AgentSearchBox, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <ListBox x:Name="AgentSuggestionsList"
-                             Grid.Row="1"
-                             Margin="0,2,0,0"
-                             Background="White"
-                             BorderBrush="#FFBFD6E5"
-                             BorderThickness="1"
-                             MaxHeight="120"
-                             Visibility="Collapsed"
-                             MouseDoubleClick="AgentSuggestionsList_MouseDoubleClick"/>
-
-                   
+                             Background="White" BorderBrush="#FFBFD6E5" BorderThickness="1"
+                             MaxHeight="120" Visibility="Collapsed"
+                             MouseDoubleClick="AgentSuggestionsList_MouseDoubleClick"
+                             Margin="0,36,0,0"/>
                 </Grid>
 
                 <!-- SALE DATE -->
@@ -180,46 +166,16 @@
                     <ComboBoxItem Content="-- Select payment mode --" IsSelected="True" Foreground="Gray"/>
                     <ComboBoxItem Content="One-time Payment"/>
                     <ComboBoxItem Content="Installment"/>
-                    
                 </ComboBox>
 
                 <!-- BUTTONS -->
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            Margin="0,20,0,0">
-                    <Button Content="Cancel" Width="100" Height="38"
-                            Margin="0,0,12,0"
-                            Background="#FFE9F7FF"
-                            Foreground="#FF2C2C2C"
-                            BorderBrush="#FFAACDEB"
-                            BorderThickness="1.2"
-                            FontWeight="SemiBold"
-                            Cursor="Hand"
-                            Click="CancelButton_Click"/>
-
-                    <Button Content="Add" Width="100" Height="38"
-                            Background="#FFFFE08F"
-                            Foreground="#FF2C2C2C"
-                            FontWeight="Bold"
-                            BorderBrush="#FFE6C96D"
-                            BorderThickness="1.2"
-                            Cursor="Hand"
-                            Click="SaveButton_Click"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                    <Button Content="Cancel" Style="{StaticResource RoundedButton}" Background="#FFE9F7FF" Foreground="#FF2C2C2C" BorderBrush="#FFAACDEB" Click="CancelButton_Click"/>
+                    <Button Content="Add" Style="{StaticResource RoundedButton}" Background="#FFFFE08F" Foreground="#FF2C2C2C" BorderBrush="#FFE6C96D" Click="SaveButton_Click"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <!-- Close Button -->
-        <Button Content="✖"
-                Width="28" Height="28"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Margin="0,10,10,0"
-                Background="Transparent"
-                Foreground="Red"
-                FontWeight="Bold"
-                BorderThickness="0"
-                Cursor="Hand"
-                Click="CancelButton_Click"/>
+      
     </Grid>
 </Window>

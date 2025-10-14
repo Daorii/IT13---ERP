@@ -67,12 +67,17 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <!-- Page Header -->
+            <TextBlock Grid.Row="0" Text="Logs" FontSize="26" FontWeight="Bold" Foreground="{StaticResource Gray800}" 
+                   Margin="0,0,0,16"/>
+
             <!-- Top bar: Search + Back -->
-            <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid Grid.Row="1" Margin="0,0,0,24">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -104,7 +109,7 @@
             </Grid>
 
             <!-- Logs table -->
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -160,7 +165,7 @@
             </Grid>
 
             <!-- Pagination -->
-            <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid Grid.Row="3" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>

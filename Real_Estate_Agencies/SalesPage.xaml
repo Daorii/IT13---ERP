@@ -100,13 +100,29 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <!-- Page Title -->
                 <RowDefinition Height="Auto"/>
+                <!-- Filters -->
+                <RowDefinition Height="Auto"/>
+                <!-- Add Sale Button -->
                 <RowDefinition Height="*"/>
+                <!-- Sales Table -->
                 <RowDefinition Height="Auto"/>
+                <!-- Pagination -->
             </Grid.RowDefinitions>
 
+
+            <!-- Page Title -->
+            <TextBlock Grid.Row="0" Text="Sales Page"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="#2C3E50"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   Margin="0,0,0,16"/>
+
             <!-- Filters -->
-            <Border Grid.Row="0" Background="White" CornerRadius="12"
+            <Border Grid.Row="1" Background="White" CornerRadius="12"
                     Padding="20" Margin="0,0,0,16"
                     BorderBrush="{StaticResource Gray200}" BorderThickness="1">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
@@ -150,13 +166,13 @@
             </Border>
 
             <!-- Add Sale Button -->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
                 <Button Content="Add Sale" Style="{StaticResource AddButtonStyle}" Width="120" Height="36"
                         Click="AddSale_Click"/>
             </StackPanel>
 
             <!-- Sales Table -->
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -222,7 +238,7 @@
 
             <!-- Pagination -->
             <!-- Pagination -->
-            <Grid Grid.Row="3" Margin="0,16,0,0">
+            <Grid Grid.Row="4" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
