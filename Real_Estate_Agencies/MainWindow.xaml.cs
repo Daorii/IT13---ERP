@@ -122,8 +122,26 @@ namespace Real_Estate_Agencies
 
             if (clicked == BtnLogout)
             {
-                MessageBox.Show("You have been logged out.", "Logout", MessageBoxButton.OK, MessageBoxImage.Information);
-                Application.Current.Shutdown();
+                // Confirmation dialog
+                var result = MessageBox.Show("Are you sure you want to log out?",
+                                             "Confirm Logout",
+                                             MessageBoxButton.YesNo,
+                                             MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    MessageBox.Show("You have been logged out.", "Logout", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    LoginView loginView = new LoginView();
+                    loginView.Show();
+
+                    this.Close();
+                }
+                else
+                {
+                    BtnLogout.IsChecked = false;
+                }
+
                 return;
             }
 

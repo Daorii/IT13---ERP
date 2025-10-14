@@ -11,10 +11,10 @@ namespace Real_Estate_Agencies.Data
             "Data Source=db29561.public.databaseasp.net;User ID=db29561;Password=123456789;Encrypt=False;Trust Server Certificate=True";
 
         private static readonly string _localConnectionString =
-            "Data Source=NITRO\\SQLEXPRESS;Initial Catalog=RealEstate;Integrated Security=True;Encrypt=False;Trust Server Certificate=True";
+            "Data Source=localhost\\SQLEXPRESS;Initial Catalog=RealEstate;Integrated Security=True;Trust Server Certificate=True";
          
         private static bool _isOnlineAvailable = true;
-        private static bool _enableLocalFallback = false; // Set to false to disable local database fallback
+        private static bool _enableLocalFallback = true; // Set to false to disable local database fallback
         private static DateTime _lastCheckTime = DateTime.MinValue;
         private static readonly TimeSpan _recheckInterval = TimeSpan.FromMinutes(5); // Recheck online DB every 5 minutes
 
